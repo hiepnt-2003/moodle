@@ -46,6 +46,11 @@ class batch_form extends moodleform {
         $mform->addElement('date_selector', 'start_date', get_string('start_date', 'local_course_batches'));
         $mform->addRule('start_date', null, 'required', null, 'client');
         
+        // Trường mô tả
+        $mform->addElement('textarea', 'description', get_string('description', 'local_course_batches'), 
+                          array('rows' => 4, 'cols' => 50));
+        $mform->setType('description', PARAM_TEXT);
+        
         // Hidden field cho ID (khi edit)
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -116,7 +121,8 @@ if ($batch) {
         'id' => $batch->id,
         'action' => $action,
         'batch_name' => $batch->batch_name,
-        'start_date' => $batch->start_date
+        'start_date' => $batch->start_date,
+        'description' => $batch->description
     ));
 } else {
     $mform->set_data(array('action' => $action));
@@ -130,11 +136,11 @@ if ($mform->is_cancelled()) {
     
     if ($action == 'edit' && $data->id) {
         // Cập nhật đợt mở môn
-        batch_manager::update_batch($data->id, $data->batch_name, $data->start_date);
+        batch_manager::update_batch($data->id, $data->batch_name, $data->start_date, $data->description);
         $message = get_string('batch_updated', 'local_course_batches');
     } else {
         // Tạo đợt mở môn mới
-        batch_manager::create_batch($data->batch_name, $data->start_date);
+        batch_manager::create_batch($data->batch_name, $data->start_date, $data->description);
         $message = get_string('batch_created', 'local_course_batches');
     }
     

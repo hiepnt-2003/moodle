@@ -93,19 +93,37 @@ switch ($action) {
             if ($batch) {
                 echo $OUTPUT->header();
                 
-                // Tiêu đề
+                // Tiêu đề và thông tin đợt
                 echo $OUTPUT->heading(get_string('batch_courses', 'local_course_batches', $batch->batch_name));
                 
-                // Nút quay lại
+                // Hiển thị thông tin chi tiết đợt
+                echo html_writer::start_div('alert alert-info mb-3');
+                echo html_writer::tag('strong', 'Thông tin đợt mở môn:') . html_writer::empty_tag('br');
+                echo 'Ngày bắt đầu: ' . date('d/m/Y', $batch->start_date) . html_writer::empty_tag('br');
+                echo 'Ngày tạo: ' . date('d/m/Y H:i', $batch->created_date) . html_writer::empty_tag('br');
+                if (!empty($batch->description)) {
+                    echo 'Mô tả: ' . $batch->description;
+                }
+                echo html_writer::end_div();
+                
+                // Nút quay lại và quản lý
+                echo html_writer::start_div('mb-3');
                 $back_url = new moodle_url('/local/course_batches/index.php');
-                echo html_writer::link($back_url, get_string('back_to_batches', 'local_course_batches'), 
-                                     array('class' => 'btn btn-secondary mb-3'));
+                echo html_writer::link($back_url, '← ' . get_string('back_to_batches', 'local_course_batches'), 
+                                     array('class' => 'btn btn-secondary me-2'));
+                
+                if (has_capability('local/course_batches:manage', $context)) {
+                    $manage_url = new moodle_url('/local/course_batches/manage_courses.php', array('batch_id' => $id));
+                    echo html_writer::link($manage_url, 'Quản lý khóa học trong đợt', 
+                                         array('class' => 'btn btn-primary'));
+                }
+                echo html_writer::end_div();
                 
                 // Lấy danh sách khóa học
-                $courses = batch_manager::get_courses_in_batch($batch->start_date);
+                $courses = batch_manager::get_courses_in_batch($id);
                 
                 if (empty($courses)) {
-                    echo $OUTPUT->notification('Không có khóa học nào trong đợt này.', 'info');
+                    echo $OUTPUT->notification('Chưa có khóa học nào được gán vào đợt này.', 'info');
                 } else {
                     // Tạo bảng hiển thị khóa học
                     $table = new html_table();
@@ -113,9 +131,10 @@ switch ($action) {
                         'ID',
                         'Tên khóa học',
                         'Tên viết tắt',
-                        'Ngày bắt đầu',
+                        'Ngày bắt đầu khóa học',
                         'Trạng thái',
-                        'Số học viên'
+                        'Số học viên',
+                        'Ngày thêm vào đợt'
                     );
                     $table->attributes['class'] = 'table table-striped';
                     
@@ -126,12 +145,18 @@ switch ($action) {
                                                  $course->fullname, array('target' => '_blank'));
                         $row[] = $course->shortname;
                         $row[] = date('d/m/Y', $course->startdate);
-                        $row[] = $course->visible ? 'Hiển thị' : 'Ẩn';
-                        $row[] = $course->enrolled_users;
+                        $row[] = $course->visible ? '<span class="badge bg-success">Hiển thị</span>' : '<span class="badge bg-secondary">Ẩn</span>';
+                        $row[] = $course->enrolled_users ?: '0';
+                        $row[] = date('d/m/Y H:i', $course->time_added_to_batch);
                         $table->data[] = $row;
                     }
                     
                     echo html_writer::table($table);
+                    
+                    // Hiển thị tổng kết
+                    echo html_writer::start_div('alert alert-light mt-3');
+                    echo html_writer::tag('strong', 'Tổng kết: ') . count($courses) . ' khóa học trong đợt này';
+                    echo html_writer::end_div();
                 }
                 
                 echo $OUTPUT->footer();
@@ -143,6 +168,48 @@ switch ($action) {
 
 // Hiển thị trang chính (danh sách đợt mở môn)
 echo $OUTPUT->header();
+
+// Hiển thị thống kê tổng quan
+$stats = batch_manager::get_statistics();
+echo html_writer::start_div('row mb-4');
+
+echo html_writer::start_div('col-md-3');
+echo html_writer::start_div('card bg-primary text-white');
+echo html_writer::start_div('card-body');
+echo html_writer::tag('h5', $stats->total_batches, array('class' => 'card-title'));
+echo html_writer::tag('p', 'Tổng số đợt mở môn', array('class' => 'card-text'));
+echo html_writer::end_div();
+echo html_writer::end_div();
+echo html_writer::end_div();
+
+echo html_writer::start_div('col-md-3');
+echo html_writer::start_div('card bg-success text-white');
+echo html_writer::start_div('card-body');
+echo html_writer::tag('h5', $stats->assigned_courses, array('class' => 'card-title'));
+echo html_writer::tag('p', 'Khóa học đã gán', array('class' => 'card-text'));
+echo html_writer::end_div();
+echo html_writer::end_div();
+echo html_writer::end_div();
+
+echo html_writer::start_div('col-md-3');
+echo html_writer::start_div('card bg-warning text-white');
+echo html_writer::start_div('card-body');
+echo html_writer::tag('h5', $stats->unassigned_courses, array('class' => 'card-title'));
+echo html_writer::tag('p', 'Khóa học chưa gán', array('class' => 'card-text'));
+echo html_writer::end_div();
+echo html_writer::end_div();
+echo html_writer::end_div();
+
+echo html_writer::start_div('col-md-3');
+echo html_writer::start_div('card bg-info text-white');
+echo html_writer::start_div('card-body');
+echo html_writer::tag('h5', $stats->total_courses, array('class' => 'card-title'));
+echo html_writer::tag('p', 'Tổng số khóa học', array('class' => 'card-text'));
+echo html_writer::end_div();
+echo html_writer::end_div();
+echo html_writer::end_div();
+
+echo html_writer::end_div();
 
 // Tiêu đề trang
 echo $OUTPUT->heading(get_string('batch_list', 'local_course_batches'));
