@@ -23,7 +23,7 @@ $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
 // 🔹 Lấy danh sách courses với thông tin category
-$sql = "SELECT c.id, c.fullname, c.shortname, c.startdate, c.enddate, c.category, cc.name as categoryname
+$sql = "SELECT c.id, c.fullname, c.shortname, c.startdate, c.enddate, cc.name as categoryname
         FROM {course} c
         LEFT JOIN {course_categories} cc ON c.category = cc.id
         WHERE c.id != 1
@@ -47,12 +47,12 @@ foreach ($courses as $c) {
     // Số thứ tự
     $content .= html_writer::tag('td', $stt, ['style' => 'border:1px solid #ddd; padding:10px; text-align:center;']);
     
-    // Fullname với link đến course management
-    $course_url = new moodle_url('/course/management.php', array('categoryid' => $c->category, 'courseid' => $c->id));
+    // Fullname với link đến course
+    $course_url = new moodle_url('/course/view.php', array('id' => $c->id));
     $fullname_link = html_writer::link($course_url, $c->fullname, ['style' => 'color:#0066cc; text-decoration:none;']);
     $content .= html_writer::tag('td', $fullname_link, ['style' => 'border:1px solid #ddd; padding:10px;']);
     
-    // Shortname với link đến course management
+    // Shortname với link đến course
     $shortname_link = html_writer::link($course_url, $c->shortname, ['style' => 'color:#0066cc; text-decoration:none;']);
     $content .= html_writer::tag('td', $shortname_link, ['style' => 'border:1px solid #ddd; padding:10px;']);
     
