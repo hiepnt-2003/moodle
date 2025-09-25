@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/course_batches/db" VERSION="20250925" COMMENT="XMLDB file for Moodle local/course_batches"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <TABLE NAME="local_course_batches" COMMENT="Bảng lưu trữ thông tin đợt mở môn">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="batch_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Tên đợt mở môn"/>
+        <FIELD NAME="start_date" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Ngày bắt đầu đợt mở môn (timestamp)"/>
+        <FIELD NAME="created_date" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Ngày tạo record (timestamp)"/>
+        <FIELD NAME="course_count" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Số lượng khóa học trong đợt"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="start_date_idx" UNIQUE="false" FIELDS="start_date"/>
+        <INDEX NAME="batch_name_idx" UNIQUE="false" FIELDS="batch_name"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

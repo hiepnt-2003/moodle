@@ -28,13 +28,18 @@ require_once('../../config.php');
 require_login();
 
 // Set up the page
+// Định nghĩa URL chính thức của trang
 $PAGE->set_url('/local/hello/index.php');
+// Thiết lập context hệ thống (system-wide)
 $PAGE->set_context(context_system::instance());
+// Tiêu đề hiển thị trên tab browser
 $PAGE->set_title(get_string('pluginname', 'local_hello'));
+// Tiêu đề chính trên trang
 $PAGE->set_heading(get_string('pluginname', 'local_hello'));
+// 	Sử dụng layout chuẩn của Moodle
 $PAGE->set_pagelayout('standard');
 
-// Start output
+// Start output HTML
 echo $OUTPUT->header();
 
 // Display content
