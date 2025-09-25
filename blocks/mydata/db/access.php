@@ -20,4 +20,13 @@ $capabilities = [
         ],
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ],
+
+    'block/mydata:viewreports' => [
+        'captype' => 'read',
+        'contextlevel' => 50, // CONTEXT_SYSTEM
+        'archetypes' => [
+            'manager' => 1, // CAP_ALLOW
+            'coursecreator' => 1 // CAP_ALLOW - Course Creator cũng có quyền manager
+        ]
+    ],
 ];

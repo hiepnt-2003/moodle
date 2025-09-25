@@ -1,5 +1,6 @@
 <?php
     require_once('../../config.php');
+    require_once($CFG->dirroot . '/blocks/mydata/lib.php');
 
     defined('MOODLE_INTERNAL') || die();
 
@@ -9,34 +10,16 @@
     // Set up the page
     $PAGE->set_url('/blocks/mydata/view.php');
     $PAGE->set_context(context_system::instance());
-    $PAGE->set_title('Danh sách khóa học và người dùng');
-    $PAGE->set_heading('Danh sách khóa học và người dùng');
+    $PAGE->set_title(get_string('view_all_title', 'block_mydata'));
+    $PAGE->set_heading(get_string('view_all_heading', 'block_mydata'));
     $PAGE->set_pagelayout('standard');
 
     echo $OUTPUT->header();
 
-    /**
-     * Kiểm tra xem người dùng hiện tại có phải admin hay manager không
-     * @return bool true nếu có quyền, false nếu không có quyền
-     */
-    function is_admin_or_manager() {
-        $context = context_system::instance();
-        
-        // Kiểm tra các quyền admin và manager
-        if (has_capability('moodle/site:config', $context) ||               // Site Administrator
-            has_capability('moodle/course:create', $context) ||              // Manager/Course Creator
-            has_capability('moodle/user:create', $context) ||                // User Management
-            has_capability('block/mydata:viewreports', $context)) {          // Custom permission
-            return true;
-        }
-        
-        return false;
-    }
-
-    // Kiểm tra quyền admin hoặc manager
-    if (!is_admin_or_manager()) {
+    // Kiểm tra quyền Admin hoặc Manager
+    if (!block_mydata_has_access_permission()) {
         // Nếu không có quyền, hiển thị thông báo lỗi
-        print_error('nopermissions', 'error', '', 'Bạn không có quyền truy cập danh sách này');
+        print_error('nopermissions', 'error', '', get_string('no_permission_error', 'block_mydata'));
     }
 
     // 🔹 Lấy danh sách courses với thông tin category
@@ -130,6 +113,19 @@
         $stt++;
     }
     $content .= html_writer::end_tag('table');
+
+    // Thêm liên kết đến trang báo cáo
+    $content .= html_writer::start_tag('div', ['style' => 'text-align:center; margin-top:30px; padding:20px; background-color:#f8f9fa; border-radius:8px;']);
+    $content .= html_writer::tag('h4', '📊 Báo cáo nâng cao', ['style' => 'margin-bottom:15px; color:#0066cc;']);
+    
+    $report_url = new moodle_url('/blocks/mydata/report.php');
+    $report_link = html_writer::link($report_url, 'Xem báo cáo người dùng theo khóa học', 
+        ['class' => 'btn btn-primary', 'style' => 'font-size:16px; padding:10px 20px;']);
+    
+    $content .= html_writer::tag('p', $report_link);
+    $content .= html_writer::tag('p', 'Chọn khóa học cụ thể để xem danh sách người dùng và vai trò của họ', 
+        ['style' => 'margin-top:10px; font-size:14px; color:#666;']);
+    $content .= html_writer::end_tag('div');
 
     echo $content;
 
