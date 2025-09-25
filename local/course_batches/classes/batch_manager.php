@@ -252,21 +252,30 @@ class batch_manager {
     }
 
     /**
-     * Lấy danh sách khóa học trong một đợt mở môn
+     * Lấy danh sách khóa học trong một đợt mở môn với thông tin chi tiết
      * @param int $batch_id ID của đợt mở môn
-     * @return array Danh sách khóa học
+     * @return array Danh sách khóa học với thông tin đầy đủ
      */
     public static function get_courses_in_batch($batch_id) {
         global $DB;
         
-        $sql = "SELECT c.id, c.fullname, c.shortname, c.startdate, c.visible, c.timecreated,
-                       COUNT(ue.id) as enrolled_users, bc.timecreated as time_added_to_batch
+        $sql = "SELECT c.id, c.fullname, c.shortname, c.startdate, c.enddate, c.visible, 
+                       c.timecreated, c.timemodified, c.summary, c.format, c.lang,
+                       COUNT(DISTINCT ue.id) as enrolled_users, 
+                       COUNT(DISTINCT cm.id) as total_activities,
+                       bc.timecreated as time_added_to_batch,
+                       cat.name as category_name,
+                       cat.path as category_path
                 FROM {local_course_batch_courses} bc
                 JOIN {course} c ON c.id = bc.courseid
-                LEFT JOIN {enrol} e ON e.courseid = c.id
-                LEFT JOIN {user_enrolments} ue ON ue.enrolid = e.id
+                LEFT JOIN {course_categories} cat ON cat.id = c.category
+                LEFT JOIN {enrol} e ON e.courseid = c.id AND e.enrol != 'guest'
+                LEFT JOIN {user_enrolments} ue ON ue.enrolid = e.id AND ue.status = 0
+                LEFT JOIN {course_modules} cm ON cm.course = c.id AND cm.visible = 1
                 WHERE bc.batchid = ?
-                GROUP BY c.id, c.fullname, c.shortname, c.startdate, c.visible, c.timecreated, bc.timecreated
+                GROUP BY c.id, c.fullname, c.shortname, c.startdate, c.enddate, c.visible, 
+                         c.timecreated, c.timemodified, c.summary, c.format, c.lang,
+                         bc.timecreated, cat.name, cat.path
                 ORDER BY c.fullname";
         
         return $DB->get_records_sql($sql, array($batch_id));
@@ -289,6 +298,61 @@ class batch_manager {
                 ORDER BY c.startdate DESC, c.fullname";
         
         return $DB->get_records_sql($sql);
+    }
+
+    /**
+     * Lấy thông tin chi tiết một khóa học
+     * @param int $course_id ID của khóa học
+     * @return object|false Thông tin chi tiết khóa học
+     */
+    public static function get_course_details($course_id) {
+        global $DB;
+        
+        $sql = "SELECT c.*, cat.name as category_name, cat.path as category_path,
+                       COUNT(DISTINCT ue.id) as enrolled_users,
+                       COUNT(DISTINCT ue2.id) as active_users,
+                       COUNT(DISTINCT cm.id) as total_activities,
+                       COUNT(DISTINCT CASE WHEN cm.visible = 1 THEN cm.id END) as visible_activities,
+                       COUNT(DISTINCT CASE WHEN m.name = 'assignment' THEN cm.id END) as assignments,
+                       COUNT(DISTINCT CASE WHEN m.name = 'quiz' THEN cm.id END) as quizzes,
+                       COUNT(DISTINCT CASE WHEN m.name = 'forum' THEN cm.id END) as forums,
+                       COUNT(DISTINCT CASE WHEN m.name = 'resource' THEN cm.id END) as resources
+                FROM {course} c
+                LEFT JOIN {course_categories} cat ON cat.id = c.category
+                LEFT JOIN {enrol} e ON e.courseid = c.id AND e.enrol != 'guest'
+                LEFT JOIN {user_enrolments} ue ON ue.enrolid = e.id
+                LEFT JOIN {user_enrolments} ue2 ON ue2.enrolid = e.id AND ue2.status = 0
+                LEFT JOIN {course_modules} cm ON cm.course = c.id
+                LEFT JOIN {modules} m ON m.id = cm.module
+                WHERE c.id = ?
+                GROUP BY c.id, c.fullname, c.shortname, c.idnumber, c.summary, c.summaryformat,
+                         c.format, c.showgrades, c.newsitems, c.startdate, c.enddate, c.numsections,
+                         c.maxbytes, c.showreports, c.visible, c.visibleold, c.groupmode, c.groupmodeforce,
+                         c.defaultgroupingid, c.lang, c.calendartype, c.theme, c.timecreated, c.timemodified,
+                         c.requested, c.enablecompletion, c.completionnotify, c.cacherev, c.category,
+                         cat.name, cat.path";
+        
+        return $DB->get_record_sql($sql, array($course_id));
+    }
+
+    /**
+     * Lấy danh sách giáo viên của một khóa học
+     * @param int $course_id ID của khóa học
+     * @return array Danh sách giáo viên
+     */
+    public static function get_course_teachers($course_id) {
+        global $DB;
+        
+        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.email, r.name as role_name, r.shortname as role_shortname
+                FROM {user} u
+                JOIN {role_assignments} ra ON ra.userid = u.id
+                JOIN {role} r ON r.id = ra.roleid
+                JOIN {context} ctx ON ctx.id = ra.contextid
+                WHERE ctx.contextlevel = 50 AND ctx.instanceid = ?
+                AND r.shortname IN ('editingteacher', 'teacher')
+                ORDER BY r.shortname, u.lastname, u.firstname";
+        
+        return $DB->get_records_sql($sql, array($course_id));
     }
 
     /**

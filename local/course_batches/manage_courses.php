@@ -131,31 +131,64 @@ if (empty($assigned_courses)) {
     echo $OUTPUT->notification('Chưa có khóa học nào trong đợt này.', 'info');
 } else {
     $table = new html_table();
-    $table->head = array('ID', 'Tên khóa học', 'Tên viết tắt', 'Thời gian khóa học', 'Trạng thái', 'Thao tác');
-    $table->attributes['class'] = 'table table-striped';
+    $table->head = array('ID', 'Thông tin khóa học', 'Thời gian', 'Danh mục', 'Hoạt động', 'Học viên', 'Thao tác');
+    $table->attributes['class'] = 'table table-striped table-hover';
     
     foreach ($assigned_courses as $course) {
         $row = array();
+        
+        // ID
         $row[] = $course->id;
-        $row[] = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), 
-                                 $course->fullname, array('target' => '_blank'));
-        $row[] = $course->shortname;
+        
+        // Thông tin khóa học
+        $course_info = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), 
+                                       $course->fullname, array('target' => '_blank', 'class' => 'fw-bold'));
+        $course_info .= html_writer::empty_tag('br');
+        $course_info .= html_writer::tag('small', 'Mã: ' . $course->shortname, array('class' => 'text-muted'));
+        if ($course->visible) {
+            $course_info .= ' <span class="badge bg-success">Hiển thị</span>';
+        } else {
+            $course_info .= ' <span class="badge bg-secondary">Ẩn</span>';
+        }
+        $row[] = $course_info;
+        
+        // Thời gian
         $course_time_range = date('d/m/Y', $course->startdate);
         if (!empty($course->enddate) && $course->enddate > 0) {
-            $course_time_range .= ' - ' . date('d/m/Y', $course->enddate);
+            $course_time_range .= html_writer::empty_tag('br') . date('d/m/Y', $course->enddate);
         }
         $row[] = $course_time_range;
-        $row[] = $course->visible ? '<span class="badge bg-success">Hiển thị</span>' : '<span class="badge bg-secondary">Ẩn</span>';
         
-        // Nút xóa khỏi đợt
+        // Danh mục
+        $row[] = $course->category_name ?: 'Không xác định';
+        
+        // Hoạt động
+        $row[] = ($course->total_activities ?: '0') . ' hoạt động';
+        
+        // Học viên
+        $student_info = ($course->enrolled_users ?: '0') . ' học viên';
+        if (isset($course->active_users) && $course->active_users > 0) {
+            $student_info .= html_writer::empty_tag('br');
+            $student_info .= html_writer::tag('small', $course->active_users . ' đang hoạt động', array('class' => 'text-success'));
+        }
+        $row[] = $student_info;
+        
+        // Thao tác
+        $actions = array();
+        $actions[] = html_writer::link(new moodle_url('/local/course_batches/course_detail.php', 
+                                                    array('id' => $course->id, 'batch_id' => $batch_id)), 
+                                     'Chi tiết', array('class' => 'btn btn-sm btn-info'));
+        
         $remove_url = new moodle_url($PAGE->url, array(
             'action' => 'remove_course',
             'course_id' => $course->id,
             'sesskey' => sesskey()
         ));
-        $row[] = html_writer::link($remove_url, 'Xóa khỏi đợt', 
-                                 array('class' => 'btn btn-sm btn-danger', 
-                                       'onclick' => 'return confirm("Bạn có chắc muốn xóa khóa học này khỏi đợt?")'));
+        $actions[] = html_writer::link($remove_url, 'Xóa khỏi đợt', 
+                                     array('class' => 'btn btn-sm btn-danger', 
+                                           'onclick' => 'return confirm("Bạn có chắc muốn xóa khóa học này khỏi đợt?")'));
+        
+        $row[] = implode(' ', $actions);
         
         $table->data[] = $row;
     }
