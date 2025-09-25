@@ -13,9 +13,16 @@ defined('MOODLE_INTERNAL') || die();
 // Require login
 require_login();
 
+// Kiểm tra quyền manager
+$context = context_system::instance();
+if (!has_capability('block/mydata:viewreports', $context) && !has_capability('moodle/site:config', $context)) {
+    // Nếu không phải manager, hiển thị thông báo lỗi
+    print_error('nopermissions', 'error', '', 'Chỉ có Manager mới có quyền xem báo cáo này');
+}
+
 // Set up the page
 $PAGE->set_url('/blocks/mydata/view.php');
-$PAGE->set_context(context_system::instance());
+$PAGE->set_context($context);
 $PAGE->set_title('Danh sách khóa học và người dùng');
 $PAGE->set_heading('Danh sách khóa học và người dùng');
 $PAGE->set_pagelayout('standard');
