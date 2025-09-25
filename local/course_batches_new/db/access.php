@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Upgrade script for local_course_batches plugin
+ * Capability definitions for local_course_batches plugin
  *
  * @package    local_course_batches
  * @copyright  2025 Your Name
@@ -24,19 +24,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/ddllib.php');
-
-/**
- * Upgrade the local_course_batches plugin
- * @param int $oldversion the version we are upgrading from
- */
-function xmldb_local_course_batches_upgrade($oldversion) {
-    global $DB, $CFG;
-    
-    $dbman = $DB->get_manager();
-
-    // Just return true for now to avoid upgrade issues
-    // The tables will be created by install.xml for new installations
-    
-    return true;
-}
+$capabilities = array(
+    'local/course_batches:view' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ),
+    ),
+    'local/course_batches:manage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+        ),
+    ),
+);

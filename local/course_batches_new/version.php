@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Upgrade script for local_course_batches plugin
+ * Version information for local_course_batches plugin
  *
  * @package    local_course_batches
  * @copyright  2025 Your Name
@@ -24,19 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/ddllib.php');
-
-/**
- * Upgrade the local_course_batches plugin
- * @param int $oldversion the version we are upgrading from
- */
-function xmldb_local_course_batches_upgrade($oldversion) {
-    global $DB, $CFG;
-    
-    $dbman = $DB->get_manager();
-
-    // Just return true for now to avoid upgrade issues
-    // The tables will be created by install.xml for new installations
-    
-    return true;
-}
+$plugin->component = 'local_course_batches';
+$plugin->version = 2025092504;
+$plugin->requires = 2020110900;
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release = '1.4 (2025-09-25) - Đợt mở môn đơn giản';

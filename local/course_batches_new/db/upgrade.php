@@ -24,19 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/ddllib.php');
-
-/**
- * Upgrade the local_course_batches plugin
- * @param int $oldversion the version we are upgrading from
- */
 function xmldb_local_course_batches_upgrade($oldversion) {
-    global $DB, $CFG;
-    
-    $dbman = $DB->get_manager();
-
-    // Just return true for now to avoid upgrade issues
-    // The tables will be created by install.xml for new installations
-    
     return true;
 }
