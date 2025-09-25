@@ -20,13 +20,4 @@ $capabilities = [
         ],
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ],
-
-    'block/mydata:viewreports' => [
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => [
-            'manager' => CAP_ALLOW
-        ],
-        'clonepermissionsfrom' => 'moodle/site:config'
-    ],
 ];

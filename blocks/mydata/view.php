@@ -13,24 +13,41 @@ defined('MOODLE_INTERNAL') || die();
 // Require login
 require_login();
 
-// Kiểm tra quyền manager
-$context = context_system::instance();
-if (!has_capability('block/mydata:viewreports', $context) && !has_capability('moodle/site:config', $context)) {
-    // Nếu không phải manager, hiển thị thông báo lỗi
-    print_error('nopermissions', 'error', '', 'Chỉ có Manager mới có quyền xem báo cáo này');
-}
-
 // Set up the page
 $PAGE->set_url('/blocks/mydata/view.php');
-$PAGE->set_context($context);
+$PAGE->set_context(context_system::instance());
 $PAGE->set_title('Danh sách khóa học và người dùng');
 $PAGE->set_heading('Danh sách khóa học và người dùng');
 $PAGE->set_pagelayout('standard');
 
 echo $OUTPUT->header();
 
+/**
+ * Kiểm tra xem người dùng hiện tại có phải admin hay manager không
+ * @return bool true nếu có quyền, false nếu không có quyền
+ */
+function is_admin_or_manager() {
+    $context = context_system::instance();
+    
+    // Kiểm tra các quyền admin và manager
+    if (has_capability('moodle/site:config', $context) ||               // Site Administrator
+        has_capability('moodle/course:create', $context) ||              // Manager/Course Creator
+        has_capability('moodle/user:create', $context) ||                // User Management
+        has_capability('block/mydata:viewreports', $context)) {          // Custom permission
+        return true;
+    }
+    
+    return false;
+}
+
+// Kiểm tra quyền admin hoặc manager
+if (!is_admin_or_manager()) {
+    // Nếu không có quyền, hiển thị thông báo lỗi
+    print_error('nopermissions', 'error', '', 'Bạn không có quyền truy cập danh sách này');
+}
+
 // 🔹 Lấy danh sách courses với thông tin category
-$sql = "SELECT c.id, c.fullname, c.shortname, c.startdate, c.enddate, cc.name as categoryname
+$sql = "SELECT c.id, c.fullname, c.shortname, c.startdate, c.enddate, c.category, cc.name as categoryname
         FROM {course} c
         LEFT JOIN {course_categories} cc ON c.category = cc.id
         WHERE c.id != 1
@@ -54,12 +71,12 @@ foreach ($courses as $c) {
     // Số thứ tự
     $content .= html_writer::tag('td', $stt, ['style' => 'border:1px solid #ddd; padding:10px; text-align:center;']);
     
-    // Fullname với link đến course
-    $course_url = new moodle_url('/course/view.php', array('id' => $c->id));
+    // Fullname với link đến course management
+    $course_url = new moodle_url('/course/management.php', array('categoryid' => $c->category, 'courseid' => $c->id));
     $fullname_link = html_writer::link($course_url, $c->fullname, ['style' => 'color:#0066cc; text-decoration:none;']);
     $content .= html_writer::tag('td', $fullname_link, ['style' => 'border:1px solid #ddd; padding:10px;']);
     
-    // Shortname với link đến course
+    // Shortname với link đến course management
     $shortname_link = html_writer::link($course_url, $c->shortname, ['style' => 'color:#0066cc; text-decoration:none;']);
     $content .= html_writer::tag('td', $shortname_link, ['style' => 'border:1px solid #ddd; padding:10px;']);
     
