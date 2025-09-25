@@ -68,8 +68,8 @@ if ($action && confirm_sesskey()) {
             break;
             
         case 'auto_assign':
-            $count = batch_manager::auto_assign_courses_to_batch($batch_id, $batch->start_date);
-            redirect($PAGE->url, "Đã tự động gán {$count} khóa học vào đợt", null, \core\output\notification::NOTIFY_SUCCESS);
+            $count = batch_manager::auto_assign_courses_by_date_range($batch_id, $batch->start_date, $batch->end_date);
+            redirect($PAGE->url, "Đã tự động gán {$count} khóa học vào đợt theo khoảng thời gian", null, \core\output\notification::NOTIFY_SUCCESS);
             break;
     }
 }
@@ -85,15 +85,17 @@ echo html_writer::link($back_url, '← Quay lại xem đợt', array('class' => 
 echo html_writer::start_div('alert alert-info mb-4');
 echo html_writer::tag('h5', 'Thông tin đợt mở môn');
 echo 'Tên đợt: ' . $batch->batch_name . html_writer::empty_tag('br');
-echo 'Ngày bắt đầu: ' . date('d/m/Y', $batch->start_date) . html_writer::empty_tag('br');
+echo 'Khoảng thời gian: ' . date('d/m/Y', $batch->start_date) . ' - ' . date('d/m/Y', $batch->end_date) . html_writer::empty_tag('br');
 if (!empty($batch->description)) {
-    echo 'Mô tả: ' . $batch->description;
+    echo 'Mô tả: ' . $batch->description . html_writer::empty_tag('br');
 }
+echo html_writer::tag('small', 'Các khóa học có thời gian bắt đầu và kết thúc nằm trong khoảng này sẽ được tự động thêm vào đợt.', 
+                     array('class' => 'text-muted'));
 echo html_writer::end_div();
 
 // Nút tự động gán
 $auto_assign_url = new moodle_url($PAGE->url, array('action' => 'auto_assign', 'sesskey' => sesskey()));
-echo html_writer::link($auto_assign_url, 'Tự động gán khóa học cùng ngày bắt đầu', 
+echo html_writer::link($auto_assign_url, 'Tự động gán khóa học theo khoảng thời gian', 
                      array('class' => 'btn btn-success mb-3'));
 
 // Tabs
@@ -129,7 +131,7 @@ if (empty($assigned_courses)) {
     echo $OUTPUT->notification('Chưa có khóa học nào trong đợt này.', 'info');
 } else {
     $table = new html_table();
-    $table->head = array('ID', 'Tên khóa học', 'Tên viết tắt', 'Ngày bắt đầu', 'Trạng thái', 'Thao tác');
+    $table->head = array('ID', 'Tên khóa học', 'Tên viết tắt', 'Thời gian khóa học', 'Trạng thái', 'Thao tác');
     $table->attributes['class'] = 'table table-striped';
     
     foreach ($assigned_courses as $course) {
@@ -138,7 +140,11 @@ if (empty($assigned_courses)) {
         $row[] = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), 
                                  $course->fullname, array('target' => '_blank'));
         $row[] = $course->shortname;
-        $row[] = date('d/m/Y', $course->startdate);
+        $course_time_range = date('d/m/Y', $course->startdate);
+        if (!empty($course->enddate) && $course->enddate > 0) {
+            $course_time_range .= ' - ' . date('d/m/Y', $course->enddate);
+        }
+        $row[] = $course_time_range;
         $row[] = $course->visible ? '<span class="badge bg-success">Hiển thị</span>' : '<span class="badge bg-secondary">Ẩn</span>';
         
         // Nút xóa khỏi đợt

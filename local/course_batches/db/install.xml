@@ -7,7 +7,8 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="batch_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Tên đợt mở môn"/>
-        <FIELD NAME="start_date" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Ngày bắt đầu đợt mở môn (timestamp)"/>
+        <FIELD NAME="start_date" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Ngày bắt đầu học (timestamp)"/>
+        <FIELD NAME="end_date" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Ngày kết thúc học (timestamp)"/>
         <FIELD NAME="created_date" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Ngày tạo record (timestamp)"/>
         <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Mô tả đợt mở môn"/>
       </FIELDS>

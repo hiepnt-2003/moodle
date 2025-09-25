@@ -58,8 +58,18 @@ function xmldb_local_course_batches_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        // Add description field to local_course_batches table.
+        // Add end_date field to local_course_batches table.
         $table = new xmldb_table('local_course_batches');
+        $field = new xmldb_field('end_date', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'start_date');
+
+        // Conditionally launch add field end_date.
+        if (!$dbman->field_exists($table, $field)) {
+            // Set default end_date = start_date + 30 days for existing records
+            $dbman->add_field($table, $field);
+            $DB->execute("UPDATE {local_course_batches} SET end_date = start_date + (30 * 24 * 60 * 60) WHERE end_date = 0 OR end_date IS NULL");
+        }
+
+        // Add description field to local_course_batches table.
         $field = new xmldb_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null, 'created_date');
 
         // Conditionally launch add field description.
