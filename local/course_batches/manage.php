@@ -47,16 +47,8 @@ class batch_form extends moodleform {
         $mform->addRule('start_date', null, 'required', null, 'client');
         $mform->addHelpButton('start_date', 'start_date', 'local_course_batches');
         
-        // Trường ngày kết thúc học
-        $mform->addElement('date_selector', 'end_date', get_string('end_date', 'local_course_batches'));
-        $mform->addRule('end_date', null, 'required', null, 'client');
-        $mform->addHelpButton('end_date', 'end_date', 'local_course_batches');
-        
-        // Trường mô tả
-        $mform->addElement('textarea', 'description', get_string('description', 'local_course_batches'), 
-                          array('rows' => 4, 'cols' => 50));
-        $mform->setType('description', PARAM_TEXT);
-        $mform->addHelpButton('description', 'description', 'local_course_batches');
+        // Thông tin giải thích
+        $mform->addElement('static', 'info', '', 'Các môn học có cùng ngày bắt đầu sẽ được tự động gán vào đợt này.');
         
         // Hidden field cho ID (khi edit)
         $mform->addElement('hidden', 'id');
@@ -73,24 +65,19 @@ class batch_form extends moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         
-        // Kiểm tra ngày kết thúc phải sau ngày bắt đầu
-        if ($data['end_date'] <= $data['start_date']) {
-            $errors['end_date'] = 'Ngày kết thúc phải sau ngày bắt đầu';
-        }
-        
-        // Kiểm tra trùng lặp khoảng thời gian (trừ record hiện tại khi edit)
+        // Kiểm tra trùng lặp ngày bắt đầu (trừ record hiện tại khi edit)
         global $DB;
         if (!empty($data['id'])) {
             $sql = "SELECT id FROM {local_course_batches} 
-                    WHERE start_date = ? AND end_date = ? AND id != ?";
-            $exists = $DB->record_exists_sql($sql, array($data['start_date'], $data['end_date'], $data['id']));
+                    WHERE start_date = ? AND id != ?";
+            $exists = $DB->record_exists_sql($sql, array($data['start_date'], $data['id']));
         } else {
-            $conditions = array('start_date' => $data['start_date'], 'end_date' => $data['end_date']);
+            $conditions = array('start_date' => $data['start_date']);
             $exists = $DB->record_exists('local_course_batches', $conditions);
         }
         
         if ($exists) {
-            $errors['start_date'] = 'Đã có đợt mở môn với khoảng thời gian này';
+            $errors['start_date'] = 'Đã có đợt mở môn với ngày bắt đầu này';
         }
         
         return $errors;
@@ -134,9 +121,7 @@ if ($batch) {
         'id' => $batch->id,
         'action' => $action,
         'batch_name' => $batch->batch_name,
-        'start_date' => $batch->start_date,
-        'end_date' => $batch->end_date,
-        'description' => $batch->description
+        'start_date' => $batch->start_date
     ));
 } else {
     $mform->set_data(array('action' => $action));
@@ -150,11 +135,11 @@ if ($mform->is_cancelled()) {
     
     if ($action == 'edit' && $data->id) {
         // Cập nhật đợt mở môn
-        batch_manager::update_batch($data->id, $data->batch_name, $data->start_date, $data->end_date, $data->description);
+        batch_manager::update_batch($data->id, $data->batch_name, $data->start_date);
         $message = get_string('batch_updated', 'local_course_batches');
     } else {
         // Tạo đợt mở môn mới
-        batch_manager::create_batch($data->batch_name, $data->start_date, $data->end_date, $data->description);
+        batch_manager::create_batch($data->batch_name, $data->start_date);
         $message = get_string('batch_created', 'local_course_batches');
     }
     

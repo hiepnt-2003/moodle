@@ -99,11 +99,9 @@ switch ($action) {
                 // Hiển thị thông tin chi tiết đợt
                 echo html_writer::start_div('alert alert-info mb-3');
                 echo html_writer::tag('strong', 'Thông tin đợt mở môn:') . html_writer::empty_tag('br');
-                echo 'Khoảng thời gian học: ' . date('d/m/Y', $batch->start_date) . ' - ' . date('d/m/Y', $batch->end_date) . html_writer::empty_tag('br');
+                echo 'Ngày bắt đầu học: ' . date('d/m/Y', $batch->start_date) . html_writer::empty_tag('br');
                 echo 'Ngày tạo đợt: ' . date('d/m/Y H:i', $batch->created_date) . html_writer::empty_tag('br');
-                if (!empty($batch->description)) {
-                    echo 'Mô tả: ' . $batch->description;
-                }
+                echo 'Các môn học trong đợt này có cùng ngày bắt đầu học.';
                 echo html_writer::end_div();
                 
                 // Nút quay lại và quản lý
@@ -292,7 +290,7 @@ if (empty($batches)) {
     $table = new html_table();
     $table->head = array(
         get_string('batch_name', 'local_course_batches'),
-        get_string('date_range', 'local_course_batches'),
+        get_string('start_date', 'local_course_batches'),
         get_string('created_date', 'local_course_batches'),
         get_string('course_count', 'local_course_batches'),
         get_string('actions', 'local_course_batches')
@@ -302,7 +300,7 @@ if (empty($batches)) {
     foreach ($batches as $batch) {
         $row = array();
         $row[] = $batch->batch_name;
-        $row[] = date('d/m/Y', $batch->start_date) . ' - ' . date('d/m/Y', $batch->end_date);
+        $row[] = date('d/m/Y', $batch->start_date);
         $row[] = date('d/m/Y H:i', $batch->created_date);
         $row[] = $batch->course_count;
         

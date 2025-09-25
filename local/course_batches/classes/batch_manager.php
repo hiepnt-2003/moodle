@@ -42,7 +42,7 @@ class batch_manager {
         $sql = "SELECT b.*, COUNT(bc.courseid) as course_count
                 FROM {local_course_batches} b
                 LEFT JOIN {local_course_batch_courses} bc ON bc.batchid = b.id
-                GROUP BY b.id, b.batch_name, b.start_date, b.created_date, b.description
+                GROUP BY b.id, b.batch_name, b.start_date, b.created_date
                 ORDER BY b.start_date DESC";
         
         return $DB->get_records_sql($sql);
@@ -62,24 +62,20 @@ class batch_manager {
      * Tạo đợt mở môn mới
      * @param string $batch_name Tên đợt mở môn
      * @param int $start_date Ngày bắt đầu học (timestamp)
-     * @param int $end_date Ngày kết thúc học (timestamp)
-     * @param string $description Mô tả đợt mở môn
      * @return int ID của đợt mở môn vừa tạo
      */
-    public static function create_batch($batch_name, $start_date, $end_date, $description = '') {
+    public static function create_batch($batch_name, $start_date) {
         global $DB;
         
         $batch = new \stdClass();
         $batch->batch_name = $batch_name;
         $batch->start_date = $start_date;
-        $batch->end_date = $end_date;
         $batch->created_date = time();
-        $batch->description = $description;
         
         $batch_id = $DB->insert_record('local_course_batches', $batch);
         
-        // Tự động thêm các khóa học phù hợp vào đợt
-        self::auto_assign_courses_by_date_range($batch_id, $start_date, $end_date);
+        // Tự động thêm các khóa học có cùng startdate vào đợt
+        self::auto_assign_courses_by_start_date($batch_id, $start_date);
         
         return $batch_id;
     }
@@ -89,19 +85,15 @@ class batch_manager {
      * @param int $id ID của đợt mở môn
      * @param string $batch_name Tên đợt mở môn
      * @param int $start_date Ngày bắt đầu học (timestamp)
-     * @param int $end_date Ngày kết thúc học (timestamp)
-     * @param string $description Mô tả đợt mở môn
      * @return bool True nếu thành công
      */
-    public static function update_batch($id, $batch_name, $start_date, $end_date, $description = '') {
+    public static function update_batch($id, $batch_name, $start_date) {
         global $DB;
         
         $batch = new \stdClass();
         $batch->id = $id;
         $batch->batch_name = $batch_name;
         $batch->start_date = $start_date;
-        $batch->end_date = $end_date;
-        $batch->description = $description;
         
         $result = $DB->update_record('local_course_batches', $batch);
         
@@ -109,8 +101,8 @@ class batch_manager {
             // Xóa tất cả khóa học hiện tại trong đợt
             $DB->delete_records('local_course_batch_courses', array('batchid' => $id));
             
-            // Tự động thêm lại các khóa học phù hợp với khoảng thời gian mới
-            self::auto_assign_courses_by_date_range($id, $start_date, $end_date);
+            // Tự động thêm lại các khóa học có cùng startdate
+            self::auto_assign_courses_by_start_date($id, $start_date);
         }
         
         return $result;
@@ -138,32 +130,28 @@ class batch_manager {
     public static function auto_generate_batches() {
         global $DB;
         
-        // Lấy tất cả các kết hợp (startdate, enddate) duy nhất từ bảng course
-        $sql = "SELECT DISTINCT c.startdate, c.enddate, COUNT(*) as course_count
+        // Lấy tất cả các startdate duy nhất từ bảng course
+        $sql = "SELECT DISTINCT c.startdate, COUNT(*) as course_count
                 FROM {course} c
-                WHERE c.startdate > 0 AND c.enddate > 0 AND c.id > 1
+                WHERE c.startdate > 0 AND c.id > 1
                 AND NOT EXISTS (
                     SELECT 1 FROM {local_course_batches} b 
-                    WHERE b.start_date = c.startdate AND b.end_date = c.enddate
+                    WHERE b.start_date = c.startdate
                 )
-                GROUP BY c.startdate, c.enddate
+                GROUP BY c.startdate
                 ORDER BY c.startdate";
         
-        $date_ranges = $DB->get_records_sql($sql);
+        $start_dates = $DB->get_records_sql($sql);
         $created_count = 0;
         
-        foreach ($date_ranges as $range) {
-            $start_date = $range->startdate;
-            $end_date = $range->enddate;
+        foreach ($start_dates as $dateinfo) {
+            $start_date = $dateinfo->startdate;
             
-            // Tạo tên đợt mở môn dựa trên khoảng ngày
-            $batch_name = 'Đợt mở môn ' . date('d/m/Y', $start_date) . ' - ' . date('d/m/Y', $end_date);
+            // Tạo tên đợt mở môn dựa trên ngày bắt đầu
+            $batch_name = 'Đợt mở môn ' . date('d/m/Y', $start_date);
             
-            $description = "Đợt mở môn được tạo tự động từ {$range->course_count} khóa học có thời gian từ " . 
-                          date('d/m/Y', $start_date) . ' đến ' . date('d/m/Y', $end_date);
-            
-            // Tạo đợt mở môn (sẽ tự động assign khóa học)
-            self::create_batch($batch_name, $start_date, $end_date, $description);
+            // Tạo đợt mở môn (sẽ tự động assign khóa học có cùng startdate)
+            self::create_batch($batch_name, $start_date);
             $created_count++;
         }
         
@@ -171,24 +159,21 @@ class batch_manager {
     }
 
     /**
-     * Tự động gán khóa học vào đợt dựa trên khoảng thời gian
+     * Tự động gán khóa học vào đợt dựa trên ngày bắt đầu
      * @param int $batch_id ID của đợt mở môn
      * @param int $start_date Ngày bắt đầu của đợt
-     * @param int $end_date Ngày kết thúc của đợt
      * @return int Số khóa học đã gán
      */
-    public static function auto_assign_courses_by_date_range($batch_id, $start_date, $end_date) {
+    public static function auto_assign_courses_by_start_date($batch_id, $start_date) {
         global $DB;
         
-        // Lấy tất cả khóa học có thời gian bắt đầu và kết thúc nằm trong khoảng của đợt
+        // Lấy tất cả khóa học có cùng startdate
         $sql = "SELECT id
                 FROM {course} 
                 WHERE id > 1 
-                AND startdate >= ? AND startdate <= ?
-                AND enddate >= ? AND enddate <= ?
-                AND startdate > 0 AND enddate > 0";
+                AND startdate = ?";
         
-        $courses = $DB->get_records_sql($sql, array($start_date, $end_date, $start_date, $end_date));
+        $courses = $DB->get_records_sql($sql, array($start_date));
         $assigned_count = 0;
         
         foreach ($courses as $course) {
@@ -207,15 +192,7 @@ class batch_manager {
      * @return int Số khóa học đã gán
      */
     public static function auto_assign_courses_to_batch($batch_id, $start_date) {
-        global $DB;
-        
-        // Lấy thông tin đợt để có end_date
-        $batch = self::get_batch($batch_id);
-        if (!$batch) {
-            return 0;
-        }
-        
-        return self::auto_assign_courses_by_date_range($batch_id, $batch->start_date, $batch->end_date);
+        return self::auto_assign_courses_by_start_date($batch_id, $start_date);
     }
 
     /**

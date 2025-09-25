@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_course_batches';
-$plugin->version = 2025092502; // Build của plugin theo ngày hiện tại (logic mới)
+$plugin->version = 2025092503; // Build của plugin theo ngày hiện tại (cấu trúc đơn giản hóa)
 $plugin->requires = 2020110900; // Số build tương ứng Moodle 3.10
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.2 (2025-09-25) - Gán theo khoảng thời gian';
+$plugin->release = '1.3 (2025-09-25) - Cấu trúc đơn giản: đợt học và môn học';

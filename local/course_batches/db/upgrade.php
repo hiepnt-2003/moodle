@@ -87,5 +87,25 @@ function xmldb_local_course_batches_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025092501, 'local', 'course_batches');
     }
 
+    if ($oldversion < 2025092503) {
+        // Simplify batch structure - remove end_date and description columns
+        $table = new xmldb_table('local_course_batches');
+        
+        // Drop end_date column if exists
+        $field = new xmldb_field('end_date');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        
+        // Drop description column if exists
+        $field = new xmldb_field('description');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Savepoint reached.
+        upgrade_plugin_savepoint(true, 2025092503, 'local', 'course_batches');
+    }
+
     return true;
 }

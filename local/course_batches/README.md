@@ -1,42 +1,38 @@
 # Plugin Quản lý Đợt Mở Môn (Course Batches) cho Moodle
 
-## Mô tả
-# Plugin Quản lý Đợt Mở Môn (Course Batches) cho Moodle
-
-Plugin local Moodle để quản lý đợt mở môn theo khoảng thời gian. Plugin tự động phân tích và nhóm các khóa học có thời gian bắt đầu và kết thúc nằm trong cùng khoảng thời gian thành các đợt mở môn.
+Plugin local Moodle để quản lý đợt mở môn đơn giản. Plugin tự động nhóm các khóa học có cùng ngày bắt đầu thành các đợt mở môn.
 
 ## Logic hoạt động
-**Nguyên tắc phân loại**: Khóa học được tự động thêm vào đợt mở môn nếu thời gian bắt đầu (`startdate`) và thời gian kết thúc (`enddate`) của khóa học **nằm trong khoảng thời gian** của đợt mở môn.
+**Nguyên tắc phân loại**: Khóa học được tự động thêm vào đợt mở môn nếu có **cùng ngày bắt đầu** (`startdate`) với đợt mở môn.
 
 **Ví dụ**: 
-- Đợt mở môn: 01/01/2025 - 31/03/2025
-- Khóa học A: 15/01/2025 - 15/02/2025 → **Được thêm vào đợt**
-- Khóa học B: 15/12/2024 - 15/01/2025 → **Không được thêm** (bắt đầu trước đợt)
-- Khóa học C: 15/03/2025 - 15/04/2025 → **Không được thêm** (kết thúc sau đợt)
+- Đợt mở môn: 01/01/2025
+- Khóa học A: startdate = 01/01/2025 → **Được thêm vào đợt**
+- Khóa học B: startdate = 15/01/2025 → **Không được thêm** (khác ngày bắt đầu)
+- Khóa học C: startdate = 01/01/2025 → **Được thêm vào đợt** (cùng ngày bắt đầu)
 
 ## Tính năng chính
-1. **Tạo bảng cơ sở dữ liệu mới**: 
-   - Bảng `local_course_batches` để lưu trữ thông tin đợt mở môn (có ngày bắt đầu và kết thúc)
+1. **Cấu trúc đơn giản**: 
+   - Bảng `local_course_batches` để lưu trữ thông tin đợt mở môn (chỉ có ngày bắt đầu)
    - Bảng `local_course_batch_courses` để lưu trữ mối liên hệ giữa đợt và khóa học
-2. **Tự động tạo đợt theo khoảng thời gian**: 
-   - Phân tích tất cả các kết hợp (startdate, enddate) duy nhất từ khóa học
-   - Tạo đợt mở môn cho mỗi khoảng thời gian
-   - Tự động gán khóa học phù hợp vào đợt
-3. **Quản lý đợt mở môn**: 
-   - Thêm, sửa, xóa các đợt mở môn với khoảng thời gian cụ thể
-   - Validation: ngày kết thúc phải sau ngày bắt đầu
-   - Mô tả chi tiết cho từng đợt
-4. **Tự động gán khóa học thông minh**: 
-   - Gán dựa trên khoảng thời gian chứ không chỉ ngày bắt đầu
+2. **Tự động tạo đợt theo ngày bắt đầu**: 
+   - Phân tích tất cả các ngày bắt đầu (startdate) duy nhất từ khóa học
+   - Tạo đợt mở môn cho mỗi ngày bắt đầu
+   - Tự động gán khóa học có cùng startdate vào đợt
+3. **Quản lý đợt mở môn đơn giản**: 
+   - Thêm, sửa, xóa các đợt mở môn với ngày bắt đầu cụ thể
+   - Validation: không trùng lặp ngày bắt đầu
+4. **Tự động gán khóa học**: 
+   - Gán dựa trên ngày bắt đầu giống nhau
    - Khi tạo/sửa đợt → tự động cập nhật danh sách khóa học
    - Có thể gán/bỏ gán thủ công
 5. **Hiển thị dữ liệu trực quan**: 
    - Dashboard thống kê tổng quan
-   - Hiển thị khoảng thời gian của đợt và từng khóa học
+   - Hiển thị ngày bắt đầu của đợt và từng khóa học
    - Danh sách khóa học chưa được gán vào đợt nào
-6. **Theo dõi và quản lý**: 
-   - Ghi lại thời gian thêm khóa học vào đợt
-   - Interface quản lý với tabs để dễ sử dụng
+6. **Import từ Moodle**: 
+   - Môn học được lấy từ bảng course của Moodle
+   - Tự động đồng bộ khi có khóa học mới
 
 ## Cấu trúc bảng cơ sở dữ liệu
 
@@ -44,9 +40,7 @@ Plugin local Moodle để quản lý đợt mở môn theo khoảng thời gian.
 - `id` (int): Khóa chính
 - `batch_name` (varchar 255): Tên đợt mở môn
 - `start_date` (int): Ngày bắt đầu học của đợt (timestamp)
-- `end_date` (int): **Ngày kết thúc học của đợt (timestamp)**
 - `created_date` (int): Ngày tạo record (timestamp)
-- `description` (text): Mô tả đợt mở môn
 
 ### Bảng: `local_course_batch_courses`
 - `id` (int): Khóa chính
@@ -80,27 +74,27 @@ Plugin local Moodle để quản lý đợt mở môn theo khoảng thời gian.
 - Plugin sẽ phân tích tất cả khóa học và tạo đợt mở môn dựa trên ngày bắt đầu
 
 ### 3. Quản lý thủ công
-- **Thêm đợt mới**: Nhấn "Thêm đợt mở môn", nhập tên đợt, ngày bắt đầu và kết thúc học
-- **Sửa đợt**: Nhấn nút "Sửa" trong danh sách (sẽ tự động cập nhật khóa học khi thay đổi khoảng thời gian)
+- **Thêm đợt mới**: Nhấn "Thêm đợt mở môn", nhập tên đợt và ngày bắt đầu học
+- **Sửa đợt**: Nhấn nút "Sửa" trong danh sách (sẽ tự động cập nhật khóa học khi thay đổi ngày bắt đầu)
 - **Xóa đợt**: Nhấn nút "Xóa" (có xác nhận)
 - **Xem khóa học**: Nhấn "Xem khóa học" để xem chi tiết các khóa học trong đợt
 - **Quản lý khóa học**: Trong trang chi tiết đợt có thể gán/bỏ gán khóa học thủ công
 
 ### 4. Hiển thị thông tin
 - **Dashboard thống kê**: Tổng số đợt, khóa học đã gán, chưa gán, tổng khóa học
-- **Danh sách đợt mở môn**: Tên đợt, **khoảng thời gian học**, ngày tạo, số khóa học, các thao tác
+- **Danh sách đợt mở môn**: Tên đợt, **ngày bắt đầu học**, ngày tạo, số khóa học, các thao tác
 - **Chi tiết khóa học trong đợt**: Tên khóa học, tên viết tắt, **thời gian khóa học**, trạng thái, số học viên, ngày thêm vào đợt
 - **Quản lý khóa học**: 
   - Tab "Khóa học trong đợt": Danh sách khóa học đã gán với nút xóa khỏi đợt
   - Tab "Khóa học chưa gán": Danh sách khóa học chưa gán với nút thêm vào đợt
 
-### 5. Mối liên hệ đợt - khóa học (LOGIC MỚI)
-- **Liên kết theo khoảng thời gian**: Khóa học được gán vào đợt nếu thời gian bắt đầu và kết thúc nằm trong khoảng thời gian của đợt
-- **Gán tự động thông minh**: Dựa trên cả `startdate` và `enddate` của khóa học so với khoảng thời gian đợt
-- **Điều kiện gán**: `course.startdate >= batch.start_date AND course.enddate <= batch.end_date`
+### 5. Mối liên hệ đợt - khóa học (LOGIC ĐƠN GIẢN)
+- **Liên kết theo ngày bắt đầu**: Khóa học được gán vào đợt nếu có cùng ngày bắt đầu
+- **Điều kiện gán**: `course.startdate = batch.start_date`
 - **Gán thủ công**: Admin có thể gán/bỏ gán khóa học vào/khỏi đợt bất kỳ
-- **Cập nhật tự động**: Khi sửa khoảng thời gian đợt, danh sách khóa học được cập nhật tự động
+- **Cập nhật tự động**: Khi sửa ngày bắt đầu đợt, danh sách khóa học được cập nhật tự động
 - **Theo dõi lịch sử**: Ghi lại thời gian thêm khóa học vào đợt
+- **Import từ Moodle**: Môn học được lấy từ bảng course của Moodle
 
 ## Quyền truy cập
 
@@ -148,13 +142,13 @@ local/course_batches/
   - Cải thiện mối liên hệ giữa đợt và khóa học
   - Thêm dashboard thống kê
   - Thêm trang quản lý khóa học trong đợt
-  - Thêm trường mô tả cho đợt mở môn
   - Theo dõi lịch sử thêm khóa học vào đợt
-- **v1.2** (2025-09-25): **LOGIC MỚI - Gán theo khoảng thời gian**
-  - Thêm trường `end_date` vào bảng `local_course_batches`
-  - **Thay đổi logic gán**: từ chỉ dựa trên startdate → dựa trên khoảng thời gian (startdate + enddate)
-  - Cập nhật form thêm/sửa đợt với trường ngày kết thúc
-  - Cập nhật giao diện hiển thị khoảng thời gian thay vì chỉ ngày bắt đầu
-  - Validation: ngày kết thúc phải sau ngày bắt đầu
-  - Tự động tạo đợt dựa trên các kết hợp (startdate, enddate) duy nhất
-  - Cập nhật tự động danh sách khóa học khi thay đổi khoảng thời gian đợt
+- **v1.2** (2025-09-25): Gán theo khoảng thời gian
+  - Thêm trường `end_date` và `description`
+  - Logic gán dựa trên khoảng thời gian (startdate + enddate)
+- **v1.3** (2025-09-25): **ĐƠN GIẢN HÓA CẤU TRÚC**
+  - **Loại bỏ**: `end_date` và `description` khỏi bảng đợt mở môn
+  - **Quay lại logic đơn giản**: Chỉ gán theo startdate
+  - **Tối ưu**: Cấu trúc đơn giản, dễ quản lý
+  - **Phù hợp yêu cầu**: Đợt gồm id, tên đợt, ngày tạo, ngày bắt đầu
+  - **Môn học cùng đợt**: Có cùng startdate
