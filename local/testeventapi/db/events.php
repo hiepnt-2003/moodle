@@ -34,6 +34,10 @@ $observers = [
         'callback' => '\local_testeventapi\observer::batch_updated',
     ],
     [
+        'eventname' => '\local_testeventapi\event\batch_deleted',
+        'callback' => '\local_testeventapi\observer::batch_deleted',
+    ],
+    [
         'eventname' => '\local_testeventapi\event\course_added_to_batch',
         'callback' => '\local_testeventapi\observer::course_added_to_batch',
     ],

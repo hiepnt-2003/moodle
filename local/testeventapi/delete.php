@@ -46,8 +46,14 @@ $PAGE->set_heading(get_string('deletebatch', 'local_testeventapi'));
 // Handle confirmation.
 if ($confirm && confirm_sesskey()) {
     try {
+        // Get batch stats before deletion for email.
+        $stats = \local_testeventapi\batch_manager::get_batch_statistics($id);
+        
         $success = \local_testeventapi\batch_manager::delete_batch($id);
         if ($success) {
+            // Send email notification to admin.
+            \local_testeventapi\batch_manager::send_batch_deletion_email($batch, $stats, $USER);
+            
             redirect(new moodle_url('/local/testeventapi/index.php'), 
                 get_string('batchdeleted', 'local_testeventapi'), null, \core\output\notification::NOTIFY_SUCCESS);
         } else {
@@ -76,7 +82,7 @@ echo html_writer::div(
 echo $OUTPUT->confirm(
     get_string('confirmdeletebatch', 'local_testeventapi') . '<br><br>' .
     '<strong>' . format_string($batch->name) . '</strong><br>' .
-    'Ngày bắt đầu: ' . userdate($batch->start_date, get_string('strftimedatefullshort')),
+    'Ngày bắt đầu: ' . date('d/m/Y', $batch->start_date),
     new moodle_url('/local/testeventapi/delete.php', ['id' => $id, 'confirm' => 1, 'sesskey' => sesskey()]),
     new moodle_url('/local/testeventapi/view.php', ['id' => $id])
 );

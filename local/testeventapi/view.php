@@ -61,8 +61,8 @@ $infotable = new html_table();
 $infotable->attributes['class'] = 'table table-bordered';
 $infotable->data = [
     [get_string('batchname', 'local_testeventapi'), format_string($batch->name)],
-    [get_string('startdate', 'local_testeventapi'), userdate($batch->start_date, get_string('strftimedayfulllong'))],
-    [get_string('timecreated', 'local_testeventapi'), userdate($batch->timecreated, get_string('strftimedatefullshort'))],
+    [get_string('startdate', 'local_testeventapi'), date('d/m/Y', $batch->start_date)],
+    [get_string('timecreated', 'local_testeventapi'), date('d/m/Y H:i', $batch->timecreated)],
 ];
 
 echo html_writer::table($infotable);
@@ -110,6 +110,7 @@ if (empty($courses)) {
 } else {
     $coursestable = new html_table();
     $coursestable->head = [
+        get_string('no', 'local_testeventapi'),
         get_string('coursename', 'local_testeventapi'),
         get_string('shortname', 'local_testeventapi'),
         get_string('startdate', 'local_testeventapi'),
@@ -119,8 +120,12 @@ if (empty($courses)) {
     
     $coursestable->attributes['class'] = 'table table-striped';
     
+    $counter = 1;
     foreach ($courses as $course) {
         $row = [];
+        
+        // STT.
+        $row[] = $counter++;
         
         // Course name (link to course).
         $courseurl = new moodle_url('/course/view.php', ['id' => $course->id]);
@@ -130,10 +135,10 @@ if (empty($courses)) {
         $row[] = format_string($course->shortname);
         
         // Course start date.
-        $row[] = userdate($course->startdate, get_string('strftimedatefullshort'));
+        $row[] = date('d/m/Y', $course->startdate);
         
         // Date added to batch.
-        $row[] = userdate($course->added_time, get_string('strftimedatefullshort'));
+        $row[] = date('d/m/Y H:i', $course->added_time);
         
         // Add method.
         if ($course->added_by_event) {

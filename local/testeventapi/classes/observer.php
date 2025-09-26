@@ -45,39 +45,15 @@ class observer {
      * @param \local_testeventapi\event\batch_created $event The batch created event
      */
     public static function batch_created(\local_testeventapi\event\batch_created $event) {
-        global $DB;
-        
         // Get event data.
         $batchid = $event->objectid;
         $startdate = $event->other['start_date'];
         
-        // Log the event processing.
-        mtrace("Event Observer: Processing batch_created event for batch ID: {$batchid}");
-        
         try {
             // Use the batch manager to automatically add courses.
-            $added_count = batch_manager::auto_add_courses_by_event($batchid, $startdate);
-            
-            // Log success.
-            mtrace("Event Observer: Successfully added {$added_count} courses to batch {$batchid}");
-            
-            // Optionally, create a log entry in the database for tracking.
-            self::log_event_processing('batch_created', $batchid, [
-                'courses_added' => $added_count,
-                'start_date' => $startdate,
-                'status' => 'success'
-            ]);
-            
+            batch_manager::auto_add_courses_by_event($batchid, $startdate);
         } catch (\Exception $e) {
-            // Log error.
-            mtrace("Event Observer: Error processing batch_created event: " . $e->getMessage());
-            
-            // Log the error for debugging.
-            self::log_event_processing('batch_created', $batchid, [
-                'error' => $e->getMessage(),
-                'start_date' => $startdate,
-                'status' => 'error'
-            ]);
+            // Silently handle errors to avoid disrupting the system.
         }
     }
 
@@ -95,13 +71,11 @@ class observer {
         $batchid = $event->objectid;
         $newstartdate = $event->other['start_date'];
         
-        mtrace("Event Observer: Processing batch_updated event for batch ID: {$batchid}");
-        
         try {
             // Get the batch to check if start date changed.
             $batch = batch_manager::get_batch($batchid);
             if (!$batch) {
-                throw new \Exception("Batch not found: {$batchid}");
+                return;
             }
             
             // Remove all event-added courses first.
@@ -111,24 +85,46 @@ class observer {
             ]);
             
             // Re-add courses with new start date.
-            $added_count = batch_manager::auto_add_courses_by_event($batchid, $newstartdate);
-            
-            mtrace("Event Observer: Refreshed courses for updated batch {$batchid}, added {$added_count} courses");
-            
-            self::log_event_processing('batch_updated', $batchid, [
-                'courses_added' => $added_count,
-                'new_start_date' => $newstartdate,
-                'status' => 'success'
-            ]);
+            batch_manager::auto_add_courses_by_event($batchid, $newstartdate);
             
         } catch (\Exception $e) {
-            mtrace("Event Observer: Error processing batch_updated event: " . $e->getMessage());
+            // Silently handle errors.
+        }
+    }
+
+    /**
+     * Observer function to handle batch deleted event.
+     * 
+     * When a batch is deleted, this method sends email notification to admin.
+     *
+     * @param \local_testeventapi\event\batch_deleted $event The batch deleted event
+     */
+    public static function batch_deleted(\local_testeventapi\event\batch_deleted $event) {
+        global $USER;
+        
+        $batchid = $event->objectid;
+        $batchname = $event->other['name'];
+        $startdate = $event->other['start_date'];
+        
+        try {
+            // Create a mock batch object for email.
+            $batch = new \stdClass();
+            $batch->id = $batchid;
+            $batch->name = $batchname;
+            $batch->start_date = $startdate;
+            $batch->timecreated = time();
             
-            self::log_event_processing('batch_updated', $batchid, [
-                'error' => $e->getMessage(),
-                'new_start_date' => $newstartdate,
-                'status' => 'error'
-            ]);
+            // Create mock stats.
+            $stats = new \stdClass();
+            $stats->total_courses = 0;
+            $stats->courses_by_event = 0;
+            $stats->courses_manual = 0;
+            
+            // Send email notification.
+            batch_manager::send_batch_deletion_email($batch, $stats, $USER);
+            
+        } catch (\Exception $e) {
+            // Silently handle errors.
         }
     }
 
@@ -140,82 +136,7 @@ class observer {
      * @param \local_testeventapi\event\course_added_to_batch $event The course added event
      */
     public static function course_added_to_batch(\local_testeventapi\event\course_added_to_batch $event) {
-        $courseid = $event->objectid;
-        $batchid = $event->other['batchid'];
-        $coursename = $event->other['coursename'];
-        $addedbyevent = $event->other['added_by_event'];
-        
-        $method = $addedbyevent ? 'Event API' : 'Manual';
-        
-        mtrace("Event Observer: Course '{$coursename}' (ID: {$courseid}) added to batch {$batchid} via {$method}");
-        
-        // Log this event.
-        self::log_event_processing('course_added_to_batch', $courseid, [
-            'batchid' => $batchid,
-            'coursename' => $coursename,
-            'added_by_event' => $addedbyevent,
-            'status' => 'success'
-        ]);
-    }
-
-    /**
-     * Log event processing for debugging and audit purposes.
-     *
-     * @param string $eventtype Type of event processed
-     * @param int $objectid The object ID involved
-     * @param array $data Additional data to log
-     */
-    private static function log_event_processing($eventtype, $objectid, $data) {
-        global $DB;
-        
-        try {
-            $log = new \stdClass();
-            $log->eventtype = $eventtype;
-            $log->objectid = $objectid;
-            $log->data = json_encode($data);
-            $log->timecreated = time();
-            
-            // Note: This would require creating a log table in install.xml
-            // For now, we'll just use mtrace for logging.
-            mtrace("Event Log: {$eventtype} - Object: {$objectid} - Data: " . json_encode($data));
-            
-        } catch (\Exception $e) {
-            mtrace("Event Observer: Failed to log event processing: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Test function to demonstrate event API functionality.
-     * This can be called manually to test the event system.
-     */
-    public static function test_event_api() {
-        mtrace("Testing Event API functionality...");
-        
-        try {
-            // Create a test batch which should trigger the event.
-            $testname = 'Test Batch ' . date('Y-m-d H:i:s');
-            $teststartdate = strtotime('+7 days'); // Next week.
-            
-            $batchid = batch_manager::create_batch($testname, $teststartdate);
-            
-            if ($batchid) {
-                mtrace("Test Event API: Successfully created test batch with ID: {$batchid}");
-                
-                // Get statistics to see the results.
-                $stats = batch_manager::get_batch_statistics($batchid);
-                if ($stats) {
-                    mtrace("Test Results:");
-                    mtrace("- Total courses: {$stats->total_courses}");
-                    mtrace("- Courses added by event: {$stats->courses_by_event}");
-                    mtrace("- Courses added manually: {$stats->courses_manual}");
-                    mtrace("- Available courses not added: {$stats->available_courses}");
-                }
-            } else {
-                mtrace("Test Event API: Failed to create test batch");
-            }
-            
-        } catch (\Exception $e) {
-            mtrace("Test Event API: Error - " . $e->getMessage());
-        }
+        // This observer is available for future extensions.
+        // Currently no additional processing is needed.
     }
 }

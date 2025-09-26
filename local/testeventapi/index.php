@@ -52,13 +52,6 @@ if ($canmanage) {
         $OUTPUT->single_button($addurl, get_string('addbatch', 'local_testeventapi'), 'get', ['class' => 'btn btn-primary']),
         'text-right mb-3'
     );
-    
-    // Test Event API button.
-    $testurl = new moodle_url('/local/testeventapi/test_api.php');
-    echo html_writer::div(
-        $OUTPUT->single_button($testurl, get_string('testevent', 'local_testeventapi'), 'get', ['class' => 'btn btn-info']),
-        'text-right mb-3'
-    );
 }
 
 // Get all batches.
@@ -70,6 +63,7 @@ if (empty($batches)) {
     // Create table.
     $table = new html_table();
     $table->head = [
+        get_string('no', 'local_testeventapi'),
         get_string('batchname', 'local_testeventapi'),
         get_string('startdate', 'local_testeventapi'),
         get_string('timecreated', 'local_testeventapi'),
@@ -80,20 +74,24 @@ if (empty($batches)) {
     
     $table->attributes['class'] = 'table table-striped';
     
+    $counter = 1;
     foreach ($batches as $batch) {
         // Get statistics for this batch.
         $stats = \local_testeventapi\batch_manager::get_batch_statistics($batch->id);
         
         $row = [];
         
+        // STT.
+        $row[] = $counter++;
+        
         // Batch name.
         $row[] = format_string($batch->name);
         
         // Start date.
-        $row[] = userdate($batch->start_date, get_string('strftimedatefullshort'));
+        $row[] = date('d/m/Y', $batch->start_date);
         
         // Created date.
-        $row[] = userdate($batch->timecreated, get_string('strftimedatefullshort'));
+        $row[] = date('d/m/Y H:i', $batch->timecreated);
         
         // Total courses.
         $row[] = $stats ? $stats->total_courses : '0';
@@ -133,13 +131,7 @@ if (empty($batches)) {
 // Information box about Event API.
 echo $OUTPUT->box_start('generalbox info');
 echo html_writer::tag('h4', get_string('eventapi', 'local_testeventapi'));
-echo html_writer::tag('p', 'Plugin này demo Event API của Moodle. Khi tạo một đợt học mới, hệ thống sẽ tự động tìm và thêm các môn học có cùng ngày bắt đầu thông qua Event API.');
-echo html_writer::tag('p', 'Các sự kiện được sử dụng:');
-echo html_writer::start_tag('ul');
-echo html_writer::tag('li', '<strong>batch_created:</strong> Khi tạo đợt học mới, tự động thêm các môn học có cùng ngày bắt đầu');
-echo html_writer::tag('li', '<strong>batch_updated:</strong> Khi cập nhật đợt học, làm mới danh sách môn học');
-echo html_writer::tag('li', '<strong>course_added_to_batch:</strong> Ghi log khi môn học được thêm vào đợt');
-echo html_writer::end_tag('ul');
+echo html_writer::tag('p', 'Plugin này sử dụng Event API của Moodle để tự động quản lý các đợt học. Khi tạo một đợt học mới, hệ thống sẽ tự động tìm và thêm các môn học có cùng ngày bắt đầu.');
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();

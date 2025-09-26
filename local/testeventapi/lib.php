@@ -98,15 +98,7 @@ function local_testeventapi_extend_settings_navigation(settings_navigation $navi
         'testeventapi_manage'
     );
     
-    if (has_capability('local/testeventapi:manage', context_system::instance())) {
-        $testeventapi->add(
-            get_string('testevent', 'local_testeventapi'),
-            new moodle_url('/local/testeventapi/test_api.php'),
-            navigation_node::TYPE_SETTING,
-            null,
-            'testeventapi_test'
-        );
-    }
+
 }
 
 /**

@@ -363,4 +363,90 @@ class batch_manager {
         
         return $stats;
     }
+    
+    /**
+     * Send email notification to admin when a batch is deleted.
+     *
+     * @param object $batch The deleted batch object
+     * @param object $stats Batch statistics before deletion
+     * @param object $user User who deleted the batch
+     */
+    public static function send_batch_deletion_email($batch, $stats, $user) {
+        global $CFG, $SITE;
+        
+        try {
+            // Get admin user.
+            $admin = get_admin();
+            
+            if (!$admin) {
+                return false;
+            }
+            
+            // Prepare email subject.
+            $subject = '[' . $SITE->shortname . '] Đợt học đã được xóa: ' . $batch->name;
+            
+            // Prepare email content.
+            $message = "Thông báo: Một đợt học đã được xóa khỏi hệ thống Test Event API\n\n";
+            $message .= "Chi tiết đợt học đã xóa:\n";
+            $message .= "- Tên đợt: " . $batch->name . "\n";
+            $message .= "- Ngày bắt đầu: " . userdate($batch->start_date, '%d/%m/%Y %H:%M') . "\n";
+            $message .= "- Ngày tạo: " . userdate($batch->timecreated, '%d/%m/%Y %H:%M') . "\n\n";
+            
+            if ($stats) {
+                $message .= "Thống kê trước khi xóa:\n";
+                $message .= "- Tổng số môn học: " . $stats->total_courses . "\n";
+                $message .= "- Môn học thêm qua Event API: " . $stats->courses_by_event . "\n";
+                $message .= "- Môn học thêm thủ công: " . $stats->courses_manual . "\n\n";
+            }
+            
+            $message .= "Người thực hiện: " . fullname($user) . " (" . $user->email . ")\n";
+            $message .= "Thời gian xóa: " . userdate(time(), '%d/%m/%Y %H:%M') . "\n";
+            $message .= "Địa chỉ IP: " . getremoteaddr() . "\n\n";
+            
+            $message .= "Liên kết: " . $CFG->wwwroot . "/local/testeventapi/\n\n";
+            $message .= "Đây là email tự động từ hệ thống Test Event API.";
+            
+            // HTML version.
+            $messagehtml = "
+            <h3>Thông báo: Đợt học đã được xóa</h3>
+            <p>Một đợt học đã được xóa khỏi hệ thống <strong>Test Event API</strong></p>
+            
+            <h4>Chi tiết đợt học đã xóa:</h4>
+            <table border='1' cellpadding='5' cellspacing='0'>
+                <tr><td><strong>Tên đợt:</strong></td><td>" . format_string($batch->name) . "</td></tr>
+                <tr><td><strong>Ngày bắt đầu:</strong></td><td>" . userdate($batch->start_date, '%d/%m/%Y %H:%M') . "</td></tr>
+                <tr><td><strong>Ngày tạo:</strong></td><td>" . userdate($batch->timecreated, '%d/%m/%Y %H:%M') . "</td></tr>
+            </table>";
+            
+            if ($stats) {
+                $messagehtml .= "
+                <h4>Thống kê trước khi xóa:</h4>
+                <table border='1' cellpadding='5' cellspacing='0'>
+                    <tr><td><strong>Tổng số môn học:</strong></td><td>" . $stats->total_courses . "</td></tr>
+                    <tr><td><strong>Môn học thêm qua Event API:</strong></td><td><span style='color: green;'>" . $stats->courses_by_event . "</span></td></tr>
+                    <tr><td><strong>Môn học thêm thủ công:</strong></td><td><span style='color: blue;'>" . $stats->courses_manual . "</span></td></tr>
+                </table>";
+            }
+            
+            $messagehtml .= "
+            <h4>Thông tin người thực hiện:</h4>
+            <p><strong>Người thực hiện:</strong> " . fullname($user) . " (" . $user->email . ")<br>
+            <strong>Thời gian xóa:</strong> " . userdate(time(), '%d/%m/%Y %H:%M') . "<br>
+            <strong>Địa chỉ IP:</strong> " . getremoteaddr() . "</p>
+            
+            <p><a href='" . $CFG->wwwroot . "/local/testeventapi/'>Truy cập Test Event API</a></p>
+            
+            <hr>
+            <p><small>Đây là email tự động từ hệ thống Test Event API.</small></p>
+            ";
+            
+            // Send email.
+            $result = email_to_user($admin, $user, $subject, $message, $messagehtml);
+            
+            return $result;
+            
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 }

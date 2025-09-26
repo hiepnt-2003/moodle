@@ -1,7 +1,7 @@
 <?php
 // This file is part of Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// Moodle is free software: you can rdistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
@@ -25,6 +25,9 @@
 $string['pluginname'] = 'Test Event API';
 $string['testeventapi:manage'] = 'Quản lý Test Event API';
 $string['testeventapi:view'] = 'Xem Test Event API';
+
+// Common strings
+$string['no'] = 'STT';
 
 // Main interface
 $string['batchlist'] = 'Danh sách đợt học';
@@ -86,6 +89,7 @@ $string['statistics'] = 'Thống kê';
 $string['totalcourses'] = 'Tổng số môn học';
 $string['coursesbyevent'] = 'Thêm qua Event API';
 $string['coursesmanual'] = 'Thêm thủ công';
+$string['availablecourses'] = 'Môn học có thể thêm';
 
 // Privacy
 $string['privacy:metadata'] = 'Plugin Test Event API chỉ lưu trữ dữ liệu về các đợt học và không lưu trữ dữ liệu cá nhân của người dùng.';
@@ -99,3 +103,12 @@ $string['triggerevent'] = 'Kích hoạt sự kiện test';
 $string['eventtriggered'] = 'Sự kiện đã được kích hoạt';
 $string['eventlisteners'] = 'Event Listeners đã đăng ký';
 $string['confirmdeletebatch'] = 'Bạn có chắc chắn muốn xóa đợt học này không?';
+
+// Email related strings
+$string['emailsubject_batchdeleted'] = '[{$a}] Đợt học đã được xóa: {$a->batchname}';
+$string['emailnotification_sent'] = 'Email thông báo đã được gửi tới admin';
+$string['emailnotification_failed'] = 'Không thể gửi email thông báo';
+$string['batchdeletionemailsubject'] = 'Thông báo xóa đợt học - Test Event API';
+$string['batchdeletionemailbody'] = 'Đợt học "{$a->batchname}" đã được xóa bởi {$a->username}';
+$string['adminemailnotification'] = 'Gửi email thông báo cho admin khi xóa đợt học';
+$string['adminemailnotification_desc'] = 'Tự động gửi email thông báo cho admin khi có đợt học bị xóa';
