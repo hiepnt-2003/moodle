@@ -89,6 +89,19 @@ local/createtable/
 
 - `moodle/site:config`: Required to access and manage batches
 
+## Scheduled Tasks
+
+### Monthly Course Creation
+- **Task**: `local_createtable\task\monthly_course_creation`
+- **Schedule**: 5:00 AM on 1st day of each month
+- **Function**: Automatically creates a new batch and adds matching courses
+- **Requirements**: Auto-assign must be enabled in plugin settings
+
+To manage the scheduled task:
+1. Go to **Site Administration → Server → Scheduled tasks**
+2. Find "Tạo đợt môn học hàng tháng" task
+3. Configure timing if needed (default: 0 5 1 * *)
+
 ## License
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.

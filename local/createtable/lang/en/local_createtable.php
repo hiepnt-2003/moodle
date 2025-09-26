@@ -92,5 +92,9 @@ $string['default_batch_prefix_desc'] = 'Tiền tố sẽ được sử dụng kh
 $string['management'] = 'Quản lý';
 $string['managebatches'] = 'Quản lý đợt mở môn';
 
+// Scheduled task strings.
+$string['monthlycoursecreationnametask'] = 'Tạo đợt môn học hàng tháng';
+$string['monthlybatchname'] = 'Đợt tháng {$a}';
+
 // Privacy.
 $string['privacy:metadata'] = 'Plugin Create Table Manager chỉ lưu trữ dữ liệu về các đợt mở môn và không lưu trữ dữ liệu cá nhân của người dùng.';

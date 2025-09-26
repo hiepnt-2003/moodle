@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for local_createtable plugin.
+ * Definition of local_createtable scheduled tasks.
  *
  * @package    local_createtable
  * @copyright  2025 Your Name <your.email@example.com>
@@ -24,9 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_createtable';
-$plugin->version = 2025092604; // YYYYMMDDHH format.
-$plugin->requires = 2020110900; // Moodle 3.10.
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = 'v1.3';
-$plugin->dependencies = [];
+$tasks = [
+    [
+        'classname' => 'local_createtable\task\monthly_course_creation',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '5',
+        'day' => '1',
+        'dayofweek' => '*',
+        'month' => '*'
+    ]
+];

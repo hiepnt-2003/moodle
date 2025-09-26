@@ -40,5 +40,13 @@ function xmldb_local_createtable_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025092603, 'local', 'createtable');
     }
 
+    if ($oldversion < 2025092604) {
+        // Install scheduled task for monthly course creation.
+        // The task definition is in db/tasks.php and will be automatically installed.
+        
+        // Createtable savepoint reached.
+        upgrade_plugin_savepoint(true, 2025092604, 'local', 'createtable');
+    }
+
     return true;
 }
