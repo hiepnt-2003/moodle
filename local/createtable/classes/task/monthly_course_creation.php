@@ -24,16 +24,6 @@
 
 namespace local_createtable\task;
 
-/**
- * Scheduled task to create a new batch with courses on the 1st of each month at 5:00 AM.
- *
- * This task automatically creates a new batch and adds matching courses
- * based on the configured date pattern.
- *
- * @package    local_createtable
- * @copyright  2025 Your Name <your.email@example.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class monthly_course_creation extends \core\task\scheduled_task {
 
     /**

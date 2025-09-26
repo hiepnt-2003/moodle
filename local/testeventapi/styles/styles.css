@@ -1,0 +1,177 @@
+/* 
+ * Styles for Test Event API plugin
+ * 
+ * @package    local_testeventapi
+ * @copyright  2025 Your Name <your.email@example.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* Main container styling */
+.local-testeventapi-container {
+    margin: 20px 0;
+}
+
+/* Table styling */
+.local-testeventapi table {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.local-testeventapi .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Button styling */
+.local-testeventapi .btn-group {
+    margin: 10px 0;
+}
+
+.local-testeventapi .action-buttons {
+    white-space: nowrap;
+}
+
+.local-testeventapi .action-buttons .btn {
+    margin: 2px;
+}
+
+/* Badge styling for event indicators */
+.local-testeventapi .badge-event {
+    background-color: #28a745;
+    color: white;
+}
+
+.local-testeventapi .badge-manual {
+    background-color: #17a2b8;
+    color: white;
+}
+
+/* Statistics box */
+.local-testeventapi .stats-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.local-testeventapi .stats-box h4 {
+    color: #495057;
+    margin-bottom: 15px;
+}
+
+/* Course preview box */
+.local-testeventapi #course-preview {
+    margin: 15px 0;
+    padding: 15px;
+    border-radius: 0.25rem;
+}
+
+.local-testeventapi .course-preview-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 10px;
+    background-color: #fff;
+}
+
+.local-testeventapi .course-preview-item {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.local-testeventapi .course-preview-item:last-child {
+    border-bottom: none;
+}
+
+/* Event API info boxes */
+.local-testeventapi .event-info {
+    background-color: #e7f3ff;
+    border: 1px solid #b8daff;
+    border-radius: 0.25rem;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.local-testeventapi .event-info h5 {
+    color: #004085;
+    margin-bottom: 10px;
+}
+
+.local-testeventapi .event-info ul {
+    margin-bottom: 0;
+}
+
+/* Test results styling */
+.local-testeventapi .test-results {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 15px;
+    border-radius: 0.25rem;
+    margin: 15px 0;
+}
+
+.local-testeventapi .test-results pre {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    border-radius: 0.25rem;
+    color: #495057;
+    font-size: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Error styling */
+.local-testeventapi .error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 0.25rem;
+    margin: 15px 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .local-testeventapi .action-buttons .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    .local-testeventapi table {
+        font-size: 14px;
+    }
+    
+    .local-testeventapi .stats-box {
+        padding: 10px;
+    }
+}
+
+/* Loading animation */
+.local-testeventapi .loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 123, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #007bff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Highlight for new items */
+.local-testeventapi .highlight-new {
+    background-color: #fff3cd !important;
+    animation: fadeHighlight 3s ease-in-out;
+}
+
+@keyframes fadeHighlight {
+    0% { background-color: #fff3cd; }
+    100% { background-color: transparent; }
+}
