@@ -35,8 +35,11 @@ $PAGE->navbar->add(get_string('pluginname', 'local_createtable'), new moodle_url
 $PAGE->navbar->add($batch->name, new moodle_url('/local/createtable/view.php', ['id' => $batchid]));
 $PAGE->navbar->add(get_string('refresh_courses', 'local_createtable'));
 
-// Process the refresh action
-if (confirm_sesskey()) {
+// Check if this is a confirmed action (with sesskey)
+$confirmed = optional_param('sesskey', '', PARAM_RAW);
+
+if (!empty($confirmed) && confirm_sesskey()) {
+    // Process the refresh action
     try {
         $manager = new \local_createtable\batch_manager();
         $added_count = $manager->auto_add_courses_by_date($batchid);
