@@ -1,0 +1,93 @@
+{{!
+    @template local_createtable/batch_form
+
+    Batch form template for creating and editing batches.
+
+    Context variables required for this template:
+    * isediting bool - Whether this is editing an existing batch
+    * form_title string - Title of the form
+    * form_action string - Form action URL
+    * sesskey string - Session key for security
+    * batch object - Batch data (for editing)
+    * cancel_url string - URL to cancel and go back
+    * cancel_text string - Text for cancel button
+    * save_text string - Text for save button
+
+    Example context (json):
+    {
+        "isediting": true,
+        "form_title": "Sửa đợt mở môn",
+        "form_action": "/local/createtable/manage.php",
+        "sesskey": "abc123",
+        "batch": {
+            "id": 1,
+            "name": "Đợt 1/2025",
+            "opendate": "2025-09-25"
+        },
+        "cancel_url": "/local/createtable/index.php",
+        "cancel_text": "Hủy",
+        "save_text": "Lưu"
+    }
+}}
+
+<div class="local-createtable-container">
+    <h2>{{form_title}}</h2>
+
+    <form method="post" action="{{form_action}}" class="local-createtable-form">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        {{#isediting}}
+        <input type="hidden" name="id" value="{{batch.id}}">
+        {{/isediting}}
+
+        <div class="local-createtable-form-card">
+            <div class="local-createtable-form-grid">
+                <div class="local-createtable-form-group">
+                    <label for="batch_name" class="local-createtable-form-label">
+                        {{#str}}batchname, local_createtable{{/str}} <span class="local-createtable-required">*</span>
+                    </label>
+                    <input type="text" 
+                           id="batch_name" 
+                           name="name" 
+                           class="local-createtable-form-control" 
+                           value="{{#batch}}{{name}}{{/batch}}"
+                           required
+                           maxlength="255"
+                           placeholder="{{#str}}batchname_placeholder, local_createtable{{/str}}">
+                    <small class="local-createtable-form-text">
+                        {{#str}}batchname_help, local_createtable{{/str}}
+                    </small>
+                </div>
+                
+                <div class="local-createtable-form-group">
+                    <label for="open_date" class="local-createtable-form-label">
+                        {{#str}}opendate, local_createtable{{/str}} <span class="local-createtable-required">*</span>
+                    </label>
+                    <input type="date" 
+                           id="open_date" 
+                           name="opendate" 
+                           class="local-createtable-form-control" 
+                           value="{{#batch}}{{opendate}}{{/batch}}"
+                           required>
+                    <small class="local-createtable-form-text">
+                        {{#str}}opendate_help, local_createtable{{/str}}
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="local-createtable-form-actions">
+            <div class="local-createtable-actions">
+                <div class="local-createtable-btn-group">
+                    <button type="submit" class="local-createtable-btn local-createtable-btn-primary">
+                        <i class="icon fa fa-save fa-fw" aria-hidden="true"></i>
+                        {{save_text}}
+                    </button>
+                    <a href="{{cancel_url}}" class="local-createtable-btn local-createtable-btn-secondary">
+                        <i class="icon fa fa-times fa-fw" aria-hidden="true"></i>
+                        {{cancel_text}}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

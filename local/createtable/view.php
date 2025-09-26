@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Main index page for batch management.
+ * View batch details page.
  *
  * @package    local_createtable
  * @copyright  2025 Your Name <your.email@example.com>
@@ -30,16 +30,25 @@ require_login();
 $context = context_system::instance();
 require_capability('local/createtable:view', $context);
 
+// Get parameters.
+$id = required_param('id', PARAM_INT);
+
 // Set up the page.
-$PAGE->set_url('/local/createtable/index.php');
+$PAGE->set_url('/local/createtable/view.php', ['id' => $id]);
 $PAGE->set_context($context);
 $PAGE->set_title(get_string('pluginname', 'local_createtable'));
 $PAGE->set_heading(get_string('pluginname', 'local_createtable'));
 
 echo $OUTPUT->header();
 
-// Get template data and render using Mustache.
-$templatedata = \local_createtable\output\renderer::get_batch_list_data();
-echo $OUTPUT->render_from_template('local_createtable/batch_list', $templatedata);
+// Get batch data.
+$batch = \local_createtable\batch_manager::get_batch($id);
+if (!$batch) {
+    print_error('batchnotfound', 'local_createtable');
+}
+
+// Get template data and render.
+$templatedata = \local_createtable\output\renderer::get_batch_detail_data($batch);
+echo $OUTPUT->render_from_template('local_createtable/batch_detail', $templatedata);
 
 echo $OUTPUT->footer();

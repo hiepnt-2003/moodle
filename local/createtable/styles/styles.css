@@ -1,0 +1,525 @@
+/**
+ * Styles for local_createtable plugin
+ *
+ * @package    local_createtable
+ * @copyright  2025
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* Main container styling */
+.local-createtable-container {
+    padding: 1rem;
+    max-width: 100%;
+}
+
+.local-createtable-container h2 {
+    color: #0066cc;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.local-createtable-container h3 {
+    color: #333;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+/* Batch list table styling */
+.local-createtable-table {
+    margin-bottom: 2rem;
+}
+
+.local-createtable-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.local-createtable-table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+}
+
+.local-createtable-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Action buttons styling */
+.local-createtable-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.local-createtable-btn-group {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.local-createtable-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.local-createtable-btn:hover {
+    text-decoration: none;
+}
+
+.local-createtable-btn-primary {
+    color: #fff;
+    background-color: #0066cc;
+    border-color: #0066cc;
+}
+
+.local-createtable-btn-primary:hover {
+    color: #fff;
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.local-createtable-btn-secondary {
+    color: #6c757d;
+    background-color: transparent;
+    border-color: #6c757d;
+}
+
+.local-createtable-btn-secondary:hover {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.local-createtable-btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 0.2rem;
+}
+
+/* Alert styling */
+.local-createtable-alert {
+    position: relative;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.local-createtable-alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.local-createtable-alert .icon {
+    margin-right: 0.5rem;
+}
+
+/* Batch detail card styling */
+.local-createtable-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.local-createtable-card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.local-createtable-card-title {
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #0066cc;
+}
+
+.local-createtable-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.local-createtable-info-item {
+    margin-bottom: 0.5rem;
+}
+
+.local-createtable-info-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Header with actions */
+.local-createtable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.local-createtable-header h2 {
+    margin: 0;
+    flex: 1;
+}
+
+/* Form styling */
+.local-createtable-form {
+    max-width: 800px;
+}
+
+.local-createtable-form-card {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.local-createtable-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.local-createtable-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.local-createtable-form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.local-createtable-form-control {
+    display: block;
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.local-createtable-form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.local-createtable-form-text {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #6c757d;
+}
+
+.local-createtable-required {
+    color: #dc3545;
+}
+
+.local-createtable-form-actions {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+/* External link styling */
+.local-createtable-external-link {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.local-createtable-external-link:hover {
+    color: #004085;
+    text-decoration: underline;
+}
+
+.local-createtable-external-link .icon {
+    margin-left: 0.25rem;
+    font-size: 0.875em;
+    opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .local-createtable-container {
+        padding: 0.5rem;
+    }
+    
+    .local-createtable-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .local-createtable-btn-group {
+        justify-content: center;
+    }
+    
+    .local-createtable-form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .local-createtable-form-card {
+        padding: 1rem;
+    }
+    
+    .local-createtable-actions {
+        justify-content: center;
+    }
+    
+    .local-createtable-table {
+        font-size: 0.875rem;
+    }
+    
+    .local-createtable-table th,
+    .local-createtable-table td {
+        padding: 0.5rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .local-createtable-actions,
+    .local-createtable-btn {
+        display: none !important;
+    }
+    
+    .local-createtable-container {
+        padding: 0;
+    }
+    
+    .local-createtable-card {
+        border: 1px solid #000;
+        box-shadow: none;
+    }
+}
+
+/* Statistics section */
+.local-createtable-stats-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.local-createtable-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.local-createtable-stat-item {
+    text-align: center;
+    padding: 15px;
+    border-radius: 6px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+}
+
+.local-createtable-stat-highlight {
+    background: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.local-createtable-stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    display: block;
+}
+
+.local-createtable-stat-highlight .local-createtable-stat-number {
+    color: #1976d2;
+}
+
+.local-createtable-stat-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Course list enhancements */
+.local-createtable-courses-section {
+    margin-top: 30px;
+}
+
+.local-createtable-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.local-createtable-section-header h3 {
+    margin: 0;
+}
+
+/* Legend */
+.local-createtable-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.local-createtable-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.local-createtable-legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.local-createtable-legend-dot.local-createtable-auto {
+    background: #4caf50;
+}
+
+.local-createtable-legend-dot.local-createtable-manual {
+    background: #ff9800;
+}
+
+/* Course row styling */
+.local-createtable-course-row.matching-date {
+    background-color: #f1f8e9 !important;
+}
+
+.local-createtable-course-row.different-date {
+    background-color: #fff3e0 !important;
+}
+
+/* Badges */
+.local-createtable-auto-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #4caf50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.local-createtable-manual-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #ff9800;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Auto-course help text */
+.local-createtable-auto-help {
+    margin-top: 10px !important;
+    margin-bottom: 0 !important;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Button variants */
+.local-createtable-btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+}
+
+.local-createtable-btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+    color: white;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+    .local-createtable-card {
+        background-color: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .local-createtable-stats-card {
+        background-color: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .local-createtable-stat-item {
+        background-color: #4a5568;
+        border-color: #718096;
+        color: #e2e8f0;
+    }
+    
+    .local-createtable-stat-highlight {
+        background-color: #2b6cb0;
+        border-color: #3182ce;
+    }
+    
+    .local-createtable-course-row.matching-date {
+        background-color: #22543d !important;
+    }
+    
+    .local-createtable-course-row.different-date {
+        background-color: #744210 !important;
+    }
+    
+    .local-createtable-form-control {
+        background-color: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .local-createtable-form-control:focus {
+        background-color: #2d3748;
+        border-color: #63b3ed;
+        color: #e2e8f0;
+    }
+}

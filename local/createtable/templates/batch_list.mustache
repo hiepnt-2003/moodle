@@ -1,0 +1,88 @@
+{{!
+    @template local_createtable/batch_list
+
+    Batch list template.
+
+    Context variables required for this template:
+    * batches array - List of batches
+    * hasbatches bool - Whether there are batches to display
+    * nobatches_message string - Message when no batches exist
+    * addbatch_url string - URL to add new batch
+    * addbatch_text string - Text for add batch button
+
+    Example context (json):
+    {
+        "batches": [
+            {
+                "id": 1,
+                "name": "Đợt 1/2025",
+                "opendate": "25/09/2025 08:00",
+                "timecreated": "24/09/2025 14:30",
+                "edit_url": "/local/createtable/manage.php?id=1",
+                "view_url": "/local/createtable/view.php?id=1",
+                "edit_text": "Sửa",
+                "view_text": "Xem"
+            }
+        ],
+        "hasbatches": true,
+        "nobatches_message": "Chưa có đợt mở môn nào.",
+        "addbatch_url": "/local/createtable/manage.php",
+        "addbatch_text": "Thêm đợt mở môn mới"
+    }
+}}
+
+<div class="local-createtable-container">
+    <h2>{{#str}}batchlist, local_createtable{{/str}}</h2>
+    
+    {{#hasbatches}}
+    <div class="table-responsive">
+        <table class="table table-striped generaltable local-createtable-table">
+            <thead>
+                <tr>
+                    <th>{{#str}}batchname, local_createtable{{/str}}</th>
+                    <th>{{#str}}opendate, local_createtable{{/str}}</th>
+                    <th>{{#str}}timecreated, local_createtable{{/str}}</th>
+                    <th>{{#str}}actions, local_createtable{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#batches}}
+                <tr>
+                    <td>{{name}}</td>
+                    <td>{{opendate}}</td>
+                    <td>{{timecreated}}</td>
+                    <td>
+                        <div class="local-createtable-actions">
+                            <div class="local-createtable-btn-group">
+                                <a href="{{edit_url}}" class="local-createtable-btn local-createtable-btn-secondary local-createtable-btn-sm">
+                                    <i class="icon fa fa-edit fa-fw" aria-hidden="true"></i>
+                                    {{edit_text}}
+                                </a>
+                                <a href="{{view_url}}" class="local-createtable-btn local-createtable-btn-primary local-createtable-btn-sm">
+                                    <i class="icon fa fa-eye fa-fw" aria-hidden="true"></i>
+                                    {{view_text}}
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {{/batches}}
+            </tbody>
+        </table>
+    </div>
+    {{/hasbatches}}
+
+    {{^hasbatches}}
+    <div class="local-createtable-alert local-createtable-alert-info">
+        <i class="icon fa fa-info-circle fa-fw" aria-hidden="true"></i>
+        {{nobatches_message}}
+    </div>
+    {{/hasbatches}}
+
+    <div class="local-createtable-actions">
+        <a href="{{addbatch_url}}" class="local-createtable-btn local-createtable-btn-primary">
+            <i class="icon fa fa-plus fa-fw" aria-hidden="true"></i>
+            {{addbatch_text}}
+        </a>
+    </div>
+</div>

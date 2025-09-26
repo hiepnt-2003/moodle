@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library functions for local_createtable plugin.
+ * Upgrade script for local_createtable plugin.
  *
  * @package    local_createtable
  * @copyright  2025 Your Name <your.email@example.com>
@@ -23,33 +23,22 @@
  */
 
 /**
- * Format timestamp to dd/mm/yyyy hh:mm format.
+ * Function to upgrade local_createtable plugin.
  *
- * @param int $timestamp Unix timestamp
- * @return string Formatted date string
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
  */
-function local_createtable_format_datetime($timestamp) {
-    return date('d/m/Y H:i', $timestamp);
-}
+function xmldb_local_createtable_upgrade($oldversion) {
+    global $CFG, $DB;
 
-/**
- * Format timestamp to dd/mm/yyyy format (date only).
- *
- * @param int $timestamp Unix timestamp
- * @return string Formatted date string
- */
-function local_createtable_format_date($timestamp) {
-    return date('d/m/Y', $timestamp);
-}
+    $dbman = $DB->get_manager();
 
-/**
- * Render template with data.
- *
- * @param string $templatename Template name
- * @param array $data Template data
- * @return string Rendered HTML
- */
-function local_createtable_render_template($templatename, $data) {
-    global $OUTPUT;
-    return $OUTPUT->render_from_template($templatename, $data);
-} 
+    if ($oldversion < 2025092603) {
+        // Add any future upgrade steps here.
+        
+        // Createtable savepoint reached.
+        upgrade_plugin_savepoint(true, 2025092603, 'local', 'createtable');
+    }
+
+    return true;
+}

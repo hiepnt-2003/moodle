@@ -10,18 +10,18 @@ function xmldb_local_createtable_install() {
     // Thêm dữ liệu mẫu vào bảng local_createtable_batches
     $sample_batches = [
         [
-            'name' => 'Đợt mở môn Kỳ 1 - 2025',
-            'open_date' => strtotime('2025-01-15'),
+            'name' => 'Đợt mở môn Kỳ Đông - 2025',
+            'open_date' => strtotime('2025-10-01'),
             'timecreated' => time()
         ],
         [
-            'name' => 'Đợt mở môn Kỳ 2 - 2025', 
-            'open_date' => strtotime('2025-06-15'),
+            'name' => 'Đợt mở môn Kỳ 1 - 2026', 
+            'open_date' => strtotime('2026-02-01'),
             'timecreated' => time()
         ],
         [
-            'name' => 'Đợt mở môn Hè - 2025',
-            'open_date' => strtotime('2025-08-01'),
+            'name' => 'Đợt mở môn Kỳ 2 - 2026',
+            'open_date' => strtotime('2026-06-01'),
             'timecreated' => time()
         ]
     ];

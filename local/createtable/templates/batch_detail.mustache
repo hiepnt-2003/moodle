@@ -1,0 +1,192 @@
+{{!
+    @template local_createtable/batch_detail
+
+    Batch detail template with auto-course assignment display.
+
+    Context variables required for this template:
+    * batch object - Batch information with opendate_only for date matching
+    * courses array - List of courses with auto-match indicators
+    * statistics object - Course statistics
+    * hascourses bool - Whether there are courses to display
+    * nocourses_message string - Message when no courses exist
+    * back_url string - URL to go back to batch list
+    * back_text string - Text for back button
+    * edit_url string - URL to edit batch
+    * edit_text string - Text for edit button
+    * refresh_url string - URL to refresh auto-courses
+    * refresh_text string - Text for refresh button
+
+    Example context (json):
+    {
+        "batch": {
+            "id": 1,
+            "name": "Đợt 1/2025",
+            "opendate": "25/09/2025 08:00",
+            "opendate_only": "2025-09-25",
+            "timecreated": "24/09/2025 14:30"
+        },
+        "courses": [
+            {
+                "id": 1,
+                "fullname": "Lập trình web",
+                "shortname": "WEB101",
+                "startdate": "25/09/2025 08:00",
+                "added_time": "24/09/2025 15:00",
+                "course_url": "/course/view.php?id=1",
+                "is_matching_date": true,
+                "date_match_class": "matching-date"
+            }
+        ],
+        "statistics": {
+            "total_courses": 5,
+            "matching_courses": 3,
+            "available_courses": 12
+        },
+        "hascourses": true,
+        "nocourses_message": "Chưa có môn học nào trong đợt này.",
+        "back_url": "/local/createtable/index.php",
+        "back_text": "Quay lại",
+        "edit_url": "/local/createtable/manage.php?id=1",
+        "edit_text": "Sửa",
+        "refresh_url": "/local/createtable/refresh_courses.php?id=1",
+        "refresh_text": "Cập nhật tự động"
+    }
+}}
+
+<div class="local-createtable-container">
+    <div class="local-createtable-header">
+        <h2>{{#str}}batchdetail, local_createtable{{/str}}: {{batch.name}}</h2>
+        <div class="local-createtable-actions">
+            <div class="local-createtable-btn-group">
+                <a href="{{back_url}}" class="local-createtable-btn local-createtable-btn-secondary">
+                    <i class="icon fa fa-arrow-left fa-fw" aria-hidden="true"></i>
+                    {{back_text}}
+                </a>
+                <a href="{{refresh_url}}" class="local-createtable-btn local-createtable-btn-info">
+                    <i class="icon fa fa-refresh fa-fw" aria-hidden="true"></i>
+                    {{refresh_text}}
+                </a>
+                <a href="{{edit_url}}" class="local-createtable-btn local-createtable-btn-primary">
+                    <i class="icon fa fa-edit fa-fw" aria-hidden="true"></i>
+                    {{edit_text}}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{! Batch information card }}
+    <div class="local-createtable-card">
+        <div class="local-createtable-card-body">
+            <h5 class="local-createtable-card-title">{{#str}}batchinfo, local_createtable{{/str}}</h5>
+            <div class="local-createtable-info-grid">
+                <div>
+                    <div class="local-createtable-info-item">
+                        <span class="local-createtable-info-label">{{#str}}batchname, local_createtable{{/str}}:</span> {{batch.name}}
+                    </div>
+                    <div class="local-createtable-info-item">
+                        <span class="local-createtable-info-label">{{#str}}opendate, local_createtable{{/str}}:</span> {{batch.opendate}}
+                    </div>
+                </div>
+                <div>
+                    <div class="local-createtable-info-item">
+                        <span class="local-createtable-info-label">{{#str}}timecreated, local_createtable{{/str}}:</span> {{batch.timecreated}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{! Statistics section }}
+    <div class="local-createtable-stats-card">
+        <h5 class="local-createtable-card-title">{{#str}}statistics, local_createtable{{/str}}</h5>
+        <div class="local-createtable-stats-grid">
+            <div class="local-createtable-stat-item">
+                <div class="local-createtable-stat-number">{{statistics.total_courses}}</div>
+                <div class="local-createtable-stat-label">{{#str}}totalcourses, local_createtable{{/str}}</div>
+            </div>
+            <div class="local-createtable-stat-item local-createtable-stat-highlight">
+                <div class="local-createtable-stat-number">{{statistics.matching_courses}}</div>
+                <div class="local-createtable-stat-label">{{#str}}automatched, local_createtable{{/str}}</div>
+            </div>
+            <div class="local-createtable-stat-item">
+                <div class="local-createtable-stat-number">{{statistics.available_courses}}</div>
+                <div class="local-createtable-stat-label">{{#str}}availablecourses, local_createtable{{/str}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="local-createtable-courses-section">
+        <div class="local-createtable-section-header">
+            <h3>{{#str}}courseslist, local_createtable{{/str}}</h3>
+            {{#hascourses}}
+            <div class="local-createtable-legend">
+                <span class="local-createtable-legend-item">
+                    <span class="local-createtable-legend-dot local-createtable-auto"></span>
+                    {{#str}}automaticallyadded, local_createtable{{/str}}
+                </span>
+                <span class="local-createtable-legend-item">
+                    <span class="local-createtable-legend-dot local-createtable-manual"></span>
+                    {{#str}}manuallyadded, local_createtable{{/str}}
+                </span>
+            </div>
+            {{/hascourses}}
+        </div>
+        
+        {{#hascourses}}
+        <div class="table-responsive">
+            <table class="table table-striped generaltable local-createtable-table">
+                <thead>
+                    <tr>
+                        <th>{{#str}}coursename, local_createtable{{/str}}</th>
+                        <th>{{#str}}shortname, local_createtable{{/str}}</th>
+                        <th>{{#str}}startdate, local_createtable{{/str}}</th>
+                        <th>{{#str}}dateadded, local_createtable{{/str}}</th>
+                        <th>{{#str}}addmethod, local_createtable{{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#courses}}
+                    <tr class="local-createtable-course-row {{date_match_class}}">
+                        <td>
+                            <a href="{{course_url}}" target="_blank" class="local-createtable-external-link">
+                                {{fullname}}
+                                <i class="icon fa fa-external-link fa-fw" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                        <td>{{shortname}}</td>
+                        <td>{{startdate}}</td>
+                        <td>{{added_time}}</td>
+                        <td>
+                            {{#is_matching_date}}
+                                <span class="local-createtable-auto-badge">
+                                    <i class="icon fa fa-magic fa-fw" aria-hidden="true"></i>
+                                    {{#str}}automatic, local_createtable{{/str}}
+                                </span>
+                            {{/is_matching_date}}
+                            {{^is_matching_date}}
+                                <span class="local-createtable-manual-badge">
+                                    <i class="icon fa fa-hand-pointer-o fa-fw" aria-hidden="true"></i>
+                                    {{#str}}manual, local_createtable{{/str}}
+                                </span>
+                            {{/is_matching_date}}
+                        </td>
+                    </tr>
+                    {{/courses}}
+                </tbody>
+            </table>
+        </div>
+        {{/hascourses}}
+
+        {{^hascourses}}
+        <div class="local-createtable-alert local-createtable-alert-info">
+            <i class="icon fa fa-info-circle fa-fw" aria-hidden="true"></i>
+            <div>
+                <strong>{{nocourses_message}}</strong>
+                <p class="local-createtable-auto-help">
+                    {{#str}}autocoursehint, local_createtable{{/str}} <strong>{{batch.opendate_only}}</strong> {{#str}}willbeautoadded, local_createtable{{/str}}
+                </p>
+            </div>
+        </div>
+        {{/hascourses}}
+    </div>
+</div>
