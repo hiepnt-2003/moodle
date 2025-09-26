@@ -27,6 +27,9 @@ $PAGE->set_context($context);
 $PAGE->set_title(get_string('refresh_courses', 'local_createtable'));
 $PAGE->set_heading(get_string('refresh_courses', 'local_createtable'));
 
+// Include CSS.
+$PAGE->requires->css('/local/createtable/styles/styles.css');
+
 // Breadcrumb
 $PAGE->navbar->add(get_string('pluginname', 'local_createtable'), new moodle_url('/local/createtable/index.php'));
 $PAGE->navbar->add($batch->name, new moodle_url('/local/createtable/view.php', ['id' => $batchid]));

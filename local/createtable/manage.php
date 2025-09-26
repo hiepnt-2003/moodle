@@ -20,6 +20,9 @@ $PAGE->set_context($context);
 $PAGE->set_title(get_string('pluginname', 'local_createtable'));
 $PAGE->set_heading(get_string('pluginname', 'local_createtable'));
 
+// Include CSS.
+$PAGE->requires->css('/local/createtable/styles/styles.css');
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && confirm_sesskey()) {
     $name = required_param('name', PARAM_TEXT);
@@ -71,7 +74,7 @@ if ($id > 0) {
 }
 
 // Get template data and render form
-$templatedata = local_createtable_output_helper::get_batch_form_data($batch);
+$templatedata = \local_createtable\output\renderer::get_batch_form_data($batch);
 echo $OUTPUT->render_from_template('local_createtable/batch_form', $templatedata);
 
 echo $OUTPUT->footer();

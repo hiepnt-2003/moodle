@@ -36,6 +36,9 @@ $PAGE->set_context($context);
 $PAGE->set_title(get_string('pluginname', 'local_createtable'));
 $PAGE->set_heading(get_string('pluginname', 'local_createtable'));
 
+// Include CSS.
+$PAGE->requires->css('/local/createtable/styles/styles.css');
+
 echo $OUTPUT->header();
 
 // Get template data and render using Mustache.
