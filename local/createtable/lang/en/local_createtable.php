@@ -1,6 +1,6 @@
-<?php  
-defined('MOODLE_INTERNAL') || die();  
-  
+<?php
+defined('MOODLE_INTERNAL') || die();
+
 $string['pluginname'] = 'Create Table Manager';
 $string['batchlist'] = 'Danh sách đợt mở môn';
 $string['batchname'] = 'Tên đợt';
