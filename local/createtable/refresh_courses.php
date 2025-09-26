@@ -42,7 +42,7 @@ if (!empty($confirmed) && confirm_sesskey()) {
     // Process the refresh action
     try {
         $manager = new \local_createtable\batch_manager();
-        $added_count = $manager->auto_add_courses_by_date($batchid);
+        $added_count = $manager->auto_add_courses_by_date($batchid, $batch->open_date);
         
         $message = '';
         if ($added_count > 0) {
@@ -110,7 +110,7 @@ if (!empty($confirmed) && confirm_sesskey()) {
             $table->data[] = [
                 format_string($course->fullname),
                 format_string($course->shortname),
-                userdate($course->startdate)
+                date('d/m/Y', $course->startdate)
             ];
         }
         
