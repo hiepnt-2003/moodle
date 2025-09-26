@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/local/createtable/lib.php');
 
 // Require login and check capabilities
 require_login();
@@ -34,8 +35,8 @@ if ($batches) {
     foreach ($batches as $batch) {
         $row = [];
         $row[] = format_string($batch->name);
-        $row[] = userdate($batch->open_date, get_string('strftimedatetime'));
-        $row[] = userdate($batch->timecreated, get_string('strftimedatetime'));
+        $row[] = local_createtable_format_datetime($batch->open_date);
+        $row[] = local_createtable_format_datetime($batch->timecreated);
         
         // Thêm các nút action
         $actions = '';
