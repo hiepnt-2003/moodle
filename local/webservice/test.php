@@ -30,6 +30,7 @@ require_once('../../config.php');
             <h3>📊 Configuration Status</h3>
             <p><strong>Moodle URL:</strong> <?php echo $CFG->wwwroot; ?></p>
             <p><strong>API Endpoint:</strong> <?php echo $CFG->wwwroot; ?>/webservice/rest/server.php</p>
+            <p><strong>Token Available:</strong> ✅ <code>7dbe17f17c65d685d18731cefd9a2e46</code></p>
             <p><strong>Web Services:</strong> 
                 <?php echo !empty($CFG->enablewebservices) ? '✅ Enabled' : '❌ Disabled'; ?>
             </p>
@@ -43,7 +44,7 @@ require_once('../../config.php');
             <h3>🧪 Test API Call</h3>
             <form id="apiForm">
                 <label>Web Service Token:</label>
-                <input type="text" id="token" placeholder="Your web service token" required>
+                <input type="text" id="token" value="7dbe17f17c65d685d18731cefd9a2e46" placeholder="Your web service token" required>
                 
                 <label>Source Course Shortname (to clone from):</label>
                 <input type="text" id="shortname_clone" placeholder="EXISTING_COURSE" required>
@@ -76,7 +77,7 @@ require_once('../../config.php');
             <h3>💻 cURL Command Example</h3>
             <textarea readonly rows="8">curl -X POST "<?php echo $CFG->wwwroot; ?>/webservice/rest/server.php" \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "wstoken=YOUR_TOKEN" \
+  -d "wstoken=7dbe17f17c65d685d18731cefd9a2e46" \
   -d "wsfunction=local_webservice_clone_course" \
   -d "moodlewsrestformat=json" \
   -d "shortname_clone=EXISTING_COURSE" \

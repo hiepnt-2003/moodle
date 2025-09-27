@@ -370,12 +370,12 @@
     {
       "key": "moodle_url",
       "value": "http://localhost/moodle",
-      "description": "Your Moodle base URL (change this)"
+      "description": "Your Moodle base URL"
     },
     {
       "key": "ws_token", 
-      "value": "YOUR_TOKEN_HERE",
-      "description": "Your web service token (replace this)"
+      "value": "7dbe17f17c65d685d18731cefd9a2e46",
+      "description": "Your web service token"
     }
   ]
 }
