@@ -78,9 +78,9 @@
               "description": "Response format"
             },
             {
-              "key": "shortname_clone",
-              "value": "TEST_COURSE",
-              "description": "Source course shortname"
+              "key": "shortname_clone", 
+              "value": "{{$randomWord}}COURSE",
+              "description": "Source course shortname - Change to existing course"
             },
             {
               "key": "fullname",
@@ -369,7 +369,7 @@
   "variable": [
     {
       "key": "moodle_url",
-      "value": "http://localhost/moodle",
+      "value": "http://localhost",
       "description": "Your Moodle base URL"
     },
     {
