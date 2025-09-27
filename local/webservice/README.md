@@ -404,473 +404,243 @@ Trước khi sử dụng, verify:
 **Compatibility**: Moodle 3.10+  
 **License**: GPL v3+
 
-### **🔧 2. Web Service Configuration**
+## Quick Start - Gọi API Clone Môn Học
 
-#### **Enable Web Services:**
-1. **Site Administration** → **Advanced Features**
-2. Enable **"Enable web services"**
-3. Enable **"Enable REST protocol"**
+### Bước 1: Chuẩn bị
+1. **Plugin đã cài đặt**: Đảm bảo plugin `local_webservice` đã được install
+2. **Web Services enabled**: Enable web services và REST protocol
+3. **Token**: Có token để authenticate
+4. **Source Course**: Có khóa học gốc để clone
 
-#### **Create Web Service User:**
-1. **Site Administration** → **Users** → **Accounts** → **Add a new user**
-2. Create dedicated web service user account
+### Bước 2: Gọi API
 
-#### **Configure Service:**
-1. **Site Administration** → **Server** → **Web services** → **External services**
-2. Find **"Course Clone Service"** 
-3. **Enable** the service
-4. **Add** authorized users
+#### **API Endpoint:**
+```
+POST http://your-moodle.com/webservice/rest/server.php
+```
 
-#### **Generate Token:**
-1. **Site Administration** → **Server** → **Web services** → **Manage tokens**
-2. **Create token** for web service user
-3. Select **"Course Clone Service"**
-4. Copy generated token
+#### **Postman Request:**
+1. **Method**: POST
+2. **URL**: `http://your-moodle.com/webservice/rest/server.php`
+3. **Body** (form-urlencoded):
+```
+wstoken: abc123def456ghi789
+wsfunction: local_webservice_clone_course
+moodlewsrestformat: json
+shortname_clone: MATH101
+fullname: Toán Cao Cấp - Lớp Mới
+shortname: MATH101_CLONE_2025
+startdate: 1727136000
+enddate: 1735689600
+```
 
-### **🔌 3. API Usage Examples**
-
-#### **cURL Example:**
+#### **cURL Command:**
 ```bash
-curl -X POST "https://your-moodle.com/webservice/rest/server.php" \
-  -d "wstoken=YOUR_TOKEN_HERE" \
+curl -X POST "http://your-moodle.com/webservice/rest/server.php" \
+  -d "wstoken=abc123def456ghi789" \
   -d "wsfunction=local_webservice_clone_course" \
   -d "moodlewsrestformat=json" \
   -d "shortname_clone=MATH101" \
-  -d "fullname=Advanced Mathematics - New Class" \
-  -d "shortname=MATH101_NEW" \
-  -d "startdate=1735689600" \
-  -d "enddate=1743465600"
+  -d "fullname=Toán Cao Cấp - Lớp Mới" \
+  -d "shortname=MATH101_CLONE_2025" \
+  -d "startdate=1727136000" \
+  -d "enddate=1735689600"
 ```
 
-#### **PHP Example:**
+#### **Response Success:**
+```json
+{
+    "status": "success",
+    "id": 42,
+    "message": "Course cloned successfully"
+}
+```
+
+#### **Response Error:**
+```json
+{
+    "status": "error",
+    "id": 0,
+    "message": "Source course not found with shortname: MATH101"
+}
+```
+
+### Bước 3: Import Postman Collection
+
+1. Download file `Course_Clone_API.postman_collection.json`
+2. Mở Postman → Import → Chọn file
+3. Update environment variables:
+   - `moodle_url`: http://your-moodle-site.com
+   - `ws_token`: your-actual-token-here
+4. Chạy test requests
+
+## Code Examples
+
+### PHP Example:
 ```php
 <?php
-$url = 'https://your-moodle.com/webservice/rest/server.php';
-$token = 'YOUR_TOKEN_HERE';
+function cloneCourse($token, $moodleUrl, $sourceShortname, $newFullname, $newShortname) {
+    $url = $moodleUrl . '/webservice/rest/server.php';
+    
+    $params = [
+        'wstoken' => $token,
+        'wsfunction' => 'local_webservice_clone_course',
+        'moodlewsrestformat' => 'json',
+        'shortname_clone' => $sourceShortname,
+        'fullname' => $newFullname,
+        'shortname' => $newShortname,
+        'startdate' => strtotime('+1 week'),
+        'enddate' => strtotime('+3 months')
+    ];
 
-$params = [
-    'wstoken' => $token,
-    'wsfunction' => 'local_webservice_clone_course',
-    'moodlewsrestformat' => 'json',
-    'shortname_clone' => 'MATH101',
-    'fullname' => 'Advanced Mathematics - New Class',
-    'shortname' => 'MATH101_NEW',
-    'startdate' => strtotime('+1 week'),
-    'enddate' => strtotime('+2 months')
-];
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
 
-$response = curl_exec($ch);
-curl_close($ch);
+    return json_decode($response, true);
+}
 
-$result = json_decode($response, true);
-print_r($result);
+// Sử dụng:
+$result = cloneCourse(
+    'abc123def456ghi789',
+    'http://your-moodle.com',
+    'MATH101',
+    'Toán Cao Cấp - Khóa Mới',
+    'MATH101_NEW_2025'
+);
+
+if ($result['status'] === 'success') {
+    echo "Clone thành công! Course ID: " . $result['id'];
+} else {
+    echo "Lỗi: " . $result['message'];
+}
 ?>
 ```
 
-#### **JavaScript/AJAX Example:**
+### JavaScript/AJAX Example:
 ```javascript
-const cloneCourse = async (params) => {
-    const url = 'https://your-moodle.com/webservice/rest/server.php';
-    const token = 'YOUR_TOKEN_HERE';
+async function cloneCourse(token, moodleUrl, sourceShortname, newFullname, newShortname) {
+    const url = `${moodleUrl}/webservice/rest/server.php`;
     
     const formData = new FormData();
     formData.append('wstoken', token);
     formData.append('wsfunction', 'local_webservice_clone_course');
     formData.append('moodlewsrestformat', 'json');
-    formData.append('shortname_clone', params.shortname_clone);
-    formData.append('fullname', params.fullname);
-    formData.append('shortname', params.shortname);
-    formData.append('startdate', params.startdate);
-    formData.append('enddate', params.enddate);
-    
+    formData.append('shortname_clone', sourceShortname);
+    formData.append('fullname', newFullname);
+    formData.append('shortname', newShortname);
+    formData.append('startdate', Math.floor(Date.now() / 1000) + 86400); // Tomorrow
+    formData.append('enddate', Math.floor(Date.now() / 1000) + 7776000); // 3 months
+
     try {
         const response = await fetch(url, {
             method: 'POST',
             body: formData
         });
         
-        const result = await response.json();
-        return result;
+        return await response.json();
     } catch (error) {
-        console.error('Clone failed:', error);
         return {
             status: 'error',
             id: 0,
             message: error.message
         };
     }
-};
+}
 
-// Usage
-cloneCourse({
-    shortname_clone: 'MATH101',
-    fullname: 'Advanced Mathematics - New Class',
-    shortname: 'MATH101_NEW',
-    startdate: Math.floor(Date.now() / 1000) + 86400, // Tomorrow
-    enddate: Math.floor(Date.now() / 1000) + 2592000  // 30 days
-}).then(result => {
-    console.log('Clone result:', result);
+// Sử dụng:
+cloneCourse(
+    'abc123def456ghi789',
+    'http://your-moodle.com',
+    'MATH101',
+    'Toán Cao Cấp - Khóa Mới',
+    'MATH101_NEW_2025'
+).then(result => {
+    if (result.status === 'success') {
+        console.log('Clone thành công! Course ID:', result.id);
+    } else {
+        console.error('Lỗi:', result.message);
+    }
 });
 ```
 
----
+### Python Example:
+```python
+import requests
+import time
 
-## 🛡️ Error Handling
+def clone_course(token, moodle_url, source_shortname, new_fullname, new_shortname):
+    url = f"{moodle_url}/webservice/rest/server.php"
+    
+    data = {
+        'wstoken': token,
+        'wsfunction': 'local_webservice_clone_course',
+        'moodlewsrestformat': 'json',
+        'shortname_clone': source_shortname,
+        'fullname': new_fullname,
+        'shortname': new_shortname,
+        'startdate': int(time.time()) + 86400,  # Tomorrow
+        'enddate': int(time.time()) + 7776000   # 3 months
+    }
+    
+    response = requests.post(url, data=data)
+    return response.json()
 
-### **🔍 Common Error Scenarios:**
+# Sử dụng:
+result = clone_course(
+    'abc123def456ghi789',
+    'http://your-moodle.com',
+    'MATH101',
+    'Toán Cao Cấp - Khóa Mới',
+    'MATH101_NEW_2025'
+)
 
-#### **❌ Source Course Not Found**
-```json
-{
-    "status": "error",
-    "id": 0,
-    "message": "Source course not found with shortname: NONEXISTENT"
-}
+if result['status'] == 'success':
+    print(f"Clone thành công! Course ID: {result['id']}")
+else:
+    print(f"Lỗi: {result['message']}")
 ```
 
-#### **❌ Shortname Already Exists**
-```json
-{
-    "status": "error",
-    "id": 0,
-    "message": "Course shortname already exists: MATH101_DUPLICATE"
-}
-```
+## Common Error Handling
 
-#### **❌ Invalid Date Range**
-```json
-{
-    "status": "error",
-    "id": 0,
-    "message": "End date must be after start date"
-}
-```
+### Xử lý lỗi trong code:
 
-#### **❌ Insufficient Permissions**
-```json
-{
-    "status": "error",
-    "id": 0,
-    "message": "You do not have permission to clone courses"
-}
-```
-
-#### **❌ Backup/Restore Failure**
-```json
-{
-    "status": "error",
-    "id": 0,
-    "message": "Failed to create course backup: disk space insufficient"
-}
-```
-
-### **🔧 Error Recovery:**
-- **Validation Errors**: Fix input parameters và retry
-- **Permission Errors**: Check user capabilities và service configuration  
-- **Backup Failures**: Check disk space và Moodle backup settings
-- **Restore Failures**: Verify course category permissions
-- **Network Errors**: Implement retry logic với appropriate delays
-
----
-
-## 🏗️ Technical Architecture
-
-### **📁 File Structure:**
-```
-local/webservice/
-├── version.php                 # Plugin metadata
-├── db/
-│   ├── services.php           # Web service definitions
-│   └── access.php             # Capability definitions
-├── lang/en/
-│   └── local_webservice.php   # Language strings
-├── externallib.php            # Main web service class
-├── test.php                   # Testing interface
-└── README.md                  # Documentation
-```
-
-### **🔌 Web Service Configuration:**
-
-#### **Function Definition:**
 ```php
-$functions = [
-    'local_webservice_clone_course' => [
-        'classname'   => 'local_webservice_external',
-        'methodname'  => 'clone_course',
-        'classpath'   => 'local/webservice/externallib.php',
-        'description' => 'Clone a course with new details',
-        'type'        => 'write',
-        'capabilities' => 'moodle/course:create,moodle/backup:backupcourse,moodle/restore:restorecourse',
-    ],
-];
-```
-
-#### **Service Definition:**
-```php
-$services = [
-    'Course Clone Service' => [
-        'functions' => ['local_webservice_clone_course'],
-        'restrictedusers' => 0,
-        'enabled' => 1,
-        'shortname' => 'course_clone_service',
-    ],
-];
-```
-
-### **🔐 Security Features:**
-
-#### **Capability Requirements:**
-- `moodle/course:create` - Create new courses
-- `moodle/backup:backupcourse` - Create course backups  
-- `moodle/restore:restorecourse` - Restore course content
-
-#### **Input Validation:**
-- Parameter type checking
-- Required field validation
-- Date range validation
-- Shortname uniqueness check
-- SQL injection prevention
-
-#### **Error Handling:**
-- Graceful failure modes
-- Detailed error messages
-- Cleanup on failures
-- Transaction safety
-
----
-
-## 🎯 Use Cases và Applications
-
-### **🏫 Educational Institutions:**
-
-#### **🔄 Semester Course Setup:**
-```php
-// Clone courses for new semester
-foreach ($semester_courses as $course) {
-    $result = clone_course(
-        $course['template_shortname'],
-        $course['name'] . ' - Spring 2025',
-        $course['shortname'] . '_S2025',
-        $spring_start_date,
-        $spring_end_date
-    );
-}
-```
-
-#### **👥 Multi-Section Courses:**
-```php
-// Create multiple sections of same course
-for ($section = 1; $section <= 5; $section++) {
-    $result = clone_course(
-        'MATH101_TEMPLATE',
-        "Mathematics 101 - Section {$section}",
-        "MATH101_SEC{$section}",
-        $semester_start,
-        $semester_end
-    );
-}
-```
-
-### **🏢 Corporate Training:**
-
-#### **📚 Training Program Rollout:**
-```php
-// Deploy training across departments
-$departments = ['HR', 'IT', 'Sales', 'Marketing'];
-foreach ($departments as $dept) {
-    $result = clone_course(
-        'COMPLIANCE_TEMPLATE',
-        "Compliance Training - {$dept}",
-        "COMPLIANCE_{$dept}_2025",
-        $training_start,
-        $training_end
-    );
-}
-```
-
-### **🔗 Integration Examples:**
-
-#### **📊 LMS Integration:**
-```php
-// Integrate with external student information system
-$external_courses = fetch_from_sis();
-foreach ($external_courses as $ext_course) {
-    if ($ext_course['needs_clone']) {
-        $result = clone_course(
-            $ext_course['template'],
-            $ext_course['full_name'],
-            $ext_course['short_name'],
-            $ext_course['start_date'],
-            $ext_course['end_date']
-        );
-        
-        update_sis_with_course_id($ext_course['id'], $result['id']);
+function handleCloneResult($result) {
+    switch ($result['status']) {
+        case 'success':
+            echo "✅ Clone thành công! Course ID: " . $result['id'];
+            break;
+        case 'error':
+            if (strpos($result['message'], 'not found') !== false) {
+                echo "❌ Khóa học gốc không tồn tại";
+            } elseif (strpos($result['message'], 'already exists') !== false) {
+                echo "❌ Shortname đã được sử dụng";
+            } elseif (strpos($result['message'], 'date') !== false) {
+                echo "❌ Ngày tháng không hợp lệ";
+            } else {
+                echo "❌ Lỗi: " . $result['message'];
+            }
+            break;
     }
 }
 ```
 
----
+## Postman Collection
 
-## 🎓 Testing và Debugging
+Import file `Course_Clone_API.postman_collection.json` để có sẵn các test cases:
 
-### **🧪 Built-in Test Interface:**
+1. **Success Test** - Clone thành công
+2. **Source Not Found** - Khóa học gốc không tồn tại  
+3. **Invalid Date Range** - Ngày tháng không hợp lệ
+4. **Duplicate Shortname** - Shortname trùng lặp
 
-Plugin cung cấp web interface để test web service tại:
-```
-https://your-moodle.com/local/webservice/test.php
-```
-
-**Features:**
-- ✅ Interactive form để test parameters
-- 📋 List existing courses để reference
-- 📊 Real-time response display
-- 📖 API documentation built-in
-- 🔍 Error debugging information
-
-### **🐛 Debug Mode:**
-
-Enable debugging trong Moodle để see detailed error messages:
-```php
-// In config.php
-$CFG->debug = DEBUG_DEVELOPER;
-$CFG->debugdisplay = 1;
-```
-
-### **📝 Logging:**
-
-Plugin logs major operations:
-- Course clone attempts
-- Success/failure status
-- Error details
-- Performance metrics
-
-Check logs at: **Site Administration** → **Reports** → **Logs**
-
----
-
-## 💡 Best Practices
-
-### **⚡ Performance Optimization:**
-
-#### **🎯 Efficient Cloning:**
-- Clone during low-traffic periods
-- Use background tasks for large courses
-- Monitor disk space for backups
-- Clean up temporary files
-
-#### **📊 Batch Operations:**
-```php
-// Process multiple clones efficiently
-$clone_queue = [];
-foreach ($courses_to_clone as $course) {
-    $clone_queue[] = [
-        'shortname_clone' => $course['template'],
-        'fullname' => $course['name'],
-        'shortname' => $course['code'],
-        'startdate' => $course['start'],
-        'enddate' => $course['end']
-    ];
-}
-
-// Process in batches to avoid timeouts
-$batch_size = 5;
-$batches = array_chunk($clone_queue, $batch_size);
-foreach ($batches as $batch) {
-    process_clone_batch($batch);
-    sleep(2); // Prevent server overload
-}
-```
-
-### **🔒 Security Best Practices:**
-
-#### **🛡️ Token Management:**
-- Use dedicated web service accounts
-- Rotate tokens regularly
-- Restrict token permissions
-- Monitor API usage
-
-#### **📝 Audit Trail:**
-```php
-// Log all clone operations
-function log_clone_operation($params, $result, $user_id) {
-    $log_entry = [
-        'timestamp' => time(),
-        'user_id' => $user_id,
-        'action' => 'course_clone',
-        'source_course' => $params['shortname_clone'],
-        'target_course' => $params['shortname'],
-        'status' => $result['status'],
-        'new_course_id' => $result['id']
-    ];
-    
-    // Store in custom log table or use Moodle events
-    \core\event\course_created::create($log_entry)->trigger();
-}
-```
-
-### **🎯 Error Prevention:**
-
-#### **✅ Pre-flight Checks:**
-```php
-// Validate before attempting clone
-function pre_clone_validation($params) {
-    $checks = [
-        'source_exists' => check_source_course($params['shortname_clone']),
-        'target_available' => check_shortname_available($params['shortname']),
-        'dates_valid' => validate_date_range($params['startdate'], $params['enddate']),
-        'permissions_ok' => check_user_capabilities(),
-        'disk_space' => check_available_disk_space(),
-    ];
-    
-    return array_filter($checks) === $checks; // All true
-}
-```
-
----
-
-## 🔮 Future Enhancements
-
-### **🚀 Planned Features:**
-
-#### **📅 Advanced Date Handling:**
-- Automatic date shifting for activities
-- Holiday calendar integration  
-- Timezone support
-
-#### **🎨 Customization Options:**
-- Selective content cloning
-- Template-based cloning
-- Bulk operation support
-
-#### **📊 Enhanced Reporting:**
-- Clone operation analytics
-- Performance monitoring
-- Usage statistics
-
-#### **🔗 Extended Integration:**
-- External calendar sync
-- Student enrollment automation
-- Grade book template application
-
----
-
-## 📞 Support và Documentation
-
-### **📚 Additional Resources:**
-- [Moodle Web Services Documentation](https://docs.moodle.org/dev/Web_services)
-- [Backup and Restore API](https://docs.moodle.org/dev/Backup_API)
-- [External Functions](https://docs.moodle.org/dev/External_functions_API)
-
-### **🆘 Troubleshooting:**
-- Check Moodle logs for detailed errors
-- Verify web service configuration
-- Test with minimal data set first
-- Contact system administrator for permission issues
-
-Plugin **local_webservice** cung cấp powerful và flexible solution cho course cloning needs, với robust error handling và comprehensive documentation để ensure successful implementation!
+Collection bao gồm:
+- Pre-request scripts tự động generate unique shortname
+- Test scripts validate response
+- Environment variables cho URL và token
