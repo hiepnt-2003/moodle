@@ -1,0 +1,381 @@
+{
+  "info": {
+    "name": "Moodle Course Clone API",
+    "description": "Web Service API để clone khóa học trong Moodle",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Clone Course - Success Test",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response contains required fields\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('status');",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData).to.have.property('message');",
+              "});",
+              "",
+              "pm.test(\"Successful clone returns valid course ID\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    if (jsonData.status === \"success\") {",
+              "        pm.expect(jsonData.id).to.be.above(0);",
+              "        console.log(\"New course ID: \" + jsonData.id);",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Generate unique shortname",
+              "pm.environment.set(\"unique_shortname\", \"CLONE_\" + Date.now());",
+              "",
+              "// Generate timestamps",
+              "const now = Math.floor(Date.now() / 1000);",
+              "pm.environment.set(\"start_timestamp\", now + 86400); // Tomorrow",
+              "pm.environment.set(\"end_timestamp\", now + 2592000); // 30 days later"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "wstoken",
+              "value": "{{ws_token}}",
+              "description": "Web service token"
+            },
+            {
+              "key": "wsfunction", 
+              "value": "local_webservice_clone_course",
+              "description": "Function name"
+            },
+            {
+              "key": "moodlewsrestformat",
+              "value": "json",
+              "description": "Response format"
+            },
+            {
+              "key": "shortname_clone",
+              "value": "TEST_COURSE",
+              "description": "Source course shortname"
+            },
+            {
+              "key": "fullname",
+              "value": "Successfully Cloned Course",
+              "description": "New course full name"
+            },
+            {
+              "key": "shortname",
+              "value": "{{unique_shortname}}",
+              "description": "New course shortname (auto-generated)"
+            },
+            {
+              "key": "startdate", 
+              "value": "{{start_timestamp}}",
+              "description": "Start date timestamp"
+            },
+            {
+              "key": "enddate",
+              "value": "{{end_timestamp}}",
+              "description": "End date timestamp" 
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{moodle_url}}/webservice/rest/server.php",
+          "host": [
+            "{{moodle_url}}"
+          ],
+          "path": [
+            "webservice",
+            "rest", 
+            "server.php"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Clone Course - Source Not Found Error",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response is error status\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.eql(\"error\");",
+              "    pm.expect(jsonData.id).to.eql(0);",
+              "    pm.expect(jsonData.message).to.include(\"not found\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "wstoken",
+              "value": "{{ws_token}}"
+            },
+            {
+              "key": "wsfunction",
+              "value": "local_webservice_clone_course"
+            },
+            {
+              "key": "moodlewsrestformat", 
+              "value": "json"
+            },
+            {
+              "key": "shortname_clone",
+              "value": "NON_EXISTENT_COURSE",
+              "description": "This course should not exist"
+            },
+            {
+              "key": "fullname",
+              "value": "This Should Fail"
+            },
+            {
+              "key": "shortname",
+              "value": "ERROR_TEST_001"
+            },
+            {
+              "key": "startdate",
+              "value": "1735689600"
+            },
+            {
+              "key": "enddate",
+              "value": "1743465600"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{moodle_url}}/webservice/rest/server.php",
+          "host": [
+            "{{moodle_url}}"
+          ],
+          "path": [
+            "webservice",
+            "rest",
+            "server.php"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Clone Course - Invalid Date Range Error",
+      "event": [
+        {
+          "listen": "test", 
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response is error status for invalid dates\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.eql(\"error\");",
+              "    pm.expect(jsonData.id).to.eql(0);",
+              "    pm.expect(jsonData.message).to.include(\"date\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "wstoken",
+              "value": "{{ws_token}}"
+            },
+            {
+              "key": "wsfunction",
+              "value": "local_webservice_clone_course"
+            },
+            {
+              "key": "moodlewsrestformat",
+              "value": "json"
+            },
+            {
+              "key": "shortname_clone",
+              "value": "TEST_COURSE"
+            },
+            {
+              "key": "fullname", 
+              "value": "Invalid Date Range Test"
+            },
+            {
+              "key": "shortname",
+              "value": "DATE_ERROR_TEST"
+            },
+            {
+              "key": "startdate",
+              "value": "1743465600",
+              "description": "End date as start date"
+            },
+            {
+              "key": "enddate", 
+              "value": "1735689600",
+              "description": "Start date as end date - should cause error"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{moodle_url}}/webservice/rest/server.php",
+          "host": [
+            "{{moodle_url}}"
+          ],
+          "path": [
+            "webservice",
+            "rest",
+            "server.php"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Clone Course - Duplicate Shortname Error",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response is error status for duplicate shortname\", function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.eql(\"error\");",
+              "    pm.expect(jsonData.id).to.eql(0);",
+              "    pm.expect(jsonData.message).to.include(\"already exists\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "wstoken",
+              "value": "{{ws_token}}"
+            },
+            {
+              "key": "wsfunction",
+              "value": "local_webservice_clone_course"
+            },
+            {
+              "key": "moodlewsrestformat",
+              "value": "json"
+            },
+            {
+              "key": "shortname_clone",
+              "value": "TEST_COURSE"
+            },
+            {
+              "key": "fullname",
+              "value": "Duplicate Shortname Test"
+            },
+            {
+              "key": "shortname",
+              "value": "DUPLICATE_TEST",
+              "description": "Use existing shortname to test duplicate error"
+            },
+            {
+              "key": "startdate",
+              "value": "1735689600"
+            },
+            {
+              "key": "enddate",
+              "value": "1743465600"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{moodle_url}}/webservice/rest/server.php",
+          "host": [
+            "{{moodle_url}}"
+          ],
+          "path": [
+            "webservice",
+            "rest", 
+            "server.php"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "moodle_url",
+      "value": "http://localhost/moodle",
+      "description": "Your Moodle base URL (change this)"
+    },
+    {
+      "key": "ws_token", 
+      "value": "YOUR_TOKEN_HERE",
+      "description": "Your web service token (replace this)"
+    }
+  ]
+}
