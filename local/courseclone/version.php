@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_courseclone';
-$plugin->version = 2025100100;
-$plugin->requires = 2022112800; // Moodle 4.1
+$plugin->version   = 2025100100;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2020061500;        // Requires this Moodle version.
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '1.0.0';
