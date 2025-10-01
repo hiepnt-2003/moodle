@@ -25,8 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
-require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
-require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
 /**
@@ -60,7 +58,7 @@ class local_courseclone_external extends external_api {
      * @return array Kết quả với status, id, và message
      */
     public static function clone_course($shortname_clone, $fullname, $shortname, $startdate, $enddate) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
 
         // Validate parameters.
         $params = self::validate_parameters(self::clone_course_parameters(), [
@@ -75,8 +73,6 @@ class local_courseclone_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('moodle/course:create', $context);
-        require_capability('moodle/backup:backupcourse', $context);
-        require_capability('moodle/restore:restorecourse', $context);
 
         try {
             // Step 1: Validate input parameters.
@@ -108,18 +104,68 @@ class local_courseclone_external extends external_api {
                 ];
             }
 
-            // Step 4: Create backup of source course.
-            $backup_result = self::create_course_backup($source_course->id);
-            if (!$backup_result['success']) {
-                return [
-                    'status' => 'error',
-                    'id' => 0,
-                    'message' => $backup_result['message']
-                ];
-            }
+            // Step 4: Create new course with basic information from source course
+            $result = self::create_course_copy($source_course, $params);
+            
+            return $result;
 
-            // Step 5: Create new course with same category as source.
-            $new_course = self::create_new_course($params, $source_course->category);
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'id' => 0,
+                'message' => 'Copy môn học thất bại: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Create a new course based on source course information.
+     *
+     * @param object $source_course Source course object
+     * @param array $params New course parameters
+     * @return array Result array
+     */
+    private static function create_course_copy($source_course, $params) {
+        global $DB;
+        
+        try {
+            // Create new course data based on source course
+            $course_data = new stdClass();
+            
+            // Basic required fields
+            $course_data->fullname = $params['fullname'];
+            $course_data->shortname = $params['shortname'];
+            $course_data->category = $source_course->category; // Keep same category
+            $course_data->startdate = $params['startdate'];
+            $course_data->enddate = $params['enddate'];
+            
+            // Copy other attributes from source course
+            $course_data->visible = $source_course->visible;
+            $course_data->format = $source_course->format;
+            $course_data->showgrades = $source_course->showgrades;
+            $course_data->newsitems = $source_course->newsitems;
+            $course_data->maxbytes = $source_course->maxbytes;
+            $course_data->showreports = $source_course->showreports;
+            $course_data->groupmode = $source_course->groupmode;
+            $course_data->groupmodeforce = $source_course->groupmodeforce;
+            $course_data->defaultgroupingid = 0; // Reset grouping
+            $course_data->enablecompletion = $source_course->enablecompletion;
+            $course_data->completionnotify = $source_course->completionnotify;
+            
+            // Copy summary and format
+            if (isset($source_course->summary)) {
+                $course_data->summary = $source_course->summary;
+                $course_data->summaryformat = $source_course->summaryformat;
+            }
+            
+            // Course format specific settings
+            if ($source_course->format == 'topics' && isset($source_course->numsections)) {
+                $course_data->numsections = $source_course->numsections;
+            }
+            
+            // Create the new course
+            $new_course = create_course($course_data);
+            
             if (!$new_course) {
                 return [
                     'status' => 'error',
@@ -128,39 +174,50 @@ class local_courseclone_external extends external_api {
                 ];
             }
 
-            // Step 6: Restore backup to new course.
-            $restore_result = self::restore_course_backup($backup_result['backup_path'], $new_course->id);
-            if (!$restore_result['success']) {
-                // Delete the created course if restore fails.
-                delete_course($new_course->id, false);
-                return [
-                    'status' => 'error',
-                    'id' => 0,
-                    'message' => $restore_result['message']
-                ];
-            }
-
-            // Step 7: Update course details.
-            self::update_course_details($new_course->id, $params['fullname'], $params['shortname'], 
-                                      $params['startdate'], $params['enddate']);
-
-            // Step 8: Clean up backup file.
-            if (isset($backup_result['backup_path']) && file_exists($backup_result['backup_path'])) {
-                unlink($backup_result['backup_path']);
-            }
+            // Copy course format options
+            self::copy_course_format_options($source_course->id, $new_course->id);
 
             return [
                 'status' => 'success',
                 'id' => $new_course->id,
-                'message' => 'Copy môn học thành công!'
+                'message' => 'Copy môn học thành công! (Đã tạo môn học mới với cấu trúc cơ bản từ môn học gốc)'
             ];
-
+            
         } catch (Exception $e) {
             return [
                 'status' => 'error',
                 'id' => 0,
-                'message' => 'Copy môn học thất bại: ' . $e->getMessage()
+                'message' => 'Lỗi tạo môn học: ' . $e->getMessage()
             ];
+        }
+    }
+
+    /**
+     * Copy course format options from source to target course.
+     *
+     * @param int $source_courseid Source course ID
+     * @param int $target_courseid Target course ID
+     */
+    private static function copy_course_format_options($source_courseid, $target_courseid) {
+        global $DB;
+        
+        try {
+            // Get course format options from source course
+            $format_options = $DB->get_records('course_format_options', ['courseid' => $source_courseid]);
+            
+            foreach ($format_options as $option) {
+                $new_option = new stdClass();
+                $new_option->courseid = $target_courseid;
+                $new_option->format = $option->format;
+                $new_option->sectionid = 0; // For course-level options
+                $new_option->name = $option->name;
+                $new_option->value = $option->value;
+                
+                $DB->insert_record('course_format_options', $new_option);
+            }
+        } catch (Exception $e) {
+            // Log error but don't fail the main operation
+            error_log('Failed to copy course format options: ' . $e->getMessage());
         }
     }
 
@@ -202,152 +259,6 @@ class local_courseclone_external extends external_api {
         }
 
         return ['success' => true];
-    }
-
-    /**
-     * Create course backup.
-     *
-     * @param int $courseid Course ID to backup
-     * @return array Backup result
-     */
-    private static function create_course_backup($courseid) {
-        global $CFG, $USER;
-
-        try {
-            // Create backup controller.
-            $bc = new backup_controller(
-                backup::TYPE_1COURSE,
-                $courseid,
-                backup::FORMAT_MOODLE,
-                backup::INTERACTIVE_NO,
-                backup::MODE_GENERAL,
-                $USER->id
-            );
-
-            // Execute backup.
-            $bc->execute_plan();
-            $backup_results = $bc->get_results();
-            $backup_file = $backup_results['backup_destination'];
-            
-            // Get backup file path.
-            $backup_path = $backup_file->copy_content_to_temp();
-            
-            // Destroy backup controller.
-            $bc->destroy();
-
-            return [
-                'success' => true,
-                'backup_path' => $backup_path,
-                'message' => 'Tạo backup thành công'
-            ];
-
-        } catch (Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'Tạo backup thất bại: ' . $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Create new course with same category as source.
-     *
-     * @param array $params Course parameters
-     * @param int $category_id Category ID from source course
-     * @return object|false New course object or false on failure
-     */
-    private static function create_new_course($params, $category_id) {
-        global $DB;
-
-        try {
-            // Prepare course data.
-            $course_data = new stdClass();
-            $course_data->fullname = $params['fullname'];
-            $course_data->shortname = $params['shortname'];
-            $course_data->category = $category_id; // Giữ nguyên category
-            $course_data->startdate = $params['startdate'];
-            $course_data->enddate = $params['enddate'];
-            $course_data->visible = 1;
-            $course_data->format = 'topics';
-            $course_data->numsections = 10;
-
-            // Create course.
-            $new_course = create_course($course_data);
-            
-            return $new_course;
-
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Restore course backup to new course.
-     *
-     * @param string $backup_path Path to backup file
-     * @param int $courseid Target course ID
-     * @return array Restore result
-     */
-    private static function restore_course_backup($backup_path, $courseid) {
-        global $USER;
-
-        try {
-            // Create restore controller.
-            $rc = new restore_controller(
-                $backup_path,
-                $courseid,
-                backup::INTERACTIVE_NO,
-                backup::MODE_GENERAL,
-                $USER->id,
-                backup::TARGET_EXISTING_DELETING
-            );
-
-            // Execute restore.
-            if ($rc->execute_precheck()) {
-                $rc->execute_plan();
-                $rc->destroy();
-
-                return [
-                    'success' => true,
-                    'message' => 'Restore thành công'
-                ];
-            } else {
-                $rc->destroy();
-                return [
-                    'success' => false,
-                    'message' => 'Restore thất bại: Precheck failed'
-                ];
-            }
-
-        } catch (Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'Restore thất bại: ' . $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Update course details after restore.
-     *
-     * @param int $courseid Course ID
-     * @param string $fullname Full name
-     * @param string $shortname Short name
-     * @param int $startdate Start date timestamp
-     * @param int $enddate End date timestamp
-     */
-    private static function update_course_details($courseid, $fullname, $shortname, $startdate, $enddate) {
-        global $DB;
-
-        $update_data = new stdClass();
-        $update_data->id = $courseid;
-        $update_data->fullname = $fullname;
-        $update_data->shortname = $shortname;
-        $update_data->startdate = $startdate;
-        $update_data->enddate = $enddate;
-        $update_data->timemodified = time();
-
-        $DB->update_record('course', $update_data);
     }
 
     /**
