@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * External web service functions for course cloning - SIMPLIFIED VERSION.
+ * External web service functions for course cloning - FIXED VERSION.
  *
  * @package    local_courseclone
  * @copyright  2025 Your Name <your.email@example.com>
@@ -73,6 +73,8 @@ class local_courseclone_external extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
         require_capability('moodle/course:create', $context);
+        require_capability('moodle/backup:backupcourse', $context);
+        require_capability('moodle/restore:restorecourse', $context);
 
         try {
             // Step 1: Validate input parameters.
@@ -108,10 +110,20 @@ class local_courseclone_external extends external_api {
             require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
             require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
+            // Create course data for the new course
+            $course_data = [
+                'fullname' => $params['fullname'],
+                'shortname' => $params['shortname'],
+                'categoryid' => $source_course->category,
+                'visible' => 1,
+                'startdate' => $params['startdate'],
+                'enddate' => $params['enddate']
+            ];
+
             // Use Moodle's duplicate_course function
-            $new_course = duplicate_course($source_course->id, $params['fullname'], 
-                                        $params['shortname'], $source_course->category, 
-                                        1, [
+            $new_course = duplicate_course($source_course->id, $course_data['fullname'], 
+                                        $course_data['shortname'], $course_data['categoryid'], 
+                                        $course_data['visible'], [
                                             'users' => 0,
                                             'role_assignments' => 0,
                                             'activities' => 1,
@@ -182,10 +194,8 @@ class local_courseclone_external extends external_api {
         return ['success' => true];
     }
 
-
-
     /**
-     * Update course dates after restore.
+     * Update course dates after cloning.
      *
      * @param int $courseid Course ID
      * @param int $startdate Start date timestamp
