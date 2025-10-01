@@ -1,81 +1,61 @@
 # Course Clone Plugin
 
-This plugin provides a webservice to clone Moodle courses with new details.
+Plugin Moodle để copy môn học với webservice API.
 
-## Features
+## Tính năng
 
-- Clone existing courses via webservice
-- Set new course details (fullname, shortname, start date, end date)
-- Returns status, course ID, and success/error messages
-- Full backup and restore functionality
+- Copy môn học với thông tin mới
+- Giữ nguyên category của môn học gốc
+- Hỗ trợ webservice API
+- Validation đầy đủ các tham số đầu vào
 
-## Installation
+## Cài đặt
 
-1. Copy the plugin to `/local/courseclone/` in your Moodle installation
-2. Visit Site Administration → Notifications to complete the installation
-3. Enable web services in Site Administration → Advanced features
-4. Configure the webservice in Site Administration → Server → Web services
+1. Copy thư mục plugin vào `local/courseclone`
+2. Truy cập Site Administration để cài đặt plugin
+3. Cấu hình webservice trong Site Administration > Server > Web services
 
-## Usage
+## Sử dụng Webservice
 
-### Webservice Function: `local_courseclone_clone_course`
+### Endpoint
+`local_courseclone_clone_course`
 
-#### Input Parameters:
-- `shortname_clone` (string) - Shortname of the source course to clone
-- `fullname` (string) - Full name for the new course  
-- `shortname` (string) - Short name for the new course
-- `startdate` (int) - Start date timestamp for the new course
-- `enddate` (int) - End date timestamp for the new course
+### Tham số đầu vào
+- `shortname_clone`: Shortname của môn học nguồn cần copy
+- `fullname`: Tên đầy đủ cho môn học mới  
+- `shortname`: Tên viết tắt cho môn học mới
+- `startdate`: Ngày bắt đầu (timestamp)
+- `enddate`: Ngày kết thúc (timestamp)
 
-#### Output:
-- `status` (string) - "success" or "error"
-- `id` (int) - ID of the cloned course (0 if error)
-- `message` (string) - Success message or error description
+### Tham số đầu ra
+- `status`: "success" hoặc "error"
+- `id`: ID của môn học mới (0 nếu có lỗi)
+- `message`: Thông báo kết quả hoặc lỗi
 
-#### Example JSON Request:
-```json
-{
-    "shortname_clone": "course1",
-    "fullname": "New Course Name", 
-    "shortname": "newcourse1",
-    "startdate": 1704067200,
-    "enddate": 1735689600
-}
-```
+### Ví dụ sử dụng với Postman
 
-#### Example Response (Success):
-```json
-{
-    "status": "success",
-    "id": 123,
-    "message": "Course cloned successfully"
-}
-```
+**URL:** `http://yourmoodle.com/webservice/rest/server.php`
 
-#### Example Response (Error):
-```json
-{
-    "status": "error", 
-    "id": 0,
-    "message": "Source course with shortname 'course1' not found"
-}
-```
+**Method:** POST
 
-## Testing with Postman
+**Parameters:**
+- `wstoken`: Your webservice token
+- `wsfunction`: local_courseclone_clone_course
+- `moodlewsrestformat`: json
+- `shortname_clone`: MATH101
+- `fullname`: Toán học cơ bản - Lớp 2
+- `shortname`: MATH101_2
+- `startdate`: 1640995200
+- `enddate`: 1672531200
 
-1. Set up authentication token in Moodle
-2. Use POST method to `/webservice/rest/server.php`
-3. Include required parameters:
-   - `wstoken` - Your webservice token
-   - `wsfunction` - `local_courseclone_clone_course`
-   - `moodlewsrestformat` - `json`
-   - Include all required function parameters
+## Yêu cầu hệ thống
 
-## Requirements
+- Moodle 4.0+
+- Quyền tạo môn học, backup và restore
 
-- Moodle 4.1 or higher
-- Proper capabilities: `moodle/course:create`, `moodle/backup:backupcourse`, `moodle/restore:restorecourse`
+## Bảo mật
 
-## License
-
-GPL v3 or later
+Plugin yêu cầu các quyền sau:
+- `moodle/course:create`
+- `moodle/backup:backupcourse` 
+- `moodle/restore:restorecourse`

@@ -18,14 +18,14 @@
  * Version information for Course Clone plugin.
  *
  * @package    local_courseclone
- * @copyright  2025 Your Name <your.email@example.com>
+ * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_courseclone';
 $plugin->version   = 2025100100;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2020061500;        // Requires this Moodle version.
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.0.0';
+$plugin->requires  = 2020110900;        // Requires this Moodle version (3.10).
+$plugin->component = 'local_courseclone'; // Full name of the plugin (used for diagnostics).
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = 'v1.0';

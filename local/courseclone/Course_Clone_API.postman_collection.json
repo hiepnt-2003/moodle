@@ -1,29 +1,13 @@
 {
 	"info": {
-		"_postman_id": "course-clone-api-collection",
+		"_postman_id": "course-clone-api",
 		"name": "Course Clone API",
-		"description": "Collection for testing Course Clone webservice in Moodle",
+		"description": "Collection để test webservice copy môn học",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Clone Course",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"// Set current timestamp for dates",
-							"const now = Math.floor(Date.now() / 1000);",
-							"const futureDate = now + (30 * 24 * 60 * 60); // 30 days from now",
-							"",
-							"pm.environment.set('startdate', now);",
-							"pm.environment.set('enddate', futureDate);"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -37,13 +21,13 @@
 					"urlencoded": [
 						{
 							"key": "wstoken",
-							"value": "{{wstoken}}",
-							"description": "Your webservice token"
+							"value": "{{webservice_token}}",
+							"description": "Webservice token"
 						},
 						{
 							"key": "wsfunction",
 							"value": "local_courseclone_clone_course",
-							"description": "Webservice function name"
+							"description": "Function name"
 						},
 						{
 							"key": "moodlewsrestformat",
@@ -52,28 +36,28 @@
 						},
 						{
 							"key": "shortname_clone",
-							"value": "{{source_shortname}}",
-							"description": "Shortname of source course to clone"
+							"value": "MATH101",
+							"description": "Shortname của môn học nguồn"
 						},
 						{
 							"key": "fullname",
-							"value": "{{new_fullname}}",
-							"description": "Full name for new course"
+							"value": "Toán học cơ bản - Lớp 2",
+							"description": "Tên đầy đủ cho môn học mới"
 						},
 						{
 							"key": "shortname",
-							"value": "{{new_shortname}}",
-							"description": "Short name for new course"
+							"value": "MATH101_2",
+							"description": "Tên viết tắt cho môn học mới"
 						},
 						{
 							"key": "startdate",
-							"value": "{{startdate}}",
-							"description": "Start date timestamp"
+							"value": "1704067200",
+							"description": "Ngày bắt đầu timestamp (01/01/2024)"
 						},
 						{
 							"key": "enddate",
-							"value": "{{enddate}}",
-							"description": "End date timestamp"
+							"value": "1719792000",
+							"description": "Ngày kết thúc timestamp (01/07/2024)"
 						}
 					]
 				},
@@ -88,7 +72,7 @@
 						"server.php"
 					]
 				},
-				"description": "Clone a course with new details"
+				"description": "Clone course với thông tin mới"
 			},
 			"response": [
 				{
@@ -113,15 +97,15 @@
 								},
 								{
 									"key": "shortname_clone",
-									"value": "course1"
+									"value": "MATH101"
 								},
 								{
 									"key": "fullname",
-									"value": "New Cloned Course"
+									"value": "Toán học cơ bản - Lớp 2"
 								},
 								{
 									"key": "shortname",
-									"value": "newcourse123"
+									"value": "MATH101_2"
 								},
 								{
 									"key": "startdate",
@@ -129,14 +113,16 @@
 								},
 								{
 									"key": "enddate",
-									"value": "1735689600"
+									"value": "1719792000"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{moodle_url}}/webservice/rest/server.php",
+							"raw": "http://yourmoodle.com/webservice/rest/server.php",
+							"protocol": "http",
 							"host": [
-								"{{moodle_url}}"
+								"yourmoodle",
+								"com"
 							],
 							"path": [
 								"webservice",
@@ -150,10 +136,10 @@
 					"_postman_previewlanguage": "json",
 					"header": [],
 					"cookie": [],
-					"body": "{\n    \"status\": \"success\",\n    \"id\": 123,\n    \"message\": \"Course cloned successfully\"\n}"
+					"body": "{\n    \"status\": \"success\",\n    \"id\": 123,\n    \"message\": \"Copy môn học thành công!\"\n}"
 				},
 				{
-					"name": "Error Response - Course Not Found",
+					"name": "Error - Course Not Found",
 					"originalRequest": {
 						"method": "POST",
 						"header": [],
@@ -165,7 +151,7 @@
 									"value": "your_token_here"
 								},
 								{
-									"key": "wsfunction", 
+									"key": "wsfunction",
 									"value": "local_courseclone_clone_course"
 								},
 								{
@@ -174,15 +160,15 @@
 								},
 								{
 									"key": "shortname_clone",
-									"value": "nonexistent"
+									"value": "NOTEXIST"
 								},
 								{
 									"key": "fullname",
-									"value": "New Course"
+									"value": "Test Course"
 								},
 								{
 									"key": "shortname",
-									"value": "newcourse456"
+									"value": "TEST001"
 								},
 								{
 									"key": "startdate",
@@ -190,14 +176,16 @@
 								},
 								{
 									"key": "enddate",
-									"value": "1735689600"
+									"value": "1719792000"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{moodle_url}}/webservice/rest/server.php",
+							"raw": "http://yourmoodle.com/webservice/rest/server.php",
+							"protocol": "http",
 							"host": [
-								"{{moodle_url}}"
+								"yourmoodle",
+								"com"
 							],
 							"path": [
 								"webservice",
@@ -211,14 +199,14 @@
 					"_postman_previewlanguage": "json",
 					"header": [],
 					"cookie": [],
-					"body": "{\n    \"status\": \"error\",\n    \"id\": 0,\n    \"message\": \"Source course with shortname 'nonexistent' not found\"\n}"
+					"body": "{\n    \"status\": \"error\",\n    \"id\": 0,\n    \"message\": \"Không tìm thấy môn học với shortname: NOTEXIST\"\n}"
 				}
 			]
 		},
 		{
-			"name": "Test Authentication",
+			"name": "Get Token (Optional)",
 			"request": {
-				"method": "POST", 
+				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -229,32 +217,35 @@
 					"mode": "urlencoded",
 					"urlencoded": [
 						{
-							"key": "wstoken",
-							"value": "{{wstoken}}"
+							"key": "username",
+							"value": "{{username}}",
+							"description": "Moodle username"
 						},
 						{
-							"key": "wsfunction",
-							"value": "core_webservice_get_site_info"
+							"key": "password",
+							"value": "{{password}}",
+							"description": "Moodle password"
 						},
 						{
-							"key": "moodlewsrestformat",
-							"value": "json"
+							"key": "service",
+							"value": "courseclone_service",
+							"description": "Service shortname"
 						}
 					]
 				},
 				"url": {
-					"raw": "{{moodle_url}}/webservice/rest/server.php",
+					"raw": "{{moodle_url}}/login/token.php",
 					"host": [
 						"{{moodle_url}}"
 					],
 					"path": [
-						"webservice",
-						"rest",
-						"server.php"
+						"login",
+						"token.php"
 					]
 				},
-				"description": "Test if webservice authentication is working"
-			}
+				"description": "Lấy webservice token (tùy chọn nếu chưa có)"
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -281,27 +272,22 @@
 		{
 			"key": "moodle_url",
 			"value": "http://localhost/moodle",
-			"description": "Your Moodle URL (change this to your actual Moodle URL)"
+			"description": "URL của Moodle site"
 		},
 		{
-			"key": "wstoken",
-			"value": "your_webservice_token_here",
-			"description": "Your webservice token (get this from Moodle administration)"
+			"key": "webservice_token",
+			"value": "your_token_here",
+			"description": "Webservice token"
 		},
 		{
-			"key": "source_shortname",
-			"value": "course1",
-			"description": "Shortname of the source course to clone"
+			"key": "username",
+			"value": "admin",
+			"description": "Moodle username"
 		},
 		{
-			"key": "new_fullname",
-			"value": "Cloned Course - Test",
-			"description": "Full name for the new course"
-		},
-		{
-			"key": "new_shortname",
-			"value": "cloned_test_123",
-			"description": "Short name for the new course (must be unique)"
+			"key": "password",
+			"value": "password",
+			"description": "Moodle password"
 		}
 	]
 }

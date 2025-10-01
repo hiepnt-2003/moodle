@@ -18,7 +18,7 @@
  * Web service external functions and service definitions.
  *
  * @package    local_courseclone
- * @copyright  2025 Your Name <your.email@example.com>
+ * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +30,7 @@ $functions = [
         'classname'   => 'local_courseclone_external',
         'methodname'  => 'clone_course',
         'classpath'   => 'local/courseclone/externallib.php',
-        'description' => 'Clone a course with new details including shortname_clone, fullname, shortname, startdate, enddate',
+        'description' => 'Clone a course with new details, keeping the same category',
         'type'        => 'write',
         'capabilities' => 'moodle/course:create,moodle/backup:backupcourse,moodle/restore:restorecourse',
     ],
