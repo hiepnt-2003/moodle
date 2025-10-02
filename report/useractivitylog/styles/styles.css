@@ -1,0 +1,103 @@
+/* User Activity Log Report Plugin Styles */
+
+.report-useractivitylog-filter {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.report-useractivitylog-filter .form-group {
+    margin-bottom: 1rem;
+}
+
+.report-useractivitylog-results {
+    margin-top: 2rem;
+}
+
+.report-useractivitylog-table {
+    font-size: 0.875rem;
+}
+
+.report-useractivitylog-table th {
+    background-color: #e9ecef;
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.report-useractivitylog-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: top;
+}
+
+.report-useractivitylog-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.report-useractivitylog-table tr:hover {
+    background-color: #e2e6ea;
+}
+
+.report-useractivitylog-time {
+    white-space: nowrap;
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.report-useractivitylog-username {
+    font-weight: 500;
+}
+
+.report-useractivitylog-component {
+    font-style: italic;
+    color: #6c757d;
+}
+
+.report-useractivitylog-ip {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.report-useractivitylog-description {
+    max-width: 200px;
+    word-wrap: break-word;
+}
+
+.report-useractivitylog-no-data {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .report-useractivitylog-table {
+        font-size: 0.75rem;
+    }
+    
+    .report-useractivitylog-table th,
+    .report-useractivitylog-table td {
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .report-useractivitylog-description {
+        max-width: 150px;
+    }
+}
+
+/* Print styles */
+@media print {
+    .report-useractivitylog-filter {
+        display: none;
+    }
+    
+    .report-useractivitylog-table {
+        font-size: 0.7rem;
+    }
+}
