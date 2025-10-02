@@ -2,11 +2,33 @@
 
 Plugin báo cáo nhật ký hoạt động của người dùng trong Moodle.
 
+## 🗂️ Cấu trúc file sau khi dọn dẹp:
+
+```
+report/userreport/
+│   index.php                    # Trang chính của plugin
+│   locallib.php                 # Form và các hàm thư viện cục bộ  
+│   settings.php                 # Đăng ký plugin vào admin menu
+│   version.php                  # Thông tin phiên bản
+│   styles.css                   # CSS cho giao diện
+│   README.md                    # Hướng dẫn sử dụng
+│
+├───classes/
+│   └───privacy/
+│       └───provider.php         # Privacy provider (GDPR compliance)
+│
+├───db/
+│   └───access.php               # Định nghĩa capabilities
+│
+└───lang/en/
+    └───report_userreport.php    # String tiếng Anh
+```
+
 ## Tính năng
 
 1. **Form lọc dữ liệu**:
    - Chọn người dùng (loại trừ người dùng đã bị xóa)
-   - Chọn ngày bắt đầu và ngày kết thúc
+   - Chọn ngày bắt đầu và ngày kết thúc  
    - Chọn khóa học cụ thể hoặc tất cả khóa học
 
 2. **Hiển thị báo cáo dạng bảng** với các cột:

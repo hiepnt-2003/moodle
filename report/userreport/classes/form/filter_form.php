@@ -15,29 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * User Activity Report form.
+ * Report filter form.
  *
  * @package    report_userreport
  * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace report_userreport\form;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
 /**
- * Form for user activity report filters.
+ * Filter form for user activity report.
+ *
+ * @package    report_userreport
+ * @copyright  2025 Your Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_userreport_form extends moodleform {
+class filter_form extends \moodleform {
 
     /**
-     * Form definition.
+     * Define the form elements.
      */
     public function definition() {
         global $DB;
 
         $mform = $this->_form;
+
+        // Header.
+        $mform->addElement('header', 'filtersheader', get_string('filters', 'core'));
 
         // User selection.
         $users = $DB->get_records_sql("
@@ -46,8 +55,7 @@ class report_userreport_form extends moodleform {
             WHERE u.deleted = 0 AND u.id > 1 
             ORDER BY u.firstname, u.lastname
         ");
-        $useroptions = array();
-        $useroptions[0] = get_string('selectuser', 'report_userreport');
+        $useroptions = [0 => get_string('selectuser', 'report_userreport')];
         foreach ($users as $user) {
             $useroptions[$user->id] = $user->fullname;
         }
@@ -55,42 +63,45 @@ class report_userreport_form extends moodleform {
         $mform->setType('userid', PARAM_INT);
         $mform->addRule('userid', null, 'required', null, 'client');
 
-        // Start date.
-        $mform->addElement('date_selector', 'startdate', get_string('startdate', 'report_userreport'));
-        $mform->setDefault('startdate', strtotime('-7 days'));
-        $mform->setType('startdate', PARAM_INT);
+        // Date range group.
+        $dategroup = [];
+        $dategroup[] = $mform->createElement('date_selector', 'startdate', get_string('startdate', 'report_userreport'));
+        $dategroup[] = $mform->createElement('static', 'to', '', ' ' . get_string('to', 'core') . ' ');
+        $dategroup[] = $mform->createElement('date_selector', 'enddate', get_string('enddate', 'report_userreport'));
+        $mform->addGroup($dategroup, 'daterange', get_string('daterange', 'core'), ' ', false);
 
-        // End date.
-        $mform->addElement('date_selector', 'enddate', get_string('enddate', 'report_userreport'));
+        $mform->setDefault('startdate', strtotime('-7 days'));
         $mform->setDefault('enddate', time());
+        $mform->setType('startdate', PARAM_INT);
         $mform->setType('enddate', PARAM_INT);
 
         // Course selection.
         $courses = $DB->get_records('course', null, 'fullname ASC', 'id, fullname');
-        $courseoptions = array();
-        $courseoptions[0] = get_string('allcourses', 'report_userreport');
+        $courseoptions = [0 => get_string('allcourses', 'report_userreport')];
         foreach ($courses as $course) {
             $courseoptions[$course->id] = $course->fullname;
         }
         $mform->addElement('select', 'courseid', get_string('selectcourse', 'report_userreport'), $courseoptions);
         $mform->setType('courseid', PARAM_INT);
 
-        // Submit button.
+        // Submit buttons.
         $this->add_action_buttons(false, get_string('generatereport', 'report_userreport'));
     }
 
     /**
-     * Form validation.
+     * Validate the form data.
      *
-     * @param array $data
-     * @param array $files
-     * @return array
+     * @param array $data Array of form data
+     * @param array $files Array of uploaded files
+     * @return array Array of errors
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if ($data['startdate'] > $data['enddate']) {
-            $errors['enddate'] = 'Ngày kết thúc phải sau ngày bắt đầu';
+        if (!empty($data['startdate']) && !empty($data['enddate'])) {
+            if ($data['startdate'] > $data['enddate']) {
+                $errors['daterange'] = get_string('invaliddaterange', 'report_userreport');
+            }
         }
 
         return $errors;

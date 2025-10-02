@@ -24,15 +24,16 @@
 
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->dirroot . '/report/userreport/classes/form/report_form.php');
 
 // Check login and permissions.
 require_login();
-require_capability('report/userreport:view', context_system::instance());
+$context = context_system::instance();
+require_capability('report/userreport:view', $context);
 
-// Set up the page.
-$PAGE->set_url('/report/userreport/index.php');
-$PAGE->set_context(context_system::instance());
+// Page setup.
+$url = new moodle_url('/report/userreport/index.php');
+$PAGE->set_url($url);
+$PAGE->set_context($context);
 $PAGE->set_title(get_string('reporttitle', 'report_userreport'));
 $PAGE->set_heading(get_string('reporttitle', 'report_userreport'));
 $PAGE->set_pagelayout('report');
@@ -41,14 +42,14 @@ $PAGE->set_pagelayout('report');
 $PAGE->requires->css('/report/userreport/styles.css');
 
 // Navigation.
-$PAGE->navbar->add(get_string('reports'), new moodle_url('/admin/reports.php'));
-$PAGE->navbar->add(get_string('pluginname', 'report_userreport'));
+navigation_node::override_active_url(new moodle_url('/admin/reports.php'));
 
+// Create form.
+$mform = new \report_userreport\form\filter_form();
+
+// Page output starts here.
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('reporttitle', 'report_userreport'));
-
-// Create and process form.
-$mform = new report_userreport_form();
 
 if ($data = $mform->get_data()) {
     // Generate report.

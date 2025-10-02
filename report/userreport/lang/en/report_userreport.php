@@ -1,21 +1,33 @@
+// Plugin identification.
 $string['pluginname'] = 'User Activity Report';
-$string['userreport:view'] = 'Xem báo cáo hoạt động người dùng';
-$string['selectuser'] = 'Chọn người dùng';
-$string['startdate'] = 'Ngày bắt đầu';
-$string['enddate'] = 'Ngày kết thúc';
-$string['selectcourse'] = 'Chọn khóa học';
-$string['allcourses'] = 'Tất cả khóa học';
-$string['generatereport'] = 'Tạo báo cáo';
-$string['time'] = 'Thời gian';
-$string['userfullname'] = 'Tên đầy đủ người dùng';
-$string['affecteduser'] = 'Người dùng bị ảnh hưởng';
-$string['eventcontext'] = 'Bối cảnh sự kiện';
-$string['component'] = 'Thành phần';
-$string['eventname'] = 'Tên sự kiện';
-$string['description'] = 'Mô tả';
-$string['origin'] = 'Nguồn gốc';
-$string['ipaddress'] = 'Địa chỉ IP';
-$string['noresults'] = 'Không có kết quả nào được tìm thấy.';
-$string['privacy:metadata'] = 'Plugin báo cáo hoạt động người dùng không lưu trữ dữ liệu cá nhân nào.';
-$string['reporttitle'] = 'Báo cáo nhật ký hoạt động của người dùng';
-$string['userdeleted'] = '[Người dùng đã bị xóa]';
+$string['reporttitle'] = 'User Activity Report';
+
+// Capabilities.
+$string['userreport:view'] = 'View user activity report';
+
+// Form elements.
+$string['selectuser'] = 'Select user';
+$string['selectcourse'] = 'Select course';
+$string['startdate'] = 'Start date';
+$string['enddate'] = 'End date';
+$string['allcourses'] = 'All courses';
+$string['generatereport'] = 'Generate report';
+$string['invaliddaterange'] = 'End date must be after start date';
+
+// Table headers.
+$string['time'] = 'Time';
+$string['userfullname'] = 'User full name';
+$string['affecteduser'] = 'Affected user';
+$string['eventcontext'] = 'Event context';
+$string['component'] = 'Component';
+$string['eventname'] = 'Event name';
+$string['description'] = 'Description';
+$string['origin'] = 'Origin';
+$string['ipaddress'] = 'IP address';
+
+// Messages.
+$string['noresults'] = 'No results found.';
+$string['userdeleted'] = '[User deleted]';
+
+// Privacy.
+$string['privacy:metadata'] = 'The User Activity Report plugin does not store any personal data.';
