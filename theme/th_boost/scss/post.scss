@@ -29,9 +29,22 @@
     font-family: 'FontAwesome', 'Font Awesome 5 Free', 'Font Awesome 5 Brands';
 }
 
-// Example custom styles
+// Custom body styles
 body {
-    // Add your custom body styles here
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+// Enhanced navigation with icons
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    
+    .nav-link {
+        transition: all 0.3s ease;
+        
+        &:hover {
+            transform: translateY(-2px);
+        }
+    }
 }
 
 // Custom header with FontAwesome icon example
@@ -41,4 +54,108 @@ body {
     margin-right: 8px;
 }
 
-// You can add more custom styles here
+// Beautiful card styles with icons
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+    
+    .card-title::before {
+        font-family: 'FontAwesome';
+        content: '\f02d'; // Book icon
+        margin-right: 10px;
+        color: #0f6cbf;
+    }
+}
+
+// Custom button styles with icons
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+        font-family: 'FontAwesome';
+        content: '\f061'; // Arrow right
+        margin-left: 8px;
+        transition: transform 0.3s ease;
+    }
+    
+    &:hover::after {
+        transform: translateX(5px);
+    }
+}
+
+// Course section headers with icons
+.course-content .section .content h3::before {
+    font-family: 'FontAwesome';
+    content: '\f0c0'; // Users/group icon
+    margin-right: 10px;
+    color: #0f6cbf;
+}
+
+// Activity icons enhancement
+.activity-icon {
+    transition: transform 0.3s ease;
+    
+    &:hover {
+        transform: scale(1.1) rotate(5deg);
+    }
+}
+
+// Custom footer with social icons
+.footer-social-icons {
+    a {
+        display: inline-block;
+        margin: 0 10px;
+        font-size: 24px;
+        transition: transform 0.3s ease;
+        
+        &:hover {
+            transform: scale(1.2);
+        }
+        
+        &.facebook::before {
+            font-family: 'FontAwesome';
+            content: '\f09a';
+            color: #3b5998;
+        }
+        
+        &.twitter::before {
+            font-family: 'FontAwesome';
+            content: '\f099';
+            color: #1da1f2;
+        }
+        
+        &.youtube::before {
+            font-family: 'FontAwesome';
+            content: '\f167';
+            color: #ff0000;
+        }
+    }
+}
+
+// Notification badges with icons
+.badge-notification {
+    &::before {
+        font-family: 'FontAwesome';
+        content: '\f0f3'; // Bell icon
+        margin-right: 5px;
+    }
+}
+
+// Dashboard customizations
+#page-my-index {
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        
+        &::before {
+            font-family: 'FontAwesome';
+            content: '\f015'; // Home icon
+            margin-right: 10px;
+        }
+    }
+}
