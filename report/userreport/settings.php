@@ -15,8 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings and links for User Activity Report plugin.
- *
+ * Report plugins - allows admin to configure reports.
+ * 
  * @package    report_userreport
  * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,12 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// Add the report to the admin menu.
-if (has_capability('report/userreport:view', context_system::instance())) {
+if ($hassiteconfig) {
     $ADMIN->add('reports', new admin_externalpage(
-        'reportuserreport',
+        'report_userreport', 
         get_string('pluginname', 'report_userreport'),
-        new moodle_url('/report/userreport/index.php'),
+        "$CFG->wwwroot/report/userreport/index.php", 
         'report/userreport:view'
     ));
 }

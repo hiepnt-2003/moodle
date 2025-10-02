@@ -1,4 +1,4 @@
-$string['pluginname'] = 'Báo cáo hoạt động người dùng';
+$string['pluginname'] = 'User Activity Report';
 $string['userreport:view'] = 'Xem báo cáo hoạt động người dùng';
 $string['selectuser'] = 'Chọn người dùng';
 $string['startdate'] = 'Ngày bắt đầu';
