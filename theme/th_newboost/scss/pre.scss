@@ -1,0 +1,38 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Pre SCSS for theme TH NewBoost.
+ *
+ * @package   theme_th_newboost
+ * @copyright 2025
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// Modern color variables
+$modern-primary: #6366f1;
+$modern-secondary: #8b5cf6;
+$modern-success: #10b981;
+$modern-info: #06b6d4;
+$modern-warning: #f59e0b;
+$modern-danger: #ef4444;
+
+// Gradient colors
+$gradient-start: #667eea;
+$gradient-end: #764ba2;
+
+// Modern spacing
+$modern-spacing: 2rem;
+$modern-border-radius: 1rem;
