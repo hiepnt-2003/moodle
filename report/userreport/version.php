@@ -15,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for local_webservice plugin.
+ * Version information for User Activity Report plugin.
  *
- * @package    local_webservice
- * @copyright  2025 Your Name <your.email@example.com>
+ * @package    report_userreport
+ * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025092601;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2025100200;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2020110900;        // Requires this Moodle version (3.10).
-$plugin->component = 'local_webservice'; // Full name of the plugin (used for diagnostics).
+$plugin->component = 'report_userreport'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.0.0';
+$plugin->release   = '1.0';

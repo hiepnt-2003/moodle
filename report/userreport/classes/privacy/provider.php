@@ -15,23 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Access control for local_webservice plugin.
+ * Privacy provider for User Activity Report plugin.
  *
- * @package    local_webservice
- * @copyright  2025 Your Name <your.email@example.com>
+ * @package    report_userreport
+ * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace report_userreport\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = [
-    'local/webservice:clonecourse' => [
-        'riskbitmask' => RISK_CONFIG | RISK_DATALOSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => [
-            'manager' => CAP_ALLOW,
-        ],
-        'clonepermissionsfrom' => 'moodle/course:create',
-    ],
-];
+/**
+ * Privacy provider for report_userreport.
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Returns a localised string for the plugin to explain why it does not store user data.
+     *
+     * @return string
+     */
+    public static function get_reason(): string {
+        return 'privacy:metadata';
+    }
+}

@@ -1,0 +1,67 @@
+/**
+ * Styles for User Activity Report plugin.
+ *
+ * @package    report_userreport
+ * @copyright  2025 Your Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+.report-userreport-form {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.report-userreport-table {
+    font-size: 14px;
+}
+
+.report-userreport-table th {
+    background-color: #e9ecef;
+    font-weight: bold;
+    padding: 12px 8px;
+    border: 1px solid #dee2e6;
+}
+
+.report-userreport-table td {
+    padding: 10px 8px;
+    border: 1px solid #dee2e6;
+    vertical-align: top;
+}
+
+.report-userreport-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.report-userreport-table tr:hover {
+    background-color: #e7f3ff;
+}
+
+.report-userreport-no-results {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+}
+
+.report-userreport-description {
+    max-width: 200px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.report-userreport-eventname {
+    max-width: 150px;
+    word-wrap: break-word;
+    font-size: 12px;
+}
+
+.report-userreport-context {
+    max-width: 120px;
+    word-wrap: break-word;
+}
+
+.report-userreport-user-deleted {
+    color: #dc3545;
+    font-style: italic;
+}
