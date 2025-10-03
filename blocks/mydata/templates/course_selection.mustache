@@ -5,17 +5,9 @@
     @copyright 2025 Your Name
     @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
-    Course selection template for block_mydata
+    Course selection results template for block_mydata
 }}
 <div class="block_mydata block_mydata_course_selection">
-    <div class="alert alert-info mb-3">
-        <h5><i class="fa fa-info-circle"></i> {{#str}}description_form, block_mydata{{/str}}</h5>
-        <p>{{#str}}course_selection_help, block_mydata{{/str}}</p>
-    </div>
-    
-    {{> core/form }}
-    
-    {{#hasresults}}
     <div class="results-section mt-4">
         <h3><i class="fa fa-chart-bar"></i> {{#str}}selected_courses_report, block_mydata{{/str}}</h3>
         
@@ -27,12 +19,45 @@
             </h4>
             
             {{#hasusers}}
-            <div class="table-responsive">
-                {{> block_mydata/users_table }}
+            <div class="block_mydata">
+                <table class="generaltable">
+                    <thead>
+                        <tr>
+                            <th><i class="fa fa-hashtag"></i> STT</th>
+                            <th><i class="fa fa-user"></i> Username</th>
+                            <th><i class="fa fa-id-card"></i> Họ tên</th>
+                            <th><i class="fa fa-envelope"></i> Email</th>
+                            <th><i class="fa fa-user-tag"></i> Vai trò</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#users}}
+                        <tr>
+                            <td class="text-center">{{stt}}</td>
+                            <td>
+                                <a href="{{userprofileurl}}">
+                                    <strong>{{username}}</strong>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{userprofileurl}}">
+                                    {{fullname}}
+                                </a>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{email}}</small>
+                            </td>
+                            <td>
+                                <span class="badge badge-{{roleclass}}">{{rolename}}</span>
+                            </td>
+                        </tr>
+                        {{/users}}
+                    </tbody>
+                </table>
             </div>
             <p class="font-weight-bold">
                 <i class="fa fa-users"></i> 
-                {{#str}}total_users, block_mydata{{/str}}: {{totalusers}}
+                Tổng số: {{totalusers}} người dùng
             </p>
             {{/hasusers}}
             
@@ -51,5 +76,4 @@
             </a>
         </div>
     </div>
-    {{/hasresults}}
 </div>

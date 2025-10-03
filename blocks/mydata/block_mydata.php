@@ -33,16 +33,12 @@ class block_mydata extends block_base {
                 ['class' => 'btn btn-secondary']);
             
             $content = html_writer::tag('div', 
-                html_writer::tag('p', 
-                    '<i class="fa fa-chart-bar"></i> ' . get_string('block_navigation_title', 'block_mydata'), 
-                    ['class' => 'font-weight-bold text-center']
-                ) .
                 html_writer::tag('div', 
                     $view_link . ' ' . $report_link, 
                     ['class' => 'btn-group text-center']
                 ) .
                 html_writer::tag('p', get_string('description_navigation', 'block_mydata'), 
-                    ['class' => 'text-center text-muted mt-20']),
+                    ['class' => 'text-center text-muted', 'style' => 'font-size:12px; margin-top:10px;']),
                 ['class' => 'block_mydata']
             );
         } else {

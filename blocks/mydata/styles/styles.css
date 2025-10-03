@@ -11,6 +11,20 @@
     padding: 15px;
 }
 
+/* Block content wrapper */
+.block_mydata .btn-group {
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.block_mydata .btn-group .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
 /* Course Selection Styles */
 .block_mydata_course_selection {
     margin: 20px 0;

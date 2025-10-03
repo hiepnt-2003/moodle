@@ -53,7 +53,24 @@ if ($fromform = $mform->get_data()) {
             $coursedata['hasusers'] = !empty($users);
             
             if (!empty($users)) {
-                $coursedata['users'] = $users;
+                // Format users data for template
+                $formattedUsers = array();
+                $stt = 1;
+                foreach ($users as $user) {
+                    $userdata = array();
+                    $userdata['stt'] = $stt;
+                    $userdata['username'] = $user->username;
+                    $userdata['fullname'] = $user->firstname . ' ' . $user->lastname;
+                    $userdata['email'] = $user->email;
+                    $userdata['userprofileurl'] = new moodle_url('/user/profile.php', array('id' => $user->id));
+                    $userdata['rolename'] = isset($user->role) ? block_mydata_get_role_display_name($user->role) : 'Student';
+                    $userdata['roleclass'] = ($user->role == 'teacher' || $user->role == 'editingteacher') ? 'success' : 'primary';
+                    
+                    $formattedUsers[] = $userdata;
+                    $stt++;
+                }
+                
+                $coursedata['users'] = $formattedUsers;
                 $coursedata['totalusers'] = count($users);
             }
             
@@ -63,17 +80,11 @@ if ($fromform = $mform->get_data()) {
         echo $OUTPUT->render_from_template('block_mydata/course_selection', $templatedata);
     }
 } else {
-    // Display form with template
-    $templatedata = array();
-    $templatedata['hasresults'] = false;
+    // Display form description
+    echo $OUTPUT->render_from_template('block_mydata/form_description', array());
     
-    // Render form content
-    ob_start();
+    // Display form
     $mform->display();
-    $formhtml = ob_get_clean();
-    
-    echo $OUTPUT->render_from_template('block_mydata/course_selection', $templatedata);
-    echo $formhtml;
 }
 
 echo $OUTPUT->footer();
