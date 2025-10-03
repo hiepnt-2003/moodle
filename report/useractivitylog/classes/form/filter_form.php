@@ -42,30 +42,56 @@ class filter_form extends \moodleform {
         $mform = $this->_form;
 
         // Header
-        $mform->addElement('header', 'filterheader', get_string('reporttitle', 'report_useractivitylog'));
+        $mform->addElement('header', 'filterheader', get_string('logsheading', 'report_useractivitylog'));
 
-        // User selection
-        $users = $this->get_active_users();
-        $mform->addElement('select', 'userid', get_string('selectuser', 'report_useractivitylog'), $users);
-        $mform->addHelpButton('userid', 'selectuser', 'report_useractivitylog');
-        $mform->addRule('userid', get_string('required'), 'required', null, 'client');
-
-        // Date range
-        $mform->addElement('date_selector', 'startdate', get_string('startdate', 'report_useractivitylog'));
-        $mform->setDefault('startdate', strtotime('-1 week'));
-
-        $mform->addElement('date_selector', 'enddate', get_string('enddate', 'report_useractivitylog'));
-        $mform->setDefault('enddate', time());
-
-        // Course selection
+        // Course selection (first, like standard logs)
         $courses = $this->get_available_courses();
-        $mform->addElement('select', 'courseid', get_string('selectcourse', 'report_useractivitylog'), $courses);
-        $mform->addHelpButton('courseid', 'selectcourse', 'report_useractivitylog');
+        $mform->addElement('select', 'courseid', \get_string('course', 'report_useractivitylog'), $courses);
+        $mform->setType('courseid', PARAM_INT);
+
+        // User selection - allow multiple users or all users
+        $users = $this->get_active_users();
+        $mform->addElement('select', 'userid', \get_string('participants', 'report_useractivitylog'), $users);
+        $mform->setType('userid', PARAM_INT);
+
+        // Date selection - single date field like standard logs
+        $mform->addElement('date_selector', 'date', \get_string('date', 'report_useractivitylog'));
+        $mform->setDefault('date', time());
+
+        // Activities (modules)
+        $activities = $this->get_activities();
+        $mform->addElement('select', 'modid', \get_string('activities', 'report_useractivitylog'), $activities);
+        $mform->setType('modid', PARAM_ALPHANUMEXT);
+
+        // Actions
+        $actions = $this->get_actions();
+        $mform->addElement('select', 'action', \get_string('actions', 'report_useractivitylog'), $actions);
+        $mform->setType('action', PARAM_ALPHA);
+
+        // Education level
+        $edulevels = $this->get_education_levels();
+        $mform->addElement('select', 'edulevel', \get_string('edulevel', 'report_useractivitylog'), $edulevels);
+        $mform->setType('edulevel', PARAM_INT);
+
+        // Origin
+        $origins = array(
+            '' => \get_string('all', 'report_useractivitylog'),
+            'web' => 'Web',
+            'ws' => 'Web service',
+            'cli' => 'Command line',
+            'restore' => 'Restore'
+        );
+        $mform->addElement('select', 'origin', \get_string('origin', 'report_useractivitylog'), $origins);
+        $mform->setType('origin', PARAM_ALPHA);
+
+        // Display options
+        $mform->addElement('text', 'logsperpage', \get_string('logsperpage', 'report_useractivitylog'), array('size' => 5));
+        $mform->setType('logsperpage', PARAM_INT);
+        $mform->setDefault('logsperpage', 100);
 
         // Action buttons
         $buttonarray = array();
-        $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('filterbutton', 'report_useractivitylog'));
-        $buttonarray[] = $mform->createElement('cancel', 'resetbutton', get_string('resetfilter', 'report_useractivitylog'));
+        $buttonarray[] = $mform->createElement('submit', 'submitbutton', \get_string('gettheselogs', 'report_useractivitylog'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
     }
 
@@ -79,10 +105,8 @@ class filter_form extends \moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if (!empty($data['startdate']) && !empty($data['enddate'])) {
-            if ($data['startdate'] >= $data['enddate']) {
-                $errors['enddate'] = get_string('daterangeerror', 'report_useractivitylog');
-            }
+        if (!empty($data['logsperpage']) && ($data['logsperpage'] < 1 || $data['logsperpage'] > 5000)) {
+            $errors['logsperpage'] = \get_string('invalidlogsperpage', 'report_useractivitylog');
         }
 
         return $errors;
@@ -96,7 +120,7 @@ class filter_form extends \moodleform {
     private function get_active_users() {
         global $DB;
 
-        $users = array('' => get_string('selectuser', 'report_useractivitylog'));
+        $users = array(0 => \get_string('allusers', 'report_useractivitylog'));
         
         $sql = "SELECT id, firstname, lastname, username 
                 FROM {user} 
@@ -106,7 +130,7 @@ class filter_form extends \moodleform {
         $userrecords = $DB->get_records_sql($sql);
         
         foreach ($userrecords as $user) {
-            $displayname = fullname($user) . ' (' . $user->username . ')';
+            $displayname = fullname($user);
             $users[$user->id] = $displayname;
         }
 
@@ -121,7 +145,7 @@ class filter_form extends \moodleform {
     private function get_available_courses() {
         global $DB;
 
-        $courses = array('' => get_string('allcourses', 'report_useractivitylog'));
+        $courses = array(0 => \get_string('allcourses'));
         
         $sql = "SELECT id, fullname, shortname 
                 FROM {course} 
@@ -131,10 +155,62 @@ class filter_form extends \moodleform {
         $courserecords = $DB->get_records_sql($sql);
         
         foreach ($courserecords as $course) {
-            $displayname = $course->fullname . ' (' . $course->shortname . ')';
+            $displayname = format_string($course->fullname);
+            if ($course->shortname) {
+                $displayname .= ' (' . $course->shortname . ')';
+            }
             $courses[$course->id] = $displayname;
         }
 
         return $courses;
+    }
+
+    /**
+     * Get list of activities/modules.
+     *
+     * @return array
+     */
+    private function get_activities() {
+        global $DB;
+
+        $activities = array('' => \get_string('allactivities', 'report_useractivitylog'));
+        
+        // Get all activity modules
+        $modules = $DB->get_records('modules', array('visible' => 1), 'name');
+        
+        foreach ($modules as $module) {
+            $activities[$module->name] = \get_string('pluginname', $module->name);
+        }
+
+        return $activities;
+    }
+
+    /**
+     * Get list of actions.
+     *
+     * @return array
+     */
+    private function get_actions() {
+        return array(
+            '' => \get_string('allactions', 'report_useractivitylog'),
+            'c' => \get_string('create', 'report_useractivitylog'),
+            'r' => \get_string('view', 'report_useractivitylog'),
+            'u' => \get_string('update', 'report_useractivitylog'), 
+            'd' => \get_string('delete', 'report_useractivitylog')
+        );
+    }
+
+    /**
+     * Get education levels.
+     *
+     * @return array
+     */
+    private function get_education_levels() {
+        return array(
+            -1 => \get_string('alleducationlevels', 'report_useractivitylog'),
+            1 => \get_string('educationlevelother', 'report_useractivitylog'),
+            2 => \get_string('educationlevelparticipating', 'report_useractivitylog'),
+            3 => \get_string('educationlevelteaching', 'report_useractivitylog')
+        );
     }
 }

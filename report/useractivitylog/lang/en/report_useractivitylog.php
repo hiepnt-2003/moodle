@@ -22,37 +22,52 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'User Activity Log';
-$string['privacy:metadata'] = 'The User Activity Log plugin shows existing log data but does not store any personal data itself.';
-$string['useractivitylog:view'] = 'View user activity log report';
+$string['pluginname'] = 'Logs';
+$string['privacy:metadata'] = 'The Logs report shows existing log data but does not store any personal data itself.';
+$string['useractivitylog:view'] = 'View logs report';
 
-// Filter form strings
-$string['selectuser'] = 'Select user';
-$string['selectuser_help'] = 'Choose a user to view their activity log';
-$string['startdate'] = 'Start date';
-$string['enddate'] = 'End date';
-$string['selectcourse'] = 'Select course';
-$string['selectcourse_help'] = 'Choose a course to filter activities (leave empty for all courses)';
+// Filter form strings - compatible with standard logs
+$string['logsheading'] = 'Logs';
+$string['gettheselogs'] = 'Get these logs';
+$string['allusers'] = 'All participants';
 $string['allcourses'] = 'All courses';
-$string['filterbutton'] = 'Filter';
-$string['resetfilter'] = 'Reset';
+$string['allactivities'] = 'All activities';
+$string['allactions'] = 'All actions';
+$string['alleducationlevels'] = 'All education levels';
+$string['participants'] = 'Participants';
+$string['activities'] = 'Activities';
+$string['actions'] = 'Actions';
+$string['edulevel'] = 'Education level';
+$string['origin'] = 'Origin';
+$string['logsperpage'] = 'Logs per page';
+$string['educationlevelother'] = 'Other';
+$string['educationlevelparticipating'] = 'Participating';
+$string['educationlevelteaching'] = 'Teaching';
+$string['invalidlogsperpage'] = 'Logs per page must be between 1 and 5000';
 
 // Table headers
 $string['time'] = 'Time';
-$string['fullname'] = 'User full name';
+$string['fullname'] = 'Full name';
 $string['affecteduser'] = 'Affected user';
 $string['eventcontext'] = 'Event context';
 $string['component'] = 'Component';
 $string['eventname'] = 'Event name';
 $string['description'] = 'Description';
-$string['origin'] = 'Origin';
 $string['ipaddress'] = 'IP address';
 
 // Messages
-$string['nodata'] = 'No activity data found for the selected criteria.';
-$string['invaliduser'] = 'Invalid user selected.';
-$string['daterangeerror'] = 'End date must be after start date.';
-$string['selectuserhelp'] = 'Please select a user to view their activity log.';
+$string['nodata'] = 'No logs found for the selected criteria.';
+$string['nologs'] = 'No logs found.';
+$string['logshowing'] = 'Displaying {$a->displayed} of {$a->total} entries';
+
+// Standard Moodle strings used
+$string['all'] = 'All';
+$string['course'] = 'Course';
+$string['date'] = 'Date';
+$string['create'] = 'Create';
+$string['view'] = 'View';
+$string['update'] = 'Update';
+$string['delete'] = 'Delete';
 
 // Page title
-$string['reporttitle'] = 'User Activity Log Report';
+$string['reporttitle'] = 'Logs';
