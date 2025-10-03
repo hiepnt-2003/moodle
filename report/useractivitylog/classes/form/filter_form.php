@@ -42,7 +42,7 @@ class filter_form extends \moodleform {
         $mform = $this->_form;
 
         // Header
-        $mform->addElement('header', 'filterheader', get_string('logsheading', 'report_useractivitylog'));
+        $mform->addElement('header', 'filterheader', \get_string('logsheading', 'report_useractivitylog'));
 
         // Course selection (first, like standard logs)
         $courses = $this->get_available_courses();
@@ -61,7 +61,7 @@ class filter_form extends \moodleform {
         // Activities (modules)
         $activities = $this->get_activities();
         $mform->addElement('select', 'modid', \get_string('activities', 'report_useractivitylog'), $activities);
-        $mform->setType('modid', PARAM_ALPHANUMEXT);
+        $mform->setType('modid', PARAM_TEXT);
 
         // Actions
         $actions = $this->get_actions();
@@ -155,7 +155,7 @@ class filter_form extends \moodleform {
         $courserecords = $DB->get_records_sql($sql);
         
         foreach ($courserecords as $course) {
-            $displayname = format_string($course->fullname);
+            $displayname = $course->fullname; // Use fullname directly to avoid format_string issues
             if ($course->shortname) {
                 $displayname .= ' (' . $course->shortname . ')';
             }

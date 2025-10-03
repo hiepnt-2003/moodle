@@ -60,14 +60,22 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'report_useractivitylog'));
 
 // Display form
-$mform->display();
+try {
+    $mform->display();
+} catch (Exception $e) {
+    echo $OUTPUT->notification('Form display error: ' . $e->getMessage(), 'error');
+}
 
 // Display results if form submitted
 if ($showresults) {
     if (empty($logs)) {
         echo $OUTPUT->notification(get_string('nodata', 'report_useractivitylog'), 'info');
     } else {
-        echo display_logs_table($logs, $data, $totalcount);
+        try {
+            echo display_logs_table($logs, $data, $totalcount);
+        } catch (Exception $e) {
+            echo $OUTPUT->notification('Table display error: ' . $e->getMessage(), 'error');
+        }
     }
 }
 

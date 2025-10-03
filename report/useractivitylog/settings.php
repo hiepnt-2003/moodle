@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Add link to the admin reports menu
-if ($ADMIN->fulltree) {
+if ($hassiteconfig) {
     $ADMIN->add('reports', new admin_externalpage('reportuseractivitylog',
         get_string('pluginname', 'report_useractivitylog'),
         "$CFG->wwwroot/report/useractivitylog/index.php",
