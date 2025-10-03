@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Clone API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { background: #007cba; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        button:hover { background: #005a87; }
+        .result { margin-top: 20px; padding: 15px; border: 1px solid #ddd; background: #f9f9f9; }
+        .error { background: #ffe6e6; border-color: #ff9999; }
+        .success { background: #e6ffe6; border-color: #99ff99; }
+        .endpoint { background: #f0f8ff; padding: 10px; margin: 10px 0; border-left: 4px solid #007cba; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Course Clone API Test Client</h1>
+        
+        <!-- Configuration Section -->
+        <div class="endpoint">
+            <h3>⚙️ Configuration</h3>
+            <div class="form-group">
+                <label for="moodleUrl">Moodle URL:</label>
+                <input type="url" id="moodleUrl" placeholder="https://your-moodle-site.com" value="http://localhost/moodle">
+            </div>
+            <div class="form-group">
+                <label for="token">Web Service Token:</label>
+                <input type="text" id="token" placeholder="Your web service token here">
+            </div>
+        </div>
+
+        <!-- Test Functions -->
+        <div class="endpoint">
+            <h3>📋 1. Get Course List</h3>
+            <div class="form-group">
+                <label for="categoryId">Category ID (0 = all):</label>
+                <input type="number" id="categoryId" value="0">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="visibleOnly" checked> Only visible courses
+                </label>
+            </div>
+            <button onclick="getCourseList()">Get Course List</button>
+        </div>
+
+        <div class="endpoint">
+            <h3>🔍 2. Get Clone Status</h3>
+            <div class="form-group">
+                <label for="courseId">Course ID:</label>
+                <input type="number" id="courseId" placeholder="Enter course ID">
+            </div>
+            <button onclick="getCloneStatus()">Get Clone Status</button>
+        </div>
+
+        <div class="endpoint">
+            <h3>📄 3. Clone Course</h3>
+            <div class="form-group">
+                <label for="sourceShortname">Source Course Shortname:</label>
+                <input type="text" id="sourceShortname" placeholder="e.g., MATH101">
+            </div>
+            <div class="form-group">
+                <label for="newFullname">New Course Fullname:</label>
+                <input type="text" id="newFullname" placeholder="e.g., Mathematics 101 - Fall 2024">
+            </div>
+            <div class="form-group">
+                <label for="newShortname">New Course Shortname:</label>
+                <input type="text" id="newShortname" placeholder="e.g., MATH101_FALL2024">
+            </div>
+            <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate">
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate">
+            </div>
+            <button onclick="cloneCourse()">Clone Course</button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="result" class="result" style="display: none;">
+            <h3>📊 Result</h3>
+            <pre id="resultContent"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const futureDate = new Date(today.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days later
+            
+            document.getElementById('startDate').value = today.toISOString().split('T')[0];
+            document.getElementById('endDate').value = futureDate.toISOString().split('T')[0];
+        });
+
+        function showResult(data, isError = false) {
+            const resultDiv = document.getElementById('result');
+            const resultContent = document.getElementById('resultContent');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = isError ? 'result error' : 'result success';
+            resultContent.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function makeRequest(functionName, params = {}) {
+            const moodleUrl = document.getElementById('moodleUrl').value;
+            const token = document.getElementById('token').value;
+
+            if (!moodleUrl || !token) {
+                alert('Please enter Moodle URL and Token');
+                return;
+            }
+
+            const url = `${moodleUrl}/webservice/rest/server.php`;
+            const formData = new FormData();
+            
+            formData.append('wstoken', token);
+            formData.append('wsfunction', functionName);
+            formData.append('moodlewsrestformat', 'json');
+            
+            // Add parameters
+            Object.keys(params).forEach(key => {
+                if (params[key] !== null && params[key] !== undefined) {
+                    formData.append(key, params[key]);
+                }
+            });
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (data.exception) {
+                    showResult({
+                        error: data.exception,
+                        message: data.message,
+                        debuginfo: data.debuginfo
+                    }, true);
+                } else {
+                    showResult(data, false);
+                }
+            } catch (error) {
+                showResult({ error: 'Network error', message: error.message }, true);
+            }
+        }
+
+        function getCourseList() {
+            const categoryId = document.getElementById('categoryId').value;
+            const visibleOnly = document.getElementById('visibleOnly').checked;
+            
+            makeRequest('local_courseclone_get_course_list', {
+                categoryid: parseInt(categoryId),
+                visible: visibleOnly
+            });
+        }
+
+        function getCloneStatus() {
+            const courseId = document.getElementById('courseId').value;
+            
+            if (!courseId) {
+                alert('Please enter Course ID');
+                return;
+            }
+            
+            makeRequest('local_courseclone_get_clone_status', {
+                courseid: parseInt(courseId)
+            });
+        }
+
+        function cloneCourse() {
+            const sourceShortname = document.getElementById('sourceShortname').value;
+            const newFullname = document.getElementById('newFullname').value;
+            const newShortname = document.getElementById('newShortname').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            if (!sourceShortname || !newFullname || !newShortname || !startDate || !endDate) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const startTimestamp = Math.floor(new Date(startDate).getTime() / 1000);
+            const endTimestamp = Math.floor(new Date(endDate).getTime() / 1000);
+
+            makeRequest('local_courseclone_clone_course', {
+                shortname_clone: sourceShortname,
+                fullname: newFullname,
+                shortname: newShortname,
+                startdate: startTimestamp,
+                enddate: endTimestamp
+            });
+        }
+    </script>
+</body>
+</html>

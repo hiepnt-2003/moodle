@@ -273,4 +273,186 @@ class local_courseclone_external extends external_api {
             'message' => new external_value(PARAM_TEXT, 'Thông báo thành công hoặc mô tả lỗi'),
         ]);
     }
+
+    /**
+     * Describes the parameters for get_course_list function.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_course_list_parameters() {
+        return new external_function_parameters([
+            'categoryid' => new external_value(PARAM_INT, 'ID danh mục (0 = tất cả)', VALUE_DEFAULT, 0),
+            'visible' => new external_value(PARAM_BOOL, 'Chỉ lấy course hiển thị', VALUE_DEFAULT, true),
+        ]);
+    }
+
+    /**
+     * Get list of courses for cloning.
+     *
+     * @param int $categoryid Category ID (0 for all)
+     * @param bool $visible Only visible courses
+     * @return array List of courses
+     */
+    public static function get_course_list($categoryid = 0, $visible = true) {
+        global $DB;
+
+        // Validate parameters.
+        $params = self::validate_parameters(self::get_course_list_parameters(), [
+            'categoryid' => $categoryid,
+            'visible' => $visible,
+        ]);
+
+        // Validate context and capabilities.
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('moodle/course:view', $context);
+
+        try {
+            $conditions = ['id' => '> 1']; // Exclude site course
+            
+            if ($params['categoryid'] > 0) {
+                $conditions['category'] = $params['categoryid'];
+            }
+            
+            if ($params['visible']) {
+                $conditions['visible'] = 1;
+            }
+
+            $courses = $DB->get_records('course', $conditions, 'fullname ASC', 
+                'id, fullname, shortname, category, startdate, enddate, visible');
+
+            $result = [];
+            foreach ($courses as $course) {
+                $result[] = [
+                    'id' => $course->id,
+                    'fullname' => $course->fullname,
+                    'shortname' => $course->shortname,
+                    'category' => $course->category,
+                    'startdate' => $course->startdate,
+                    'enddate' => $course->enddate,
+                    'visible' => $course->visible,
+                ];
+            }
+
+            return [
+                'courses' => $result,
+                'total' => count($result),
+            ];
+
+        } catch (Exception $e) {
+            throw new moodle_exception('error', 'local_courseclone', '', $e->getMessage());
+        }
+    }
+
+    /**
+     * Describes the return value for get_course_list function.
+     *
+     * @return external_single_structure
+     */
+    public static function get_course_list_returns() {
+        return new external_single_structure([
+            'courses' => new external_multiple_structure(
+                new external_single_structure([
+                    'id' => new external_value(PARAM_INT, 'Course ID'),
+                    'fullname' => new external_value(PARAM_TEXT, 'Course full name'),
+                    'shortname' => new external_value(PARAM_TEXT, 'Course short name'),
+                    'category' => new external_value(PARAM_INT, 'Category ID'),
+                    'startdate' => new external_value(PARAM_INT, 'Start date timestamp'),
+                    'enddate' => new external_value(PARAM_INT, 'End date timestamp'),
+                    'visible' => new external_value(PARAM_BOOL, 'Is visible'),
+                ])
+            ),
+            'total' => new external_value(PARAM_INT, 'Total number of courses'),
+        ]);
+    }
+
+    /**
+     * Describes the parameters for get_clone_status function.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_clone_status_parameters() {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'Course ID to check'),
+        ]);
+    }
+
+    /**
+     * Get clone status and information of a course.
+     *
+     * @param int $courseid Course ID
+     * @return array Course information
+     */
+    public static function get_clone_status($courseid) {
+        global $DB;
+
+        // Validate parameters.
+        $params = self::validate_parameters(self::get_clone_status_parameters(), [
+            'courseid' => $courseid,
+        ]);
+
+        // Validate context and capabilities.
+        $context = context_course::instance($params['courseid']);
+        self::validate_context($context);
+        require_capability('moodle/course:view', $context);
+
+        try {
+            $course = $DB->get_record('course', ['id' => $params['courseid']], '*', MUST_EXIST);
+
+            // Get course statistics
+            $enrolled_count = $DB->count_records_sql(
+                "SELECT COUNT(DISTINCT u.id) 
+                 FROM {user} u 
+                 JOIN {user_enrolments} ue ON u.id = ue.userid 
+                 JOIN {enrol} e ON ue.enrolid = e.id 
+                 WHERE e.courseid = ? AND u.deleted = 0",
+                [$params['courseid']]
+            );
+
+            $sections_count = $DB->count_records('course_sections', ['course' => $params['courseid']]);
+            $activities_count = $DB->count_records('course_modules', ['course' => $params['courseid']]);
+
+            return [
+                'id' => $course->id,
+                'fullname' => $course->fullname,
+                'shortname' => $course->shortname,
+                'category' => $course->category,
+                'startdate' => $course->startdate,
+                'enddate' => $course->enddate,
+                'visible' => $course->visible,
+                'format' => $course->format,
+                'enrolled_users' => $enrolled_count,
+                'sections_count' => $sections_count,
+                'activities_count' => $activities_count,
+                'can_clone' => true,
+                'status' => 'ready_for_clone',
+            ];
+
+        } catch (Exception $e) {
+            throw new moodle_exception('coursenotfound', 'local_courseclone');
+        }
+    }
+
+    /**
+     * Describes the return value for get_clone_status function.
+     *
+     * @return external_single_structure
+     */
+    public static function get_clone_status_returns() {
+        return new external_single_structure([
+            'id' => new external_value(PARAM_INT, 'Course ID'),
+            'fullname' => new external_value(PARAM_TEXT, 'Course full name'),
+            'shortname' => new external_value(PARAM_TEXT, 'Course short name'),
+            'category' => new external_value(PARAM_INT, 'Category ID'),
+            'startdate' => new external_value(PARAM_INT, 'Start date timestamp'),
+            'enddate' => new external_value(PARAM_INT, 'End date timestamp'),
+            'visible' => new external_value(PARAM_BOOL, 'Is visible'),
+            'format' => new external_value(PARAM_TEXT, 'Course format'),
+            'enrolled_users' => new external_value(PARAM_INT, 'Number of enrolled users'),
+            'sections_count' => new external_value(PARAM_INT, 'Number of sections'),
+            'activities_count' => new external_value(PARAM_INT, 'Number of activities'),
+            'can_clone' => new external_value(PARAM_BOOL, 'Can be cloned'),
+            'status' => new external_value(PARAM_TEXT, 'Clone status'),
+        ]);
+    }
 }

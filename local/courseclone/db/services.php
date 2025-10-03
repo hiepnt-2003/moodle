@@ -34,12 +34,32 @@ $functions = [
         'type'        => 'write',
         'capabilities' => 'moodle/course:create,moodle/backup:backupcourse,moodle/restore:restorecourse',
     ],
+    'local_courseclone_get_course_list' => [
+        'classname'   => 'local_courseclone_external',
+        'methodname'  => 'get_course_list',
+        'classpath'   => 'local/courseclone/externallib.php',
+        'description' => 'Get list of courses available for cloning',
+        'type'        => 'read',
+        'capabilities' => 'moodle/course:view',
+    ],
+    'local_courseclone_get_clone_status' => [
+        'classname'   => 'local_courseclone_external',
+        'methodname'  => 'get_clone_status',
+        'classpath'   => 'local/courseclone/externallib.php',
+        'description' => 'Get detailed information about a course for cloning',
+        'type'        => 'read',
+        'capabilities' => 'moodle/course:view',
+    ],
 ];
 
 // Define the services.
 $services = [
     'Course Clone Service' => [
-        'functions' => ['local_courseclone_clone_course'],
+        'functions' => [
+            'local_courseclone_clone_course',
+            'local_courseclone_get_course_list',
+            'local_courseclone_get_clone_status'
+        ],
         'restrictedusers' => 0,
         'enabled' => 1,
         'shortname' => 'courseclone_service',

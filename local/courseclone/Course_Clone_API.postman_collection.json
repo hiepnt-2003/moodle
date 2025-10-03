@@ -7,6 +7,45 @@
 	},
 	"item": [
 		{
+			"name": "Get Course List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{moodle_url}}/webservice/rest/server.php?wstoken={{webservice_token}}&wsfunction=local_courseclone_get_course_list&moodlewsrestformat=json&categoryid=0&visible=1",
+					"host": ["{{moodle_url}}"],
+					"path": ["webservice", "rest", "server.php"],
+					"query": [
+						{"key": "wstoken", "value": "{{webservice_token}}"},
+						{"key": "wsfunction", "value": "local_courseclone_get_course_list"},
+						{"key": "moodlewsrestformat", "value": "json"},
+						{"key": "categoryid", "value": "0", "description": "Category ID (0 = all)"},
+						{"key": "visible", "value": "1", "description": "Only visible courses"}
+					]
+				},
+				"description": "Get list of courses available for cloning"
+			}
+		},
+		{
+			"name": "Get Clone Status", 
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{moodle_url}}/webservice/rest/server.php?wstoken={{webservice_token}}&wsfunction=local_courseclone_get_clone_status&moodlewsrestformat=json&courseid=5",
+					"host": ["{{moodle_url}}"],
+					"path": ["webservice", "rest", "server.php"],
+					"query": [
+						{"key": "wstoken", "value": "{{webservice_token}}"},
+						{"key": "wsfunction", "value": "local_courseclone_get_clone_status"},
+						{"key": "moodlewsrestformat", "value": "json"},
+						{"key": "courseid", "value": "5", "description": "Course ID to check"}
+					]
+				},
+				"description": "Get detailed information about a course for cloning"
+			}
+		},
+		{
 			"name": "Clone Course",
 			"request": {
 				"method": "POST",
