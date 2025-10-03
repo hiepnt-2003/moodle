@@ -1,30 +1,29 @@
-# Course Clone Plugin - Simple RESTful API
+# Course Clone Plugin - RESTful API
 
-RESTful API plugin cho Moodle để clone/copy courses với Simple RESTful endpoint.
+Moodle plugin để clone/copy courses với RESTful API endpoint đơn giản.
 
-**✅ Tương thích Moodle 3.10+ - Không cần modify core files**
+## 🚀 Tính năng
 
-## 🚀 **Tính năng**
-
-- ✅ **Simple RESTful Endpoint** - không cần modify core Moodle
-- ✅ **Bearer Token Authentication** (`Authorization: Bearer {token}`)
-- ✅ **JSON Request/Response** format chuẩn REST API
-- ✅ **CORS Support** cho web applications
+- ✅ **RESTful API** với Bearer Token authentication
+- ✅ **JSON Request/Response** format chuẩn
 - ✅ **Course Cloning** với thông tin tùy chỉnh
 - ✅ **Course Discovery** - lấy danh sách courses
 - ✅ **Clone Status Check** - kiểm tra thông tin course
+- ✅ **Không cần modify core Moodle files**
 
-## 📡 **Simple RESTful Endpoint**
+## 📡 API Endpoint
 
 **URL**: `POST http://your-moodle-site.com/local/courseclone/simple_restful.php`
 
-### **Authentication**
+**Authentication**: 
 ```
-Authorization: Bearer 9b91abd4d930608720331f2558580f2c
+Authorization: Bearer your_token_here
 Content-Type: application/json
 ```
 
-### **1. Get Course List**
+## 🔧 API Functions
+
+### 1. Get Course List
 ```json
 {
   "wsfunction": "local_courseclone_get_course_list",
@@ -33,15 +32,15 @@ Content-Type: application/json
 }
 ```
 
-### **2. Get Clone Status**
+### 2. Get Clone Status
 ```json
 {
-  "wsfunction": "local_courseclone_get_clone_status", 
+  "wsfunction": "local_courseclone_get_clone_status",
   "courseid": 5
 }
 ```
 
-### **3. Clone Course**
+### 3. Clone Course
 ```json
 {
   "wsfunction": "local_courseclone_clone_course",
@@ -53,92 +52,43 @@ Content-Type: application/json
 }
 ```
 
-## ⚙️ **Installation & Setup**
+## ⚙️ Cài đặt
 
-### **1. Plugin Installation**
+### 1. Plugin Installation
 ```bash
 # Copy plugin to Moodle
 cp -r courseclone /path/to/moodle/local/
-
-# Upgrade database
-Visit: Site Administration > Notifications
 ```
 
-### **2. Web Service Configuration**
-```
-Site Administration > Server > Web services > Overview:
-✅ Enable web services
-✅ Enable REST protocol
+### 2. Moodle Configuration
+1. Visit **Site Administration > Notifications** để cài đặt plugin
+2. Vào **Site Administration > Server > Web services > Overview**:
+   - ✅ Enable web services
+   - ✅ Enable REST protocol
+3. Tạo external service và token trong **Manage tokens**
 
-External services > Add service:
-- Name: Course Clone RESTful Service
-- Functions: local_courseclone_*
-- Enabled: Yes
+## 🧪 Testing
 
-Manage tokens > Create token:
-- Service: Course Clone RESTful Service 
-- User: API User
-```
+Import Postman collection: `Simple_Course_Clone_API.postman_collection.json`
 
-### **3. RESTful Middleware Setup**
-
-Edit `webservice/rest/server.php`, add after includes:
-
-```php
-// RESTful Bearer Token Support
-if (file_exists($CFG->dirroot . '/local/courseclone/restful_api.php')) {
-    require_once($CFG->dirroot . '/local/courseclone/restful_api.php');
-    local_courseclone_handle_restful_request();
-}
-```
-
-## 🧪 **Testing**
-
-### **Postman Collection**
-Import `Course_Clone_API.postman_collection.json`:
-- Set `moodle_url` variable
-- Set `webservice_token` variable
-- Execute requests
-
-### **cURL Examples**
+### cURL Example
 ```bash
-# Get courses
-curl -X POST "http://localhost/moodle/webservice/rest/server.php" \
+curl -X POST "http://your-site.com/local/courseclone/simple_restful.php" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -d '{"wsfunction": "local_courseclone_get_course_list", "moodlewsrestformat": "json", "categoryid": 0, "visible": true}'
-
-# Clone course
-curl -X POST "http://localhost/moodle/webservice/rest/server.php" \
-  -H "Content-Type: application/json" \  
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -d '{"wsfunction": "local_courseclone_clone_course", "moodlewsrestformat": "json", "shortname_clone": "MATH101", "fullname": "Math Copy", "shortname": "MATH101_COPY", "startdate": 1704067200, "enddate": 1719792000}'
+  -H "Authorization: Bearer your_token" \
+  -d '{"wsfunction": "local_courseclone_get_course_list", "categoryid": 0}'
 ```
 
-## 🔒 **Security**
+## 📁 Files
 
-- **Bearer Token Authentication** - token trong header, không expose trong URL
-- **Token Validation** - verify token từ database  
-- **User Permissions** - check capabilities cho từng function
-- **CORS Protection** - configurable allowed origins
+- `simple_restful.php` - RESTful API endpoint
+- `externallib.php` - Moodle external functions
+- `version.php` - Plugin version info
+- `Simple_Course_Clone_API.postman_collection.json` - Postman test collection
 
-## 📚 **Documentation**
+## 🎯 Requirements
 
-- `RESTFUL_BEARER_SETUP.md` - Chi tiết setup middleware
-- `Course_Clone_API.postman_collection.json` - Postman test collection
-
-## 🛠️ **Requirements**
-
-- **Moodle 3.10+** (tested với 3.10)
-- **RESTful Protocol Plugin** (recommended - enhances API capabilities) ✅
+- **Moodle 3.8+**
 - Web services enabled
-- REST/RESTful protocol enabled
+- REST protocol enabled
 - User với quyền: `moodle/course:create`, `moodle/backup:backupcourse`, `moodle/restore:restorecourse`
-
-## 🆕 **Enhanced với RESTful Plugin**
-
-Nếu bạn đã cài RESTful Protocol Plugin (như trong screenshot), plugin này sẽ:
-- ✅ **Auto-detect** RESTful plugin và tối ưu hóa processing
-- ✅ **Better JSON handling** với enhanced parsing
-- ✅ **Improved error messages** với RESTful-specific responses
-- ✅ **Enhanced CORS support** cho web applications

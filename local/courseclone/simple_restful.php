@@ -1,29 +1,32 @@
 <?php
 /**
- * Simple RESTful Course Clone Server
- * Uses existing external functions - No complex dependencies
+ * Course Clone RESTful API Endpoint
+ * 
+ * @package    local_courseclone
+ * @author     Course Clone Team
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../config.php');
 require_once($CFG->dirroot . '/local/courseclone/externallib.php');
 
-// Set headers for RESTful API
+// Set RESTful API headers
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Handle CORS preflight
+// Handle CORS preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
 /**
- * Simple RESTful Handler
+ * Main RESTful API Handler
  */
 try {
-    // Get Bearer token
+    // Extract Bearer token from Authorization header
     $token = null;
     $headers = function_exists('getallheaders') ? getallheaders() : [];
     
@@ -34,52 +37,49 @@ try {
         }
     }
     
-    // Get request data
+    // Parse JSON request body
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
     
-    // If no Bearer token, try to get from body
+    // Fallback: try to get token from request body
     if (!$token && isset($data['wstoken'])) {
         $token = $data['wstoken'];
     }
     
     if (!$token) {
-        throw new Exception('No token provided');
+        throw new Exception('Authorization token required');
     }
     
-    // Authenticate token
+    // Validate token and authenticate user
     global $DB, $USER;
     $tokenrecord = $DB->get_record('external_tokens', array('token' => $token));
     
     if (!$tokenrecord) {
-        throw new Exception('Invalid token - token not found');
+        throw new Exception('Invalid token');
     }
     
     if ($tokenrecord->validuntil > 0 && $tokenrecord->validuntil < time()) {
         throw new Exception('Token expired');
     }
     
-    // Set user
+    // Load authenticated user
     $USER = $DB->get_record('user', array('id' => $tokenrecord->userid));
     if (!$USER) {
         throw new Exception('User not found');
     }
     
-    // Get function
+    // Get requested function
     $wsfunction = $data['wsfunction'] ?? null;
     if (!$wsfunction) {
-        throw new Exception('No function specified');
+        throw new Exception('Function name required');
     }
     
-    // Create external instance
-    $external = new local_courseclone_external();
-    
-    // Route to function
+    // Route to appropriate function
     switch ($wsfunction) {
         case 'local_courseclone_get_course_list':
             $categoryid = (int)($data['categoryid'] ?? 0);
             $visible = (bool)($data['visible'] ?? true);
-            $result = $external::get_course_list($categoryid, $visible);
+            $result = local_courseclone_external::get_course_list($categoryid, $visible);
             break;
             
         case 'local_courseclone_get_clone_status':
@@ -87,7 +87,7 @@ try {
             if (!$courseid) {
                 throw new Exception('Course ID required');
             }
-            $result = $external::get_clone_status($courseid);
+            $result = local_courseclone_external::get_clone_status($courseid);
             break;
             
         case 'local_courseclone_clone_course':
@@ -98,10 +98,10 @@ try {
             $enddate = (int)($data['enddate'] ?? 0);
             
             if (!$shortname_clone || !$fullname || !$shortname || !$startdate || !$enddate) {
-                throw new Exception('Missing required parameters');
+                throw new Exception('Missing required parameters: shortname_clone, fullname, shortname, startdate, enddate');
             }
             
-            $result = $external::clone_course($shortname_clone, $fullname, $shortname, $startdate, $enddate);
+            $result = local_courseclone_external::clone_course($shortname_clone, $fullname, $shortname, $startdate, $enddate);
             break;
             
         default:
