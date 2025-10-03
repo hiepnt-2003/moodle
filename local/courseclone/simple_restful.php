@@ -7,7 +7,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../config.php');
+// Prevent direct access
+define('NO_OUTPUT_BUFFERING', true);
+
+require_once('../../config.php');
 require_once($CFG->dirroot . '/local/courseclone/externallib.php');
 
 // Set RESTful API headers
@@ -52,6 +55,12 @@ try {
     
     // Validate token and authenticate user
     global $DB, $USER;
+    
+    // Ensure we have database connection
+    if (!$DB) {
+        throw new Exception('Database connection failed');
+    }
+    
     $tokenrecord = $DB->get_record('external_tokens', array('token' => $token));
     
     if (!$tokenrecord) {
@@ -62,11 +71,13 @@ try {
         throw new Exception('Token expired');
     }
     
-    // Load authenticated user
+    // Load authenticated user and set context
     $USER = $DB->get_record('user', array('id' => $tokenrecord->userid));
     if (!$USER) {
         throw new Exception('User not found');
     }
+    
+    // User is authenticated - proceed
     
     // Get requested function
     $wsfunction = $data['wsfunction'] ?? null;
