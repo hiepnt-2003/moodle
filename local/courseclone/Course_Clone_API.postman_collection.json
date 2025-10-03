@@ -46,59 +46,27 @@
 			}
 		},
 		{
-			"name": "Clone Course",
+			"name": "Clone Course (JSON Format)",
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/x-www-form-urlencoded"
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
 					}
 				],
 				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "wstoken",
-							"value": "{{webservice_token}}",
-							"description": "Webservice token"
-						},
-						{
-							"key": "wsfunction",
-							"value": "local_courseclone_clone_course",
-							"description": "Function name"
-						},
-						{
-							"key": "moodlewsrestformat",
-							"value": "json",
-							"description": "Response format"
-						},
-						{
-							"key": "shortname_clone",
-							"value": "MATH101",
-							"description": "Shortname của môn học nguồn"
-						},
-						{
-							"key": "fullname",
-							"value": "Toán học cơ bản - Lớp 2",
-							"description": "Tên đầy đủ cho môn học mới"
-						},
-						{
-							"key": "shortname",
-							"value": "MATH101_2",
-							"description": "Tên viết tắt cho môn học mới"
-						},
-						{
-							"key": "startdate",
-							"value": "1704067200",
-							"description": "Ngày bắt đầu timestamp (01/01/2024)"
-						},
-						{
-							"key": "enddate",
-							"value": "1719792000",
-							"description": "Ngày kết thúc timestamp (01/07/2024)"
+					"mode": "raw",
+					"raw": "{\n  \"wstoken\": \"{{webservice_token}}\",\n  \"wsfunction\": \"local_courseclone_clone_course\",\n  \"moodlewsrestformat\": \"json\",\n  \"shortname_clone\": \"MATH101\",\n  \"fullname\": \"Toán học cơ bản - Lớp 2\",\n  \"shortname\": \"MATH101_2\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
 				"url": {
 					"raw": "{{moodle_url}}/webservice/rest/server.php",
@@ -241,6 +209,149 @@
 					"body": "{\n    \"status\": \"error\",\n    \"id\": 0,\n    \"message\": \"Không tìm thấy môn học với shortname: NOTEXIST\"\n}"
 				}
 			]
+		},
+		{
+			"name": "Clone Course (FormData - Traditional)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "wstoken",
+							"value": "{{webservice_token}}",
+							"description": "Webservice token"
+						},
+						{
+							"key": "wsfunction",
+							"value": "local_courseclone_clone_course",
+							"description": "Function name"
+						},
+						{
+							"key": "moodlewsrestformat",
+							"value": "json",
+							"description": "Response format"
+						},
+						{
+							"key": "shortname_clone",
+							"value": "MATH101",
+							"description": "Shortname của môn học nguồn"
+						},
+						{
+							"key": "fullname",
+							"value": "Toán học cơ bản - Lớp 2",
+							"description": "Tên đầy đủ cho môn học mới"
+						},
+						{
+							"key": "shortname",
+							"value": "MATH101_2",
+							"description": "Tên viết tắt cho môn học mới"
+						},
+						{
+							"key": "startdate",
+							"value": "1704067200",
+							"description": "Ngày bắt đầu timestamp (01/01/2024)"
+						},
+						{
+							"key": "enddate",
+							"value": "1719792000",
+							"description": "Ngày kết thúc timestamp (01/07/2024)"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{moodle_url}}/webservice/rest/server.php",
+					"host": [
+						"{{moodle_url}}"
+					],
+					"path": [
+						"webservice",
+						"rest",
+						"server.php"
+					]
+				},
+				"description": "Clone course với FormData format (traditional)"
+			}
+		},
+		{
+			"name": "Get Course List (POST with JSON)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"wstoken\": \"{{webservice_token}}\",\n  \"wsfunction\": \"local_courseclone_get_course_list\",\n  \"moodlewsrestformat\": \"json\",\n  \"categoryid\": 0,\n  \"visible\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{moodle_url}}/webservice/rest/server.php",
+					"host": [
+						"{{moodle_url}}"
+					],
+					"path": [
+						"webservice",
+						"rest",
+						"server.php"
+					]
+				},
+				"description": "Get list of courses với JSON format"
+			}
+		},
+		{
+			"name": "Get Clone Status (POST with JSON)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"wstoken\": \"{{webservice_token}}\",\n  \"wsfunction\": \"local_courseclone_get_clone_status\",\n  \"moodlewsrestformat\": \"json\",\n  \"courseid\": 5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{moodle_url}}/webservice/rest/server.php",
+					"host": [
+						"{{moodle_url}}"
+					],
+					"path": [
+						"webservice",
+						"rest",
+						"server.php"
+					]
+				},
+				"description": "Get clone status với JSON format"
+			}
 		},
 		{
 			"name": "Get Token (Optional)",
