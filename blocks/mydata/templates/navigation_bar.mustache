@@ -1,0 +1,33 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    @template block_mydata/navigation_bar
+    @copyright 2025 Your Name
+    @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Navigation bar template for block_mydata
+}}
+<div class="block_mydata block_mydata_navigation mb-4">
+    <div class="card">
+        <div class="card-body text-center">
+            <h4 class="card-title">
+                <i class="fa fa-chart-bar"></i> 
+                {{#str}}advanced_reports, block_mydata{{/str}}
+            </h4>
+            <p class="card-text text-muted">
+                {{#str}}navigation_description, block_mydata{{/str}}
+            </p>
+            
+            <div class="btn-group">
+                <a href="{{reporturl}}" class="btn btn-primary">
+                    <i class="fa fa-file-alt"></i> 
+                    {{#str}}view_report, block_mydata{{/str}}
+                </a>
+                <a href="{{viewurl}}" class="btn btn-secondary">
+                    <i class="fa fa-list"></i> 
+                    {{#str}}view_all, block_mydata{{/str}}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

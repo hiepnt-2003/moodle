@@ -1,0 +1,309 @@
+/**
+ * Styles for block_mydata
+ *
+ * @package    block_mydata
+ * @copyright  2025 Your Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* Block MyData Main Styles */
+.block_mydata {
+    padding: 15px;
+}
+
+/* Course Selection Styles */
+.block_mydata_course_selection {
+    margin: 20px 0;
+}
+
+.block_mydata_course_selection .alert {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.block_mydata_course_selection .alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.block_mydata_course_selection .alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+    color: #856404;
+}
+
+.block_mydata_course_selection .alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+/* Results Section */
+.results-section {
+    margin-top: 30px;
+}
+
+.course-result {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #0066cc;
+}
+
+.course-result h4 {
+    color: #0066cc;
+    margin-bottom: 20px;
+}
+
+/* Tables Styles */
+.block_mydata table.generaltable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.block_mydata table.generaltable th {
+    background-color: #343a40;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+    font-weight: bold;
+}
+
+.block_mydata table.generaltable td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.block_mydata table.generaltable tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.block_mydata table.generaltable tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Courses List Styles */
+.block_mydata_courses_list {
+    margin: 20px 0;
+}
+
+.block_mydata_courses_list h3 {
+    color: #495057;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #0066cc;
+}
+
+/* Users List Styles */
+.block_mydata_users_list {
+    margin: 20px 0;
+}
+
+.block_mydata_users_list h3 {
+    color: #495057;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #28a745;
+}
+
+/* Navigation Styles */
+.block_mydata_navigation {
+    margin: 30px 0;
+}
+
+.block_mydata_navigation .card {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 12px;
+}
+
+.block_mydata_navigation .card-body {
+    padding: 30px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+}
+
+.block_mydata_navigation .card-title {
+    color: #0066cc;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.block_mydata_navigation .card-text {
+    font-size: 1rem;
+    margin-bottom: 25px;
+}
+
+/* Button Styles */
+.block_mydata .btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    margin: 5px;
+    transition: all 0.3s ease;
+}
+
+.block_mydata .btn-primary {
+    background-color: #0066cc;
+    border-color: #0066cc;
+    color: white;
+}
+
+.block_mydata .btn-primary:hover {
+    background-color: #0052a3;
+    border-color: #0052a3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,102,204,0.3);
+}
+
+.block_mydata .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.block_mydata .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(108,117,125,0.3);
+}
+
+.block_mydata .btn-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Badge Styles */
+.block_mydata .badge {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.block_mydata .badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.block_mydata .badge-primary {
+    background-color: #0066cc;
+    color: white;
+}
+
+.block_mydata .badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.block_mydata .badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.block_mydata .badge-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Links Styles */
+.block_mydata a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.block_mydata a:hover {
+    color: #0052a3;
+    text-decoration: underline;
+}
+
+/* Code Styles */
+.block_mydata code {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #e83e8c;
+}
+
+/* Icon Styles */
+.block_mydata .fa {
+    margin-right: 8px;
+}
+
+/* Text Utilities */
+.block_mydata .text-center {
+    text-align: center;
+}
+
+.block_mydata .text-muted {
+    color: #6c757d;
+}
+
+.block_mydata .font-weight-bold {
+    font-weight: bold;
+}
+
+/* Spacing Utilities */
+.block_mydata .mb-3 {
+    margin-bottom: 1rem;
+}
+
+.block_mydata .mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.block_mydata .mt-4 {
+    margin-top: 1.5rem;
+}
+
+.block_mydata .mt-20 {
+    margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .block_mydata table.generaltable {
+        font-size: 12px;
+    }
+    
+    .block_mydata .btn-group {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .course-result {
+        padding: 15px;
+    }
+    
+    .block_mydata_navigation .card-body {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .block_mydata table.generaltable th,
+    .block_mydata table.generaltable td {
+        padding: 8px;
+        font-size: 11px;
+    }
+    
+    .block_mydata .btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}

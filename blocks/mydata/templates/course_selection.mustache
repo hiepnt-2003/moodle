@@ -1,0 +1,55 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    @template block_mydata/course_selection
+    @copyright 2025 Your Name
+    @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Course selection template for block_mydata
+}}
+<div class="block_mydata block_mydata_course_selection">
+    <div class="alert alert-info mb-3">
+        <h5><i class="fa fa-info-circle"></i> {{#str}}description_form, block_mydata{{/str}}</h5>
+        <p>{{#str}}course_selection_help, block_mydata{{/str}}</p>
+    </div>
+    
+    {{> core/form }}
+    
+    {{#hasresults}}
+    <div class="results-section mt-4">
+        <h3><i class="fa fa-chart-bar"></i> {{#str}}selected_courses_report, block_mydata{{/str}}</h3>
+        
+        {{#courses}}
+        <div class="course-result mb-4">
+            <h4>
+                <i class="fa fa-graduation-cap"></i> 
+                {{coursename}}
+            </h4>
+            
+            {{#hasusers}}
+            <div class="table-responsive">
+                {{> block_mydata/users_table }}
+            </div>
+            <p class="font-weight-bold">
+                <i class="fa fa-users"></i> 
+                {{#str}}total_users, block_mydata{{/str}}: {{totalusers}}
+            </p>
+            {{/hasusers}}
+            
+            {{^hasusers}}
+            <div class="alert alert-warning">
+                <i class="fa fa-exclamation-triangle"></i>
+                {{#str}}no_users_in_course, block_mydata{{/str}}
+            </div>
+            {{/hasusers}}
+        </div>
+        {{/courses}}
+        
+        <div class="text-center mt-4">
+            <a href="{{reporturl}}" class="btn btn-primary">
+                <i class="fa fa-plus"></i> {{#str}}create_new_report, block_mydata{{/str}}
+            </a>
+        </div>
+    </div>
+    {{/hasresults}}
+</div>

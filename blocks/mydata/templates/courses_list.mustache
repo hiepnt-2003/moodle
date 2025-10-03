@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    @template block_mydata/courses_list
+    @copyright 2025 Your Name
+    @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Courses list template for block_mydata
+}}
+<div class="block_mydata block_mydata_courses_list">
+    <h3><i class="fa fa-graduation-cap"></i> {{#str}}courses_list, block_mydata{{/str}}</h3>
+    
+    {{#hascourses}}
+    <table class="generaltable">
+        <thead>
+            <tr>
+                <th><i class="fa fa-hashtag"></i> {{#str}}number, block_mydata{{/str}}</th>
+                <th><i class="fa fa-book"></i> {{#str}}coursename, block_mydata{{/str}}</th>
+                <th><i class="fa fa-tag"></i> {{#str}}shortname{{/str}}</th>
+                <th><i class="fa fa-calendar"></i> {{#str}}startdate{{/str}}</th>
+                <th><i class="fa fa-calendar-times"></i> {{#str}}enddate{{/str}}</th>
+                <th><i class="fa fa-folder"></i> {{#str}}category{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#courses}}
+            <tr>
+                <td class="text-center">{{stt}}</td>
+                <td>
+                    <a href="{{courseurl}}">
+                        <strong>{{fullname}}</strong>
+                    </a>
+                </td>
+                <td>
+                    <a href="{{courseurl}}">
+                        <code>{{shortname}}</code>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <small class="text-muted">{{startdate}}</small>
+                </td>
+                <td class="text-center">
+                    <small class="text-muted">{{enddate}}</small>
+                </td>
+                <td>
+                    <span class="badge badge-secondary">{{categoryname}}</span>
+                </td>
+            </tr>
+            {{/courses}}
+        </tbody>
+    </table>
+    {{/hascourses}}
+    
+    {{^hascourses}}
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> 
+        {{#str}}no_courses_found, block_mydata{{/str}}
+    </div>
+    {{/hascourses}}
+</div>

@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    @template block_mydata/users_table
+    @copyright 2025 Your Name
+    @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Users table template for block_mydata
+}}
+<div class="block_mydata">
+    <table class="generaltable">
+        <thead>
+            <tr>
+                <th><i class="fa fa-hashtag"></i> {{#str}}number, block_mydata{{/str}}</th>
+                <th><i class="fa fa-user"></i> {{#str}}username{{/str}}</th>
+                <th><i class="fa fa-id-card"></i> {{#str}}fullname{{/str}}</th>
+                <th><i class="fa fa-envelope"></i> {{#str}}email{{/str}}</th>
+                <th><i class="fa fa-user-tag"></i> {{#str}}role{{/str}}</th>
+                <th><i class="fa fa-clock"></i> {{#str}}lastaccess{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#users}}
+            <tr>
+                <td class="text-center">{{stt}}</td>
+                <td>
+                    <a href="{{userprofileurl}}">
+                        <strong>{{username}}</strong>
+                    </a>
+                </td>
+                <td>
+                    <a href="{{userprofileurl}}">
+                        {{fullname}}
+                    </a>
+                </td>
+                <td>
+                    <small class="text-muted">{{email}}</small>
+                </td>
+                <td>
+                    <span class="badge badge-{{roleclass}}">{{rolename}}</span>
+                </td>
+                <td>
+                    <small class="text-muted">{{lastaccess}}</small>
+                </td>
+            </tr>
+            {{/users}}
+            {{^users}}
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    <i class="fa fa-info-circle"></i> 
+                    {{#str}}no_users_found, block_mydata{{/str}}
+                </td>
+            </tr>
+            {{/users}}
+        </tbody>
+    </table>
+</div>

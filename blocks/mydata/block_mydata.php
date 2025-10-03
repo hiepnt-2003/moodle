@@ -10,36 +10,50 @@ class block_mydata extends block_base {
     }
 
     public function get_content() {
-        global $DB, $OUTPUT, $CFG;
+        global $DB, $OUTPUT, $CFG, $PAGE;
 
         if ($this->content !== null) {
             return $this->content;
         }
 
+        // Load CSS file
+        $PAGE->requires->css('/blocks/mydata/styles/styles.css');
+
         $this->content = new stdClass();
         
-        // Sử dụng hàm kiểm tra quyền từ lib.php
+        // Use permission check function from lib.php
         if (block_mydata_has_access_permission()) {
-            // Nếu có quyền admin hoặc manager, hiển thị các link
+            // If has admin or manager permission, show links
             $view_url = new moodle_url('/blocks/mydata/view.php');
             $report_url = new moodle_url('/blocks/mydata/report.php');
             
             $view_link = html_writer::link($view_url, get_string('view_all', 'block_mydata'), 
-                ['style' => 'color:#0066cc; text-decoration:underline; font-weight:bold; margin-right:10px;']);
+                ['class' => 'btn btn-primary']);
             $report_link = html_writer::link($report_url, get_string('course_report', 'block_mydata'), 
-                ['style' => 'color:#0066cc; text-decoration:underline; font-weight:bold;']);
+                ['class' => 'btn btn-secondary']);
             
             $content = html_writer::tag('div', 
-                html_writer::tag('p', '📊 ' . $view_link . ' | ' . $report_link, 
-                    ['style' => 'text-align:center; margin:10px 0;']) .
+                html_writer::tag('p', 
+                    '<i class="fa fa-chart-bar"></i> ' . get_string('block_navigation_title', 'block_mydata'), 
+                    ['class' => 'font-weight-bold text-center']
+                ) .
+                html_writer::tag('div', 
+                    $view_link . ' ' . $report_link, 
+                    ['class' => 'btn-group text-center']
+                ) .
                 html_writer::tag('p', get_string('description_navigation', 'block_mydata'), 
-                    ['style' => 'text-align:center; font-size:12px; color:#666; margin:0;']),
-                ['style' => 'padding:15px; border:2px solid #0066cc; border-radius:8px; background-color:#f8f9ff;']
+                    ['class' => 'text-center text-muted mt-20']),
+                ['class' => 'block_mydata']
             );
         } else {
-            // Nếu không có quyền, hiển thị thông báo
-            $content = html_writer::tag('p', '🔒 ' . get_string('no_permission', 'block_mydata'), 
-                ['style' => 'text-align:center; padding:15px; font-size:14px; line-height:1.5; color:#d9534f; background-color:#f2dede; border:1px solid #ebccd1; border-radius:4px;']);
+            // If no permission, show message
+            $content = html_writer::tag('div', 
+                html_writer::tag('p', 
+                    '<i class="fa fa-lock"></i> ' . get_string('no_permission', 'block_mydata'), 
+                    ['class' => 'text-center']
+                ), 
+                ['class' => 'block_mydata alert alert-warning']
+            );
         }
 
         $this->content->text = $content;
