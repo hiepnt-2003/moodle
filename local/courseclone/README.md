@@ -1,25 +1,26 @@
-# Course Clone RESTful API Plugin
+# Course Clone Plugin - Simple RESTful API
 
-RESTful API plugin cho Moodle để clone/copy courses với Bearer Token authentication.
+RESTful API plugin cho Moodle để clone/copy courses với Simple RESTful endpoint.
 
-**✅ Compatible với Moodle 3.10 + RESTful Protocol Plugin** (đã được test và confirm)
+**✅ Tương thích Moodle 3.10+ - Không cần modify core files**
 
 ## 🚀 **Tính năng**
 
-- ✅ **RESTful API** với Bearer Token authentication (`Authorization: Bearer {token}`)
+- ✅ **Simple RESTful Endpoint** - không cần modify core Moodle
+- ✅ **Bearer Token Authentication** (`Authorization: Bearer {token}`)
 - ✅ **JSON Request/Response** format chuẩn REST API
 - ✅ **CORS Support** cho web applications
 - ✅ **Course Cloning** với thông tin tùy chỉnh
 - ✅ **Course Discovery** - lấy danh sách courses
 - ✅ **Clone Status Check** - kiểm tra thông tin course
 
-## 📡 **API Endpoints**
+## 📡 **Simple RESTful Endpoint**
 
-Base URL: `POST {{moodle_url}}/webservice/rest/server.php`
+**URL**: `POST http://your-moodle-site.com/local/courseclone/simple_restful.php`
 
 ### **Authentication**
 ```
-Authorization: Bearer {your_token}
+Authorization: Bearer 9b91abd4d930608720331f2558580f2c
 Content-Type: application/json
 ```
 
@@ -27,7 +28,6 @@ Content-Type: application/json
 ```json
 {
   "wsfunction": "local_courseclone_get_course_list",
-  "moodlewsrestformat": "json",
   "categoryid": 0,
   "visible": true
 }
@@ -37,7 +37,6 @@ Content-Type: application/json
 ```json
 {
   "wsfunction": "local_courseclone_get_clone_status", 
-  "moodlewsrestformat": "json",
   "courseid": 5
 }
 ```
@@ -46,7 +45,6 @@ Content-Type: application/json
 ```json
 {
   "wsfunction": "local_courseclone_clone_course",
-  "moodlewsrestformat": "json",
   "shortname_clone": "MATH101",
   "fullname": "Mathematics 101 - Copy",
   "shortname": "MATH101_COPY",
