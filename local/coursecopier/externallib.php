@@ -171,29 +171,98 @@ class local_coursecopier_external extends external_api {
      * @return array Result array
      */
     private static function perform_course_copy($source_courseid, $target_courseid) {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
         
         try {
+            // Validate courses exist
+            $source_course = $DB->get_record('course', ['id' => $source_courseid]);
+            $target_course = $DB->get_record('course', ['id' => $target_courseid]);
+            
+            if (!$source_course || !$target_course) {
+                return [
+                    'success' => false,
+                    'message' => 'Course không tồn tại'
+                ];
+            }
+
             // Step 1: Backup source course
             $bc = new backup_controller(backup::TYPE_1COURSE, $source_courseid, backup::FORMAT_MOODLE,
                 backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id);
+            
+            // Check if backup controller was created successfully
+            if (!$bc) {
+                return [
+                    'success' => false,
+                    'message' => 'Không thể tạo backup controller'
+                ];
+            }
+            
+            $plan = $bc->get_plan();
+            if (!$plan) {
+                $bc->destroy();
+                return [
+                    'success' => false,
+                    'message' => 'Không thể lấy backup plan'
+                ];
+            }
                 
-            // Configure backup settings
-            $bc->get_plan()->get_setting('anonymize')->set_value(false);
-            $bc->get_plan()->get_setting('users')->set_value(false); // Don't copy users
-            $bc->get_plan()->get_setting('role_assignments')->set_value(false);
+            // Configure backup settings safely
+            $anonymize_setting = $plan->get_setting('anonymize');
+            if ($anonymize_setting) {
+                $anonymize_setting->set_value(false);
+            }
+            
+            $users_setting = $plan->get_setting('users');
+            if ($users_setting) {
+                $users_setting->set_value(false); // Don't copy users
+            }
+            
+            $roles_setting = $plan->get_setting('role_assignments');
+            if ($roles_setting) {
+                $roles_setting->set_value(false);
+            }
             
             $bc->execute_plan();
             $backup_id = $bc->get_backupid();
             $bc->destroy();
 
+            if (!$backup_id) {
+                return [
+                    'success' => false,
+                    'message' => 'Backup thất bại: không có backup ID'
+                ];
+            }
+
             // Step 2: Restore to target course
             $rc = new restore_controller($backup_id, $target_courseid,
                 backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id, backup::TARGET_EXISTING_DELETING);
+            
+            if (!$rc) {
+                return [
+                    'success' => false,
+                    'message' => 'Không thể tạo restore controller'
+                ];
+            }
+            
+            $restore_plan = $rc->get_plan();
+            if (!$restore_plan) {
+                $rc->destroy();
+                return [
+                    'success' => false,
+                    'message' => 'Không thể lấy restore plan'
+                ];
+            }
                 
-            // Configure restore settings
-            $rc->get_plan()->get_setting('users')->set_value(false);
-            $rc->get_plan()->get_setting('role_assignments')->set_value(false);
+            // Configure restore settings safely
+            $users_restore_setting = $restore_plan->get_setting('users');
+            if ($users_restore_setting) {
+                $users_restore_setting->set_value(false);
+            }
+            
+            $roles_restore_setting = $restore_plan->get_setting('role_assignments');
+            if ($roles_restore_setting) {
+                $roles_restore_setting->set_value(false);
+            }
             
             if (!$rc->execute_precheck()) {
                 $rc->destroy();

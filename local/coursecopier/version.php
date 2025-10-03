@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025100300;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2025100301;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2020110900;        // Moodle 3.10.
 $plugin->component = 'local_coursecopier'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_STABLE;

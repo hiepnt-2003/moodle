@@ -73,7 +73,7 @@ function local_testeventapi_extend_settings_navigation(settings_navigation $navi
     $localplugins = $navigation->get('localplugins');
     if (!$localplugins) {
         $localplugins = $navigation->add(
-            get_string('localplugins', 'admin'),
+            'Local plugins',
             null,
             navigation_node::TYPE_CATEGORY,
             null,
