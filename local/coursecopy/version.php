@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_webservice_coursecopy';
+$plugin->component = 'local_coursecopy';
 $plugin->version = 2025100400;
 $plugin->requires = 2020061500; // Moodle 3.9.0.
 $plugin->maturity = MATURITY_STABLE;

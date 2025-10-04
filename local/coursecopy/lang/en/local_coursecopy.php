@@ -15,23 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin capabilities.
+ * English language strings for local_coursecopy plugin.
  *
- * @package    local_webservice_coursecopy
+ * @package    local_coursecopy
  * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = [
-    'local/webservice_coursecopy:use' => [
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => [
-            'manager' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
-        ],
-    ],
-];
+$string['pluginname'] = 'Course Copy RESTful API';
+$string['coursecopy:use'] = 'Use Course Copy API';
+$string['privacy:metadata'] = 'The Course Copy plugin does not store any personal data.';

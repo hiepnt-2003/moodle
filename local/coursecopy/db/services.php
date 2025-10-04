@@ -17,7 +17,7 @@
 /**
  * Web service definitions for course copy using RESTful protocol.
  *
- * @package    local_webservice_coursecopy
+ * @package    local_coursecopy
  * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,10 +25,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
-    'local_webservice_coursecopy_copy_course' => [
-        'classname' => 'local_webservice_coursecopy_external',
+    'local_coursecopy_copy_course' => [
+        'classname' => 'local_coursecopy_external',
         'methodname' => 'copy_course',
-        'classpath' => 'local/webservice/coursecopy/externallib.php',
+        'classpath' => 'local/coursecopy/externallib.php',
         'description' => 'Copy a course with new parameters using RESTful protocol',
         'type' => 'write',
         'ajax' => true,
@@ -38,7 +38,7 @@ $functions = [
 
 $services = [
     'Course Copy RESTful Service' => [
-        'functions' => ['local_webservice_coursecopy_copy_course'],
+        'functions' => ['local_coursecopy_copy_course'],
         'restrictedusers' => 0,
         'enabled' => 1,
         'shortname' => 'coursecopy_restful',
