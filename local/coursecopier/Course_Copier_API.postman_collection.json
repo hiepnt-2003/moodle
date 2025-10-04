@@ -1,135 +1,13 @@
 {
 	"info": {
 		"_postman_id": "course-copier-api",
-		"name": "Course Copier API",
-		"description": "API collection for Moodle Course Copier plugin",
+		"name": "Course Copier API - JSON Clone Course",
+		"description": "API collection for Moodle Course Copier plugin - Clone course với JSON body và token",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Get Available Courses",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Response has required fields\", function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson).to.have.property('courses');",
-							"    pm.expect(responseJson).to.have.property('total');",
-							"    pm.expect(responseJson).to.have.property('status');",
-							"});",
-							"",
-							"pm.test(\"Status is success\", function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.status).to.equal('success');",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer {{ws_token}}",
-						"description": "Web service token"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"wstoken\": \"{{ws_token}}\",\n  \"wsfunction\": \"local_coursecopier_get_available_courses\",\n  \"moodlewsrestformat\": \"json\",\n  \"categoryid\": 0\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{moodle_url}}/local/coursecopier/api.php",
-					"host": [
-						"{{moodle_url}}"
-					],
-					"path": [
-						"local",
-						"coursecopier",
-						"api.php"
-					]
-				},
-				"description": "Lấy danh sách các môn học có thể copy"
-			},
-			"response": [
-				{
-					"name": "Success Response",
-					"originalRequest": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "wstoken",
-									"value": "your_token_here"
-								},
-								{
-									"key": "wsfunction",
-									"value": "local_coursecopier_get_available_courses"
-								},
-								{
-									"key": "moodlewsrestformat",
-									"value": "json"
-								},
-								{
-									"key": "categoryid",
-									"value": "0"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://yourmoodle.com/webservice/rest/server.php",
-							"protocol": "https",
-							"host": [
-								"yourmoodle",
-								"com"
-							],
-							"path": [
-								"webservice",
-								"rest",
-								"server.php"
-							]
-						}
-					},
-					"status": "OK",
-					"code": 200,
-					"_postman_previewlanguage": "json",
-					"header": [
-						{
-							"key": "Content-Type",
-							"value": "application/json"
-						}
-					],
-					"cookie": [],
-					"body": "{\n  \"courses\": [\n    {\n      \"id\": 2,\n      \"fullname\": \"Sample Course\",\n      \"shortname\": \"SAMPLE123\",\n      \"category\": 1,\n      \"startdate\": 1609459200,\n      \"enddate\": 1617235200,\n      \"visible\": true\n    }\n  ],\n  \"total\": 1,\n  \"status\": \"success\",\n  \"message\": \"Lấy danh sách môn học thành công\"\n}"
-				}
-			]
-		},
-		{
-			"name": "Copy Course",
+			"name": "Clone Course (Webservice chính)",
 			"event": [
 				{
 					"listen": "test",
@@ -146,13 +24,14 @@
 							"    pm.expect(responseJson).to.have.property('message');",
 							"});",
 							"",
-							"pm.test(\"Check copy result\", function () {",
+							"pm.test(\"Check clone result\", function () {",
 							"    const responseJson = pm.response.json();",
 							"    if (responseJson.status === 'success') {",
 							"        pm.expect(responseJson.id).to.be.above(0);",
 							"        console.log('New course ID:', responseJson.id);",
+							"        console.log('Success message:', responseJson.message);",
 							"    } else {",
-							"        console.log('Copy failed:', responseJson.message);",
+							"        console.log('Clone failed:', responseJson.message);",
 							"    }",
 							"});"
 						],
@@ -175,7 +54,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"wstoken\": \"{{ws_token}}\",\n  \"wsfunction\": \"local_coursecopier_copy_course\",\n  \"moodlewsrestformat\": \"json\",\n  \"shortname_clone\": \"ORIGINAL123\",\n  \"fullname\": \"New Course Name 2025\",\n  \"shortname\": \"NEWCOURSE2025\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
+					"raw": "{\n  \"wstoken\": \"{{ws_token}}\",\n  \"wsfunction\": \"local_coursecopier_clone_course\",\n  \"shortname_clone\": \"COURSE123\",\n  \"fullname\": \"Khóa học Clone 2025\",\n  \"shortname\": \"CLONE2025\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -193,7 +72,7 @@
 						"api.php"
 					]
 				},
-				"description": "Copy một môn học với thông tin mới"
+				"description": "Clone/copy một khóa học với thông tin mới theo yêu cầu:\n- Đầu vào: shortname_clone, fullname, shortname, startdate, enddate\n- Đầu ra: status, id, message\n- Sử dụng JSON body và token authentication"
 			},
 			"response": [
 				{
@@ -203,57 +82,33 @@
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/x-www-form-urlencoded"
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer your_token_here"
 							}
 						],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "wstoken",
-									"value": "your_token_here"
-								},
-								{
-									"key": "wsfunction",
-									"value": "local_coursecopier_copy_course"
-								},
-								{
-									"key": "moodlewsrestformat",
-									"value": "json"
-								},
-								{
-									"key": "shortname_clone",
-									"value": "ORIGINAL123"
-								},
-								{
-									"key": "fullname",
-									"value": "New Course Name 2025"
-								},
-								{
-									"key": "shortname",
-									"value": "NEWCOURSE2025"
-								},
-								{
-									"key": "startdate",
-									"value": "1704067200"
-								},
-								{
-									"key": "enddate",
-									"value": "1719792000"
+							"mode": "raw",
+							"raw": "{\n  \"wstoken\": \"your_token_here\",\n  \"wsfunction\": \"local_coursecopier_clone_course\",\n  \"shortname_clone\": \"COURSE123\",\n  \"fullname\": \"Khóa học Clone 2025\",\n  \"shortname\": \"CLONE2025\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "https://yourmoodle.com/webservice/rest/server.php",
+							"raw": "https://yourmoodle.com/local/coursecopier/api.php",
 							"protocol": "https",
 							"host": [
 								"yourmoodle",
 								"com"
 							],
 							"path": [
-								"webservice",
-								"rest",
-								"server.php"
+								"local",
+								"coursecopier",
+								"api.php"
 							]
 						}
 					},
@@ -267,66 +122,42 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n  \"status\": \"success\",\n  \"id\": 15,\n  \"message\": \"Copy môn học thành công! Đã sao chép toàn bộ nội dung từ môn học gốc.\"\n}"
+					"body": "{\n  \"status\": \"success\",\n  \"id\": 25,\n  \"message\": \"Copy môn học thành công! Đã sao chép toàn bộ nội dung từ môn học gốc.\"\n}"
 				},
 				{
-					"name": "Error Response - Course Not Found",
+					"name": "Error - Course Not Found",
 					"originalRequest": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/x-www-form-urlencoded"
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer your_token_here"
 							}
 						],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "wstoken",
-									"value": "your_token_here"
-								},
-								{
-									"key": "wsfunction",
-									"value": "local_coursecopier_copy_course"
-								},
-								{
-									"key": "moodlewsrestformat",
-									"value": "json"
-								},
-								{
-									"key": "shortname_clone",
-									"value": "NOTEXIST"
-								},
-								{
-									"key": "fullname",
-									"value": "New Course Name 2025"
-								},
-								{
-									"key": "shortname",
-									"value": "NEWCOURSE2025"
-								},
-								{
-									"key": "startdate",
-									"value": "1704067200"
-								},
-								{
-									"key": "enddate",
-									"value": "1719792000"
+							"mode": "raw",
+							"raw": "{\n  \"wstoken\": \"your_token_here\",\n  \"wsfunction\": \"local_coursecopier_clone_course\",\n  \"shortname_clone\": \"NOTEXIST\",\n  \"fullname\": \"Test Course\",\n  \"shortname\": \"TEST2025\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "https://yourmoodle.com/webservice/rest/server.php",
+							"raw": "https://yourmoodle.com/local/coursecopier/api.php",
 							"protocol": "https",
 							"host": [
 								"yourmoodle",
 								"com"
 							],
 							"path": [
-								"webservice",
-								"rest",
-								"server.php"
+								"local",
+								"coursecopier",
+								"api.php"
 							]
 						}
 					},
@@ -341,65 +172,107 @@
 					],
 					"cookie": [],
 					"body": "{\n  \"status\": \"error\",\n  \"id\": 0,\n  \"message\": \"Không tìm thấy môn học với shortname: NOTEXIST\"\n}"
-				},
+				}
+			]
+		},
+		{
+			"name": "Get Available Courses",
+			"event": [
 				{
-					"name": "Error Response - Shortname Exists",
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has required fields\", function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson).to.have.property('courses');",
+							"    pm.expect(responseJson).to.have.property('total');",
+							"    pm.expect(responseJson).to.have.property('status');",
+							"});",
+							"",
+							"pm.test(\"Status is success\", function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.status).to.equal('success');",
+							"    console.log('Total courses found:', responseJson.total);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{ws_token}}",
+						"description": "Web service token"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"wstoken\": \"{{ws_token}}\",\n  \"wsfunction\": \"local_coursecopier_get_available_courses\",\n  \"categoryid\": 0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{moodle_url}}/local/coursecopier/api.php",
+					"host": [
+						"{{moodle_url}}"
+					],
+					"path": [
+						"local",
+						"coursecopier",
+						"api.php"
+					]
+				},
+				"description": "Lấy danh sách các khóa học có thể clone"
+			},
+			"response": [
+				{
+					"name": "Success Response",
 					"originalRequest": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/x-www-form-urlencoded"
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer your_token_here"
 							}
 						],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "wstoken",
-									"value": "your_token_here"
-								},
-								{
-									"key": "wsfunction",
-									"value": "local_coursecopier_copy_course"
-								},
-								{
-									"key": "moodlewsrestformat",
-									"value": "json"
-								},
-								{
-									"key": "shortname_clone",
-									"value": "ORIGINAL123"
-								},
-								{
-									"key": "fullname",
-									"value": "New Course Name 2025"
-								},
-								{
-									"key": "shortname",
-									"value": "EXISTING_COURSE"
-								},
-								{
-									"key": "startdate",
-									"value": "1704067200"
-								},
-								{
-									"key": "enddate",
-									"value": "1719792000"
+							"mode": "raw",
+							"raw": "{\n  \"wstoken\": \"your_token_here\",\n  \"wsfunction\": \"local_coursecopier_get_available_courses\",\n  \"categoryid\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "https://yourmoodle.com/webservice/rest/server.php",
+							"raw": "https://yourmoodle.com/local/coursecopier/api.php",
 							"protocol": "https",
 							"host": [
 								"yourmoodle",
 								"com"
 							],
 							"path": [
-								"webservice",
-								"rest",
-								"server.php"
+								"local",
+								"coursecopier",
+								"api.php"
 							]
 						}
 					},
@@ -413,7 +286,7 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n  \"status\": \"error\",\n  \"id\": 0,\n  \"message\": \"Shortname đã tồn tại: EXISTING_COURSE\"\n}"
+					"body": "{\n  \"courses\": [\n    {\n      \"id\": 2,\n      \"fullname\": \"Sample Course\",\n      \"shortname\": \"COURSE123\",\n      \"category\": 1,\n      \"startdate\": 1609459200,\n      \"enddate\": 1617235200,\n      \"visible\": true\n    }\n  ],\n  \"total\": 1,\n  \"status\": \"success\",\n  \"message\": \"Lấy danh sách môn học thành công\"\n}"
 				}
 			]
 		},
@@ -453,7 +326,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"wstoken\": \"{{ws_token}}\",\n  \"wsfunction\": \"local_coursecopier_copy_course\",\n  \"moodlewsrestformat\": \"json\",\n  \"shortname_clone\": \"ORIGINAL123\",\n  \"fullname\": \"Test Invalid Dates Course\",\n  \"shortname\": \"TESTINVALID\",\n  \"startdate\": 1719792000,\n  \"enddate\": 1704067200\n}",
+					"raw": "{\n  \"wstoken\": \"{{ws_token}}\",\n  \"wsfunction\": \"local_coursecopier_clone_course\",\n  \"shortname_clone\": \"COURSE123\",\n  \"fullname\": \"Test Invalid Dates\",\n  \"shortname\": \"TESTINVALID\",\n  \"startdate\": 1719792000,\n  \"enddate\": 1704067200\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -485,9 +358,11 @@
 					"// Pre-request script để kiểm tra environment variables",
 					"if (!pm.environment.get('moodle_url')) {",
 					"    console.log('Warning: moodle_url environment variable not set');",
+					"    console.log('Please set moodle_url in your environment (e.g., https://yourmoodle.com)');",
 					"}",
 					"if (!pm.environment.get('ws_token')) {",
 					"    console.log('Warning: ws_token environment variable not set');",
+					"    console.log('Please create a web service token in Moodle admin and set it in environment');",
 					"}"
 				]
 			}
@@ -513,12 +388,12 @@
 		{
 			"key": "moodle_url",
 			"value": "https://yourmoodle.com",
-			"description": "URL của Moodle site"
+			"description": "URL của Moodle site (không có trailing slash)"
 		},
 		{
 			"key": "ws_token",
 			"value": "your_webservice_token_here",
-			"description": "Web service token"
+			"description": "Web service token (tạo trong Site Administration → Server → Web Services → Manage tokens)"
 		}
 	]
 }

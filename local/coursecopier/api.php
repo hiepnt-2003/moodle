@@ -15,13 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * RESTful JSON API endpoint for Course Copier plugin.
+ * JSON API endpoint for Course Copier plugin.
  * 
- * This file provides a JSON-friendly REST API wrapper around Moodle web services.
- * Usage: POST /local/coursecopier/api.php with JSON body
- *
  * @package    local_coursecopier
- * @copyright  2025 Your Name
+ * @copyright  2025 Course Copier
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,19 +26,19 @@ require_once('../../config.php');
 require_once($CFG->libdir . '/externallib.php');
 require_once('externallib.php');
 
-// Set headers for JSON API
+// Set JSON headers
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Handle CORS preflight request
+// Handle CORS preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Only allow POST method
+// Only allow POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode([
@@ -75,10 +72,10 @@ function send_success($data) {
 }
 
 /**
- * Extract token from Authorization header or JSON body
+ * Get token from Authorization header or JSON body
  */
 function get_token($json_data) {
-    // Try Authorization header first
+    // Check Authorization header
     $headers = getallheaders();
     if (isset($headers['Authorization'])) {
         $auth_header = $headers['Authorization'];
@@ -87,7 +84,7 @@ function get_token($json_data) {
         }
     }
     
-    // Fall back to token in JSON body
+    // Check JSON body
     if (isset($json_data['wstoken'])) {
         return $json_data['wstoken'];
     }
@@ -96,7 +93,7 @@ function get_token($json_data) {
 }
 
 /**
- * Validate token and get user
+ * Validate token and authenticate user
  */
 function validate_token($token) {
     global $DB, $USER;
@@ -111,20 +108,18 @@ function validate_token($token) {
         send_error('Invalid token', 401);
     }
     
-    // Check if token is expired
+    // Check expiry
     if ($tokenrecord->validuntil && $tokenrecord->validuntil < time()) {
         send_error('Token expired', 401);
     }
     
-    // Get user and set session
+    // Get and login user
     $user = $DB->get_record('user', ['id' => $tokenrecord->userid]);
     if (!$user) {
         send_error('User not found', 401);
     }
     
-    // Set user session
     complete_user_login($user);
-    
     return $user;
 }
 
@@ -140,18 +135,19 @@ try {
         send_error('Invalid JSON: ' . json_last_error_msg());
     }
     
-    // Get and validate token
+    // Authenticate
     $token = get_token($json_data);
     $user = validate_token($token);
     
-    // Get function name
+    // Get function
     $function_name = $json_data['wsfunction'] ?? '';
     if (empty($function_name)) {
         send_error('wsfunction parameter is required');
     }
     
-    // Route to appropriate function
+    // Route to function
     switch ($function_name) {
+        case 'local_coursecopier_clone_course':
         case 'local_coursecopier_copy_course':
             $result = local_coursecopier_external::copy_course(
                 $json_data['shortname_clone'] ?? '',
@@ -172,10 +168,8 @@ try {
             send_error('Unknown function: ' . $function_name);
     }
     
-    // Send success response
     send_success($result);
     
 } catch (Exception $e) {
-    // Handle any exceptions
     send_error('Server error: ' . $e->getMessage(), 500);
-}
+} 

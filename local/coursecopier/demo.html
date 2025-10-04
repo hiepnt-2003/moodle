@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Copier API Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            height: 200px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: #0073aa;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #005177;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .result-area {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .success {
+            border-left: 5px solid #28a745;
+            background-color: #d4edda;
+        }
+        
+        .error {
+            border-left: 5px solid #dc3545;
+            background-color: #f8d7da;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 Course Copier API Demo</h1>
+        <p>Test Moodle Course Copier Plugin với JSON API và Token Authentication</p>
+    </div>
+
+    <div class="info-box">
+        <h3>📋 API Information</h3>
+        <p><strong>Endpoint:</strong> <code>POST /local/coursecopier/api.php</code></p>
+        <p><strong>Content-Type:</strong> <code>application/json</code></p>
+        <p><strong>Authentication:</strong> Bearer Token hoặc token trong JSON body</p>
+        
+        <h4>Webservice Clone Course:</h4>
+        <ul>
+            <li><strong>Đầu vào:</strong> shortname_clone, fullname, shortname, startdate, enddate</li>
+            <li><strong>Đầu ra:</strong> status, id, message</li>
+        </ul>
+    </div>
+
+    <div class="demo-section">
+        <h3>⚙️ Configuration</h3>
+        <div class="grid">
+            <div class="input-group">
+                <label for="moodleUrl">Moodle URL:</label>
+                <input type="text" id="moodleUrl" placeholder="https://yourmoodle.com" value="https://yourmoodle.com">
+            </div>
+            <div class="input-group">
+                <label for="wsToken">Web Service Token:</label>
+                <input type="password" id="wsToken" placeholder="Enter your web service token">
+                <small style="color: #666;">Create token in: Site Administration → Server → Web Services → Manage tokens</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h3>🎯 Test Clone Course (Webservice chính)</h3>
+        <p>Test chức năng clone khóa học với đầu vào và đầu ra theo yêu cầu.</p>
+        
+        <div class="grid">
+            <div>
+                <div class="input-group">
+                    <label for="shortnameClone">Source Course Shortname:</label>
+                    <input type="text" id="shortnameClone" placeholder="COURSE123" value="COURSE123">
+                </div>
+                <div class="input-group">
+                    <label for="fullname">New Course Full Name:</label>
+                    <input type="text" id="fullname" placeholder="Khóa học Clone 2025" value="Khóa học Clone 2025">
+                </div>
+                <div class="input-group">
+                    <label for="shortname">New Course Shortname:</label>
+                    <input type="text" id="shortname" placeholder="CLONE2025" value="CLONE2025">
+                </div>
+                <div class="input-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="input-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate">
+                </div>
+            </div>
+            <div>
+                <label>Generated JSON Request:</label>
+                <textarea id="jsonRequest" readonly></textarea>
+            </div>
+        </div>
+        
+        <div>
+            <button onclick="generateJson()" class="btn">🔄 Generate JSON</button>
+            <button onclick="testCloneCourse()" class="btn btn-success" id="btnClone">🚀 Test Clone Course</button>
+            <button onclick="copyToClipboard('jsonRequest')" class="btn">📋 Copy JSON</button>
+        </div>
+        
+        <div id="result-clone" class="result-area">Click "Generate JSON" to create request, then "Test Clone Course" to execute...</div>
+    </div>
+
+    <div class="demo-section">
+        <h3>📚 Test Get Available Courses</h3>
+        <p>Lấy danh sách các khóa học có thể clone.</p>
+        
+        <div class="input-group">
+            <label for="categoryId">Category ID (0 = all categories):</label>
+            <input type="number" id="categoryId" value="0" min="0">
+        </div>
+        
+        <div>
+            <button onclick="testGetCourses()" class="btn btn-success" id="btnGet">📋 Get Available Courses</button>
+        </div>
+        
+        <div id="result-get" class="result-area">Click "Get Available Courses" to fetch course list...</div>
+    </div>
+
+    <div class="demo-section">
+        <h3>📊 cURL Examples</h3>
+        
+        <h4>Clone Course:</h4>
+        <textarea readonly style="height: 120px;">curl -X POST "https://yourmoodle.com/local/coursecopier/api.php" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "wsfunction": "local_coursecopier_clone_course",
+    "shortname_clone": "COURSE123",
+    "fullname": "Khóa học Clone 2025",
+    "shortname": "CLONE2025",
+    "startdate": 1704067200,
+    "enddate": 1719792000
+  }'</textarea>
+        
+        <h4>Get Available Courses:</h4>
+        <textarea readonly style="height: 100px;">curl -X POST "https://yourmoodle.com/local/coursecopier/api.php" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "wsfunction": "local_coursecopier_get_available_courses",
+    "categoryid": 0
+  }'</textarea>
+    </div>
+
+    <script>
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('startDate').value = tomorrow.toISOString().split('T')[0];
+            
+            const sixMonthsLater = new Date();
+            sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+            document.getElementById('endDate').value = sixMonthsLater.toISOString().split('T')[0];
+            
+            generateJson();
+        });
+
+        function generateJson() {
+            const moodleUrl = document.getElementById('moodleUrl').value;
+            const token = document.getElementById('wsToken').value;
+            const shortnameClone = document.getElementById('shortnameClone').value;
+            const fullname = document.getElementById('fullname').value;
+            const shortname = document.getElementById('shortname').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            const startTimestamp = Math.floor(new Date(startDate).getTime() / 1000);
+            const endTimestamp = Math.floor(new Date(endDate).getTime() / 1000);
+            
+            const jsonRequest = {
+                wstoken: token || "YOUR_TOKEN_HERE",
+                wsfunction: "local_coursecopier_clone_course",
+                shortname_clone: shortnameClone,
+                fullname: fullname,
+                shortname: shortname,
+                startdate: startTimestamp,
+                enddate: endTimestamp
+            };
+            
+            document.getElementById('jsonRequest').value = JSON.stringify(jsonRequest, null, 2);
+        }
+
+        async function testCloneCourse() {
+            const moodleUrl = document.getElementById('moodleUrl').value;
+            const token = document.getElementById('wsToken').value;
+            const jsonText = document.getElementById('jsonRequest').value;
+            const resultDiv = document.getElementById('result-clone');
+            const button = document.getElementById('btnClone');
+            
+            if (!moodleUrl || !token) {
+                alert('Please enter Moodle URL and Web Service Token');
+                return;
+            }
+            
+            try {
+                const jsonData = JSON.parse(jsonText);
+                
+                button.disabled = true;
+                button.textContent = '⏳ Testing...';
+                resultDiv.textContent = 'Sending request to clone course...';
+                resultDiv.className = 'result-area';
+                
+                const response = await fetch(moodleUrl + '/local/coursecopier/api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: jsonText
+                });
+                
+                const result = await response.json();
+                
+                const responseText = 
+                    '=== REQUEST ===\n' +
+                    'URL: ' + moodleUrl + '/local/coursecopier/api.php\n' +
+                    'Method: POST\n' +
+                    'Headers: Content-Type: application/json, Authorization: Bearer ' + token.substring(0, 10) + '...\n' +
+                    'Body: ' + jsonText + '\n\n' +
+                    '=== RESPONSE ===\n' +
+                    'Status: ' + response.status + ' ' + response.statusText + '\n' +
+                    'Body: ' + JSON.stringify(result, null, 2);
+                
+                resultDiv.textContent = responseText;
+                
+                if (result.status === 'success') {
+                    resultDiv.className = 'result-area success';
+                    console.log('✅ Clone course successful!', result);
+                    alert('✅ Clone course thành công! ID: ' + result.id);
+                } else {
+                    resultDiv.className = 'result-area error';
+                    console.log('❌ Clone course failed:', result);
+                }
+                
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message + '\n\nPlease check:\n1. Moodle URL is correct\n2. Token is valid\n3. Plugin is installed\n4. CORS is configured properly';
+                resultDiv.className = 'result-area error';
+                console.error('❌ Error:', error);
+            } finally {
+                button.disabled = false;
+                button.textContent = '🚀 Test Clone Course';
+            }
+        }
+
+        async function testGetCourses() {
+            const moodleUrl = document.getElementById('moodleUrl').value;
+            const token = document.getElementById('wsToken').value;
+            const categoryId = document.getElementById('categoryId').value;
+            const resultDiv = document.getElementById('result-get');
+            const button = document.getElementById('btnGet');
+            
+            if (!moodleUrl || !token) {
+                alert('Please enter Moodle URL and Web Service Token');
+                return;
+            }
+            
+            try {
+                const jsonData = {
+                    wstoken: token,
+                    wsfunction: "local_coursecopier_get_available_courses",
+                    categoryid: parseInt(categoryId)
+                };
+                
+                button.disabled = true;
+                button.textContent = '⏳ Loading...';
+                resultDiv.textContent = 'Fetching available courses...';
+                resultDiv.className = 'result-area';
+                
+                const response = await fetch(moodleUrl + '/local/coursecopier/api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(jsonData)
+                });
+                
+                const result = await response.json();
+                
+                const responseText = 
+                    '=== REQUEST ===\n' +
+                    'URL: ' + moodleUrl + '/local/coursecopier/api.php\n' +
+                    'Method: POST\n' +
+                    'Body: ' + JSON.stringify(jsonData, null, 2) + '\n\n' +
+                    '=== RESPONSE ===\n' +
+                    'Status: ' + response.status + ' ' + response.statusText + '\n' +
+                    'Body: ' + JSON.stringify(result, null, 2);
+                
+                resultDiv.textContent = responseText;
+                
+                if (result.status === 'success') {
+                    resultDiv.className = 'result-area success';
+                    console.log('✅ Get courses successful!', result);
+                } else {
+                    resultDiv.className = 'result-area error';
+                    console.log('❌ Get courses failed:', result);
+                }
+                
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message + '\n\nPlease check:\n1. Moodle URL is correct\n2. Token is valid\n3. Plugin is installed\n4. CORS is configured properly';
+                resultDiv.className = 'result-area error';
+                console.error('❌ Error:', error);
+            } finally {
+                button.disabled = false;
+                button.textContent = '📋 Get Available Courses';
+            }
+        }
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).value;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Copied to clipboard!');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                // Fallback
+                const element = document.getElementById(elementId);
+                element.select();
+                document.execCommand('copy');
+                alert('✅ Copied to clipboard!');
+            });
+        }
+
+        // Auto-generate JSON when inputs change
+        document.getElementById('shortnameClone').addEventListener('input', generateJson);
+        document.getElementById('fullname').addEventListener('input', generateJson);
+        document.getElementById('shortname').addEventListener('input', generateJson);
+        document.getElementById('startDate').addEventListener('change', generateJson);
+        document.getElementById('endDate').addEventListener('change', generateJson);
+        document.getElementById('wsToken').addEventListener('input', generateJson);
+    </script>
+</body>
+</html>
