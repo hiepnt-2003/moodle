@@ -1,0 +1,179 @@
+{
+	"info": {
+		"_postman_id": "coursecopy-api-v1",
+		"name": "Course Copy API",
+		"description": "RESTful API để copy/clone môn học trong Moodle",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Copy Course - Success Case",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"shortname_clone\": \"DEMO2024\",\n  \"fullname\": \"Demo Course Copy - Spring 2025\",\n  \"shortname\": \"DEMO2025\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/webservice/restful/server.php/local_coursecopy_copy_course",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"webservice",
+						"restful", 
+						"server.php",
+						"local_coursecopy_copy_course"
+					]
+				},
+				"description": "Copy course thành công với đầu vào hợp lệ"
+			}
+		},
+		{
+			"name": "Copy Course - Token in Body",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"token\": \"{{token}}\",\n  \"shortname_clone\": \"DEMO2024\",\n  \"fullname\": \"Demo Course Copy - Alternative Method\",\n  \"shortname\": \"DEMO2025_V2\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/webservice/restful/server.php/local_coursecopy_copy_course",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"webservice",
+						"restful",
+						"server.php",
+						"local_coursecopy_copy_course"
+					]
+				},
+				"description": "Copy course với token truyền trong request body"
+			}
+		},
+		{
+			"name": "Copy Course - Error: Source Not Found",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization", 
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"shortname_clone\": \"NON_EXISTING_COURSE\",\n  \"fullname\": \"Test Error Case\",\n  \"shortname\": \"ERROR_TEST\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/local/webservice/coursecopy/restful.php",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"local",
+						"webservice",
+						"coursecopy",
+						"restful.php"
+					]
+				},
+				"description": "Test error case với course không tồn tại"
+			}
+		},
+		{
+			"name": "Copy Course - Error: Invalid Dates",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"shortname_clone\": \"DEMO2024\",\n  \"fullname\": \"Invalid Date Test\",\n  \"shortname\": \"INVALID_DATE\",\n  \"startdate\": 1719792000,\n  \"enddate\": 1704067200\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/local/webservice/coursecopy/restful.php",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"local",
+						"webservice",
+						"coursecopy",
+						"restful.php"
+					]
+				},
+				"description": "Test error case với startdate > enddate"
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost",
+			"type": "string",
+			"description": "Moodle base URL"
+		},
+		{
+			"key": "token", 
+			"value": "your_token_here",
+			"type": "string",
+			"description": "Web service token"
+		}
+	]
+}

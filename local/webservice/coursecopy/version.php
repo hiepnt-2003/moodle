@@ -15,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for Course Copier plugin.
+ * Version information for local coursecopy plugin.
  *
- * @package    local_coursecopier
+ * @package    local_coursecopy
  * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025100301;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2020110900;        // Moodle 3.10.
-$plugin->component = 'local_coursecopier'; // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.0';
+$plugin->component = 'local_coursecopy';
+$plugin->version = 2025100400;
+$plugin->requires = 2020061500; // Moodle 3.9.0.
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release = '1.0.0';

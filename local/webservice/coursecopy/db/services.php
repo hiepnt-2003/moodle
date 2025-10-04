@@ -15,32 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Access control definitions for Course Copier plugin.
+ * Web service definitions for course copy using RESTful protocol.
  *
- * @package    local_coursecopier
+ * @package    local_coursecopy
  * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = [
-    'local/coursecopier:copyourse' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => [
-            'manager' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
-        ],
+$functions = [
+    'local_coursecopy_copy_course' => [
+        'classname' => 'local_coursecopy_external',
+        'methodname' => 'copy_course',
+        'classpath' => 'local/webservice/coursecopy/externallib.php',
+        'description' => 'Copy a course with new parameters using RESTful protocol',
+        'type' => 'write',
+        'ajax' => true,
+        'capabilities' => 'moodle/course:create,moodle/backup:backupcourse,moodle/restore:restorecourse',
     ],
-    'local/coursecopier:viewcourses' => [
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => [
-            'manager' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-        ],
+];
+
+$services = [
+    'Course Copy RESTful Service' => [
+        'functions' => ['local_coursecopy_copy_course'],
+        'restrictedusers' => 0,
+        'enabled' => 1,
+        'shortname' => 'coursecopy_restful',
+        'downloadfiles' => 0,
+        'uploadfiles' => 0,
     ],
 ];
