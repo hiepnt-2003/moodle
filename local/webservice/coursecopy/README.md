@@ -12,7 +12,7 @@ Plugin Moodle để copy/clone môn học thông qua RESTful API endpoint đơn 
 
 ## 📡 API Endpoint
 
-**URL**: `POST /local/webservice/coursecopy/restful.php`
+**URL**: `POST /webservice/restful/server.php/local_webservice_coursecopy_copy_course`
 
 **Headers**:
 ```
@@ -90,7 +90,7 @@ Authorization: Bearer your_token_here
 
 ### cURL Example
 ```bash
-curl -X POST "http://your-moodle-site/local/webservice/coursecopy/restful.php" \
+curl -X POST "http://your-moodle-site/webservice/restful/server.php/local_webservice_coursecopy_copy_course" \\
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your_token_here" \
   -d '{
@@ -104,7 +104,7 @@ curl -X POST "http://your-moodle-site/local/webservice/coursecopy/restful.php" \
 
 ### JavaScript/Fetch Example
 ```javascript
-const response = await fetch('/local/webservice/coursecopy/restful.php', {
+const response = await fetch('/webservice/restful/server.php/local_webservice_coursecopy_copy_course', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',

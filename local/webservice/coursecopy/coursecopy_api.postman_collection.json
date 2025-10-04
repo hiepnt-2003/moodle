@@ -40,7 +40,7 @@
 						"webservice",
 						"restful", 
 						"server.php",
-						"local_coursecopy_copy_course"
+						"local_webservice_coursecopy_copy_course"
 					]
 				},
 				"description": "Copy course thành công với đầu vào hợp lệ"

@@ -45,7 +45,7 @@ User cần có các capabilities sau:
 
 ### Endpoint
 ```
-**URL**: `POST /webservice/restful/server.php/local_coursecopy_copy_course`
+**URL**: `POST /webservice/restful/server.php/local_webservice_coursecopy_copy_course`
 ```
 
 ### Authentication

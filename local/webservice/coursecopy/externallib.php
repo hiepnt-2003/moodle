@@ -17,7 +17,7 @@
 /**
  * External API for course copy using RESTful webservice protocol.
  *
- * @package    local_coursecopy
+ * @package    local_webservice_coursecopy
  * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 /**
  * Course copy external functions for RESTful webservice.
  */
-class local_coursecopy_external extends external_api {
+class local_webservice_coursecopy_external extends external_api {
 
     /**
      * Returns description of method parameters.

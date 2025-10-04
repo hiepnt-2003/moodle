@@ -17,7 +17,7 @@
 /**
  * Plugin capabilities.
  *
- * @package    local_coursecopy
+ * @package    local_webservice_coursecopy
  * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
-    'local/coursecopy:use' => [
+    'local/webservice_coursecopy:use' => [
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
