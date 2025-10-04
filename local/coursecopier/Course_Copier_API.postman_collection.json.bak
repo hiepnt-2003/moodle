@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "course-copier-api",
-		"name": "Course Copier API - RESTful Protocol",
+		"name": "Course Copier API - RESTful Pro					"raw": "{\n  \"wstoken\": \"{{ws_token}}\",\n  \"wsfunction\": \"local_coursecopier_copy_course\",\n  \"moodlewsrestformat\": \"json\",\n  \"shortname_clone\": \"COURSE123\",\n  \"fullname\": \"Khóa học Clone 2025\",\n  \"shortname\": \"CLONE2025\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",ocol",
 		"description": "API collection for Moodle Course Copier plugin - Sử dụng RESTful protocol chuẩn của Moodle với JSON body và token",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -91,7 +91,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"wstoken\": \"your_token_here\",\n  \"wsfunction\": \"local_coursecopier_copy_course\",\n  \"moodlewsrestformat\": \"json\",\n  \"shortname_clone\": \"COURSE123\",\n  \"fullname\": \"Khóa học Clone 2025\",\n  \"shortname\": \"CLONE2025\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
+							"raw": "{\n  \"wstoken\": \"your_token_here\",\n  \"wsfunction\": \"local_coursecopier_clone_course\",\n  \"shortname_clone\": \"COURSE123\",\n  \"fullname\": \"Khóa học Clone 2025\",\n  \"shortname\": \"CLONE2025\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -99,16 +99,16 @@
 							}
 						},
 						"url": {
-							"raw": "https://yourmoodle.com/webservice/rest/server.php",
+							"raw": "https://yourmoodle.com/local/coursecopier/api.php",
 							"protocol": "https",
 							"host": [
 								"yourmoodle",
 								"com"
 							],
 							"path": [
-								"webservice",
-								"rest",
-								"server.php"
+								"local",
+								"coursecopier",
+								"api.php"
 							]
 						}
 					},
@@ -140,7 +140,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"wstoken\": \"your_token_here\",\n  \"wsfunction\": \"local_coursecopier_copy_course\",\n  \"moodlewsrestformat\": \"json\",\n  \"shortname_clone\": \"NOTEXIST\",\n  \"fullname\": \"Test Course\",\n  \"shortname\": \"TEST2025\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
+							"raw": "{\n  \"wstoken\": \"your_token_here\",\n  \"wsfunction\": \"local_coursecopier_clone_course\",\n  \"shortname_clone\": \"NOTEXIST\",\n  \"fullname\": \"Test Course\",\n  \"shortname\": \"TEST2025\",\n  \"startdate\": 1704067200,\n  \"enddate\": 1719792000\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -148,16 +148,16 @@
 							}
 						},
 						"url": {
-							"raw": "https://yourmoodle.com/webservice/rest/server.php",
+							"raw": "https://yourmoodle.com/local/coursecopier/api.php",
 							"protocol": "https",
 							"host": [
 								"yourmoodle",
 								"com"
 							],
 							"path": [
-								"webservice",
-								"rest",
-								"server.php"
+								"local",
+								"coursecopier",
+								"api.php"
 							]
 						}
 					},
@@ -255,7 +255,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"wstoken\": \"your_token_here\",\n  \"wsfunction\": \"local_coursecopier_get_available_courses\",\n  \"moodlewsrestformat\": \"json\",\n  \"categoryid\": 0\n}",
+							"raw": "{\n  \"wstoken\": \"your_token_here\",\n  \"wsfunction\": \"local_coursecopier_get_available_courses\",\n  \"categoryid\": 0\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -263,16 +263,16 @@
 							}
 						},
 						"url": {
-							"raw": "https://yourmoodle.com/webservice/rest/server.php",
+							"raw": "https://yourmoodle.com/local/coursecopier/api.php",
 							"protocol": "https",
 							"host": [
 								"yourmoodle",
 								"com"
 							],
 							"path": [
-								"webservice",
-								"rest",
-								"server.php"
+								"local",
+								"coursecopier",
+								"api.php"
 							]
 						}
 					},
@@ -387,8 +387,8 @@
 	"variable": [
 		{
 			"key": "moodle_url",
-			"value": "http://localhost",
-			"description": "URL của Moodle site (không có trailing slash). VD: http://localhost hoặc https://yourmoodle.com"
+			"value": "https://yourmoodle.com",
+			"description": "URL của Moodle site (không có trailing slash)"
 		},
 		{
 			"key": "ws_token",
