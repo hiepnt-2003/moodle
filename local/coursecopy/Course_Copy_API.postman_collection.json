@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "coursecopy-api-2025",
-		"name": "Course Copy API - Moodle 3.9",
-		"description": "RESTful API để copy môn học trong Moodle 3.9\n\nPlugin: local_coursecopy\nProtocol: webservice_restful",
+		"name": "Course Copy API - Moodle 3.9 (RESTful)",
+		"description": "RESTful API để copy môn học trong Moodle 3.9\n\nPlugin: local_coursecopy\nProtocol: webservice_restful\n\n**Endpoint**: /webservice/restful/server.php/local_coursecopy_copy_course\n**Headers**: Authorization, Content-Type, Accept",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -43,14 +43,20 @@
 						"type": "text"
 					},
 					{
-						"key": "Authorization",
-						"value": "Bearer {{moodle_token}}",
+						"key": "Accept",
+						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{moodle_token}}",
+						"type": "text",
+						"description": "Token không cần 'Bearer' prefix"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"wsfunction\": \"local_coursecopy_copy_course\",\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Course Copy 2025\",\n    \"shortname\": \"COURSE2025\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1735689600\n}",
+					"raw": "{\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Course Copy 2025\",\n    \"shortname\": \"COURSE2025\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1735689600\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -58,17 +64,18 @@
 					}
 				},
 				"url": {
-					"raw": "{{moodle_url}}/local/coursecopy/restful_api.php",
+					"raw": "{{moodle_url}}/webservice/restful/server.php/local_coursecopy_copy_course",
 					"host": [
 						"{{moodle_url}}"
 					],
 					"path": [
-						"local",
-						"coursecopy",
-						"restful_api.php"
+						"webservice",
+						"restful",
+						"server.php",
+						"local_coursecopy_copy_course"
 					]
 				},
-				"description": "Copy một môn học với thông tin mới\n\n**Tham số:**\n- shortname_clone: Shortname của môn học nguồn\n- fullname: Tên đầy đủ cho môn học mới\n- shortname: Tên viết tắt cho môn học mới\n- startdate: Ngày bắt đầu (Unix timestamp)\n- enddate: Ngày kết thúc (Unix timestamp)"
+				"description": "Copy một môn học với thông tin mới sử dụng webservice_restful\n\n**Endpoint**: /webservice/restful/server.php/local_coursecopy_copy_course\n\n**Headers bắt buộc**:\n- Authorization: TOKEN (không cần Bearer prefix)\n- Content-Type: application/json\n- Accept: application/json\n\n**Tham số**:\n- shortname_clone: Shortname của môn học nguồn\n- fullname: Tên đầy đủ cho môn học mới\n- shortname: Tên viết tắt cho môn học mới\n- startdate: Ngày bắt đầu (Unix timestamp)\n- enddate: Ngày kết thúc (Unix timestamp)"
 			},
 			"response": [
 				{
@@ -82,14 +89,19 @@
 								"type": "text"
 							},
 							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
 								"key": "Authorization",
-								"value": "Bearer abc123def456",
+								"value": "abc123def456",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"wsfunction\": \"local_coursecopy_copy_course\",\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Course Copy 2025\",\n    \"shortname\": \"COURSE2025\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1735689600\n}",
+							"raw": "{\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Course Copy 2025\",\n    \"shortname\": \"COURSE2025\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1735689600\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -97,16 +109,17 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost/moodle/local/coursecopy/restful_api.php",
+							"raw": "http://localhost/moodle/webservice/restful/server.php/local_coursecopy_copy_course",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"path": [
 								"moodle",
-								"local",
-								"coursecopy",
-								"restful_api.php"
+								"webservice",
+								"restful",
+								"server.php",
+								"local_coursecopy_copy_course"
 							]
 						}
 					},
@@ -133,14 +146,19 @@
 								"type": "text"
 							},
 							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
 								"key": "Authorization",
-								"value": "Bearer invalid_token",
+								"value": "invalid_token",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"wsfunction\": \"local_coursecopy_copy_course\",\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Course Copy 2025\",\n    \"shortname\": \"COURSE2025\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1735689600\n}",
+							"raw": "{\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Course Copy 2025\",\n    \"shortname\": \"COURSE2025\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1735689600\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -148,21 +166,22 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost/moodle/local/coursecopy/restful_api.php",
+							"raw": "http://localhost/moodle/webservice/restful/server.php/local_coursecopy_copy_course",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"path": [
 								"moodle",
-								"local",
-								"coursecopy",
-								"restful_api.php"
+								"webservice",
+								"restful",
+								"server.php",
+								"local_coursecopy_copy_course"
 							]
 						}
 					},
-					"status": "Bad Request",
-					"code": 400,
+					"status": "Unauthorized",
+					"code": 401,
 					"_postman_previewlanguage": "json",
 					"header": [
 						{
@@ -171,7 +190,7 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"status\": \"error\",\n    \"id\": 0,\n    \"message\": \"Invalid token\"\n}"
+					"body": "{\n    \"exception\": \"moodle_exception\",\n    \"errorcode\": \"invalidtoken\",\n    \"message\": \"Invalid token\"\n}"
 				},
 				{
 					"name": "Error - Shortname Already Exists",
@@ -184,14 +203,19 @@
 								"type": "text"
 							},
 							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
 								"key": "Authorization",
-								"value": "Bearer abc123def456",
+								"value": "abc123def456",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"wsfunction\": \"local_coursecopy_copy_course\",\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Course Copy\",\n    \"shortname\": \"EXISTING_COURSE\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1735689600\n}",
+							"raw": "{\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Course Copy\",\n    \"shortname\": \"EXISTING_COURSE\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1735689600\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -199,16 +223,17 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost/moodle/local/coursecopy/restful_api.php",
+							"raw": "http://localhost/moodle/webservice/restful/server.php/local_coursecopy_copy_course",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"path": [
 								"moodle",
-								"local",
-								"coursecopy",
-								"restful_api.php"
+								"webservice",
+								"restful",
+								"server.php",
+								"local_coursecopy_copy_course"
 							]
 						}
 					},
@@ -227,61 +252,6 @@
 			]
 		},
 		{
-			"name": "Copy Course (Token in Body)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Response has correct structure\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.have.property('status');",
-							"    pm.expect(jsonData).to.have.property('id');",
-							"    pm.expect(jsonData).to.have.property('message');",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"wstoken\": \"{{moodle_token}}\",\n    \"wsfunction\": \"local_coursecopy_copy_course\",\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Course Copy 2025 - Method 2\",\n    \"shortname\": \"COURSE2025_V2\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1735689600\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{moodle_url}}/local/coursecopy/restful_api.php",
-					"host": [
-						"{{moodle_url}}"
-					],
-					"path": [
-						"local",
-						"coursecopy",
-						"restful_api.php"
-					]
-				},
-				"description": "Copy môn học với token trong request body thay vì Authorization header"
-			},
-			"response": []
-		},
-		{
 			"name": "Copy Course with Vietnamese Characters",
 			"request": {
 				"method": "POST",
@@ -292,14 +262,19 @@
 						"type": "text"
 					},
 					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
 						"key": "Authorization",
-						"value": "Bearer {{moodle_token}}",
+						"value": "{{moodle_token}}",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"wsfunction\": \"local_coursecopy_copy_course\",\n    \"shortname_clone\": \"TOAN2024\",\n    \"fullname\": \"Toán Cao Cấp 2025 - Học Kỳ 1\",\n    \"shortname\": \"TOAN2025_HK1\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1719792000\n}",
+					"raw": "{\n    \"shortname_clone\": \"TOAN2024\",\n    \"fullname\": \"Toán Cao Cấp 2025 - Học Kỳ 1\",\n    \"shortname\": \"TOAN2025_HK1\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1719792000\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -307,14 +282,15 @@
 					}
 				},
 				"url": {
-					"raw": "{{moodle_url}}/local/coursecopy/restful_api.php",
+					"raw": "{{moodle_url}}/webservice/restful/server.php/local_coursecopy_copy_course",
 					"host": [
 						"{{moodle_url}}"
 					],
 					"path": [
-						"local",
-						"coursecopy",
-						"restful_api.php"
+						"webservice",
+						"restful",
+						"server.php",
+						"local_coursecopy_copy_course"
 					]
 				},
 				"description": "Test với tên môn học có ký tự tiếng Việt"
@@ -322,7 +298,7 @@
 			"response": []
 		},
 		{
-			"name": "Test Date Validation",
+			"name": "Test Date Validation Error",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -332,14 +308,19 @@
 						"type": "text"
 					},
 					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
 						"key": "Authorization",
-						"value": "Bearer {{moodle_token}}",
+						"value": "{{moodle_token}}",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"wsfunction\": \"local_coursecopy_copy_course\",\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Test Invalid Date\",\n    \"shortname\": \"INVALID_DATE\",\n    \"startdate\": 1735689600,\n    \"enddate\": 1704067200\n}",
+					"raw": "{\n    \"shortname_clone\": \"COURSE2024\",\n    \"fullname\": \"Test Invalid Date\",\n    \"shortname\": \"INVALID_DATE_TEST\",\n    \"startdate\": 1735689600,\n    \"enddate\": 1704067200\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -347,17 +328,18 @@
 					}
 				},
 				"url": {
-					"raw": "{{moodle_url}}/local/coursecopy/restful_api.php",
+					"raw": "{{moodle_url}}/webservice/restful/server.php/local_coursecopy_copy_course",
 					"host": [
 						"{{moodle_url}}"
 					],
 					"path": [
-						"local",
-						"coursecopy",
-						"restful_api.php"
+						"webservice",
+						"restful",
+						"server.php",
+						"local_coursecopy_copy_course"
 					]
 				},
-				"description": "Test validation lỗi khi enddate < startdate"
+				"description": "Test validation lỗi khi enddate < startdate (phải trả về error)"
 			},
 			"response": []
 		}

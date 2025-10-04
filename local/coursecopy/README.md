@@ -1,6 +1,6 @@
 # Course Copy RESTful API Plugin
 
-Plugin Moodle cho phép copy môn học thông qua RESTful API sử dụng plugin webservice_restful.
+Plugin Moodle cho phép copy môn học thông qua RESTful API sử dụng plugin **webservice_restful**.
 
 ## Thông tin Plugin
 
@@ -14,14 +14,15 @@ Plugin Moodle cho phép copy môn học thông qua RESTful API sử dụng plugi
 
 - Copy môn học với các thông tin mới (tên đầy đủ, tên viết tắt, ngày bắt đầu, ngày kết thúc)
 - Giữ nguyên cấu trúc, định dạng và cài đặt của môn học gốc
-- RESTful API endpoint với xác thực token
-- Hỗ trợ cả Authorization Bearer token và wstoken trong request body
+- Sử dụng RESTful API protocol chuẩn của Moodle
+- Xác thực qua Authorization header
+- Hỗ trợ JSON format
 
 ## Cài đặt
 
 ### 1. Cài đặt plugin webservice_restful (nếu chưa có)
 
-Plugin này yêu cầu webservice_restful đã được cài đặt và kích hoạt.
+Plugin này yêu cầu **webservice_restful** đã được cài đặt và kích hoạt tại `local/webservice/restful/`.
 
 ### 2. Cài đặt plugin coursecopy
 
@@ -59,33 +60,18 @@ Truy cập: **Site administration → Notifications** để cài đặt plugin.
 
 ## Sử dụng API
 
-### Endpoint
+### Endpoint (Sử dụng webservice_restful)
 
 ```
-POST /local/coursecopy/restful_api.php
+POST /webservice/restful/server.php/local_coursecopy_copy_course
 ```
 
-### Xác thực
+### Headers bắt buộc
 
-Có 3 cách cung cấp token:
-
-#### Cách 1: Authorization Bearer Header (khuyến nghị)
 ```
-Authorization: Bearer YOUR_TOKEN_HERE
-```
-
-#### Cách 2: Trong request body
-```json
-{
-  "wstoken": "YOUR_TOKEN_HERE",
-  "wsfunction": "local_coursecopy_copy_course",
-  ...
-}
-```
-
-#### Cách 3: Query parameter
-```
-/local/coursecopy/restful_api.php?wstoken=YOUR_TOKEN_HERE
+Authorization: YOUR_TOKEN_HERE
+Content-Type: application/json
+Accept: application/json
 ```
 
 ### Request Format
@@ -93,13 +79,19 @@ Authorization: Bearer YOUR_TOKEN_HERE
 #### Copy Course
 
 **Method**: POST  
-**Content-Type**: application/json
+**URL**: `/webservice/restful/server.php/local_coursecopy_copy_course`
 
-**Parameters**:
+**Headers**:
+```
+Authorization: YOUR_TOKEN
+Content-Type: application/json
+Accept: application/json
+```
+
+**Parameters** (trong JSON body):
 
 | Tham số | Kiểu | Bắt buộc | Mô tả |
 |---------|------|----------|-------|
-| wsfunction | string | Không | Tên function (mặc định: local_coursecopy_copy_course) |
 | shortname_clone | string | Có | Shortname của môn học nguồn cần copy |
 | fullname | string | Có | Tên đầy đủ cho môn học mới |
 | shortname | string | Có | Tên viết tắt cho môn học mới |
@@ -109,11 +101,11 @@ Authorization: Bearer YOUR_TOKEN_HERE
 **Example Request**:
 
 ```bash
-curl -X POST https://your-moodle-site.com/local/coursecopy/restful_api.php \
+curl -X POST https://your-moodle-site.com/webservice/restful/server.php/local_coursecopy_copy_course \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer abc123def456ghi789" \
+  -H "Accept: application/json" \
+  -H "Authorization: abc123def456ghi789" \
   -d '{
-    "wsfunction": "local_coursecopy_copy_course",
     "shortname_clone": "COURSE2024",
     "fullname": "Course Copy 2025",
     "shortname": "COURSE2025",
@@ -158,7 +150,6 @@ curl -X POST https://your-moodle-site.com/local/coursecopy/restful_api.php \
 
 ```javascript
 const copyData = {
-  wsfunction: "local_coursecopy_copy_course",
   shortname_clone: "MATH2024",
   fullname: "Mathematics 2025",
   shortname: "MATH2025",
@@ -166,11 +157,12 @@ const copyData = {
   enddate: 1735689600     // 2025-01-01
 };
 
-fetch('https://your-moodle-site.com/local/coursecopy/restful_api.php', {
+fetch('https://your-moodle-site.com/webservice/restful/server.php/local_coursecopy_copy_course', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_TOKEN_HERE'
+    'Accept': 'application/json',
+    'Authorization': 'YOUR_TOKEN_HERE'
   },
   body: JSON.stringify(copyData)
 })
@@ -192,16 +184,16 @@ import requests
 import json
 from datetime import datetime
 
-url = "https://your-moodle-site.com/local/coursecopy/restful_api.php"
+url = "https://your-moodle-site.com/webservice/restful/server.php/local_coursecopy_copy_course"
 token = "YOUR_TOKEN_HERE"
 
 headers = {
     "Content-Type": "application/json",
-    "Authorization": f"Bearer {token}"
+    "Accept": "application/json",
+    "Authorization": token
 }
 
 data = {
-    "wsfunction": "local_coursecopy_copy_course",
     "shortname_clone": "COURSE2024",
     "fullname": "Course Copy 2025",
     "shortname": "COURSE2025",
@@ -222,11 +214,10 @@ else:
 
 ```php
 <?php
-$url = "https://your-moodle-site.com/local/coursecopy/restful_api.php";
+$url = "https://your-moodle-site.com/webservice/restful/server.php/local_coursecopy_copy_course";
 $token = "YOUR_TOKEN_HERE";
 
 $data = [
-    'wsfunction' => 'local_coursecopy_copy_course',
     'shortname_clone' => 'COURSE2024',
     'fullname' => 'Course Copy 2025',
     'shortname' => 'COURSE2025',
@@ -237,7 +228,8 @@ $data = [
 $options = [
     'http' => [
         'header' => "Content-Type: application/json\r\n" .
-                   "Authorization: Bearer $token\r\n",
+                   "Accept: application/json\r\n" .
+                   "Authorization: $token\r\n",
         'method' => 'POST',
         'content' => json_encode($data)
     ]

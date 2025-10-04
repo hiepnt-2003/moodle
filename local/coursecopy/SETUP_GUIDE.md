@@ -1,8 +1,14 @@
 # Hướng dẫn cài đặt và sử dụng Plugin Course Copy
 
+## Giới thiệu
+
+Plugin Course Copy sử dụng **webservice_restful** protocol để cung cấp RESTful API copy môn học trong Moodle 3.9.
+
+**Endpoint**: `/webservice/restful/server.php/local_coursecopy_copy_course`
+
 ## Bước 1: Kiểm tra Plugin Restful đã được cài đặt
 
-Plugin restful đã được cài đặt tại: `local/webservice/restful/`
+Plugin restful phải được cài đặt tại: `local/webservice/restful/`
 
 Kiểm tra bằng cách truy cập:
 ```
@@ -113,10 +119,14 @@ Trước khi test API, cần có môn học nguồn để copy:
 ### 6.4. Test API Request
 
 1. Trong Postman, chọn request **Copy Course**
-2. Kiểm tra request body:
+2. Kiểm tra URL đúng: `{moodle_url}/webservice/restful/server.php/local_coursecopy_copy_course`
+3. Kiểm tra headers:
+   - `Authorization`: `{token}` (không cần Bearer prefix)
+   - `Content-Type`: `application/json`
+   - `Accept`: `application/json`
+4. Kiểm tra request body:
    ```json
    {
-       "wsfunction": "local_coursecopy_copy_course",
        "shortname_clone": "COURSE2024",
        "fullname": "Course Copy 2025",
        "shortname": "COURSE2025",
@@ -124,7 +134,7 @@ Trước khi test API, cần có môn học nguồn để copy:
        "enddate": 1735689600
    }
    ```
-3. Click **Send**
+5. Click **Send**
 
 ### 6.5. Kiểm tra kết quả
 
@@ -179,17 +189,13 @@ print(int(datetime(2025, 1, 1).timestamp()))  # 1735689600
 
 ## Bước 8: Test các trường hợp khác
 
-### Test 1: Token trong body
-
-Chọn request **Copy Course (Token in Body)** và gửi
-
-### Test 2: Tên tiếng Việt
+### Test 1: Tên tiếng Việt
 
 Chọn request **Copy Course with Vietnamese Characters** và gửi
 
-### Test 3: Validation lỗi
+### Test 2: Validation lỗi
 
-Chọn request **Test Date Validation** để test lỗi enddate < startdate
+Chọn request **Test Date Validation Error** để test lỗi enddate < startdate
 
 ## Troubleshooting - Xử lý lỗi
 
@@ -204,11 +210,11 @@ Chọn request **Test Date Validation** để test lỗi enddate < startdate
 
 ### Lỗi: "Authorization token required"
 
-**Nguyên nhân:** Token không được gửi trong request
+**Nguyên nhân:** Token không được gửi trong Authorization header
 
 **Giải pháp:**
-1. Kiểm tra Authorization header có format: `Bearer YOUR_TOKEN`
-2. Hoặc thêm `wstoken` vào request body
+1. Kiểm tra Authorization header có token
+2. Đảm bảo header là `Authorization: TOKEN` (không cần Bearer prefix)
 
 ### Lỗi: "Không tìm thấy môn học với shortname: ..."
 
@@ -250,11 +256,10 @@ Chọn request **Test Date Validation** để test lỗi enddate < startdate
 
 ```php
 <?php
-$url = "http://localhost/moodle/local/coursecopy/restful_api.php";
+$url = "http://localhost/moodle/webservice/restful/server.php/local_coursecopy_copy_course";
 $token = "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6";
 
 $data = [
-    'wsfunction' => 'local_coursecopy_copy_course',
     'shortname_clone' => 'COURSE2024',
     'fullname' => 'Course Copy 2025',
     'shortname' => 'COURSE2025',
@@ -265,7 +270,8 @@ $data = [
 $options = [
     'http' => [
         'header' => "Content-Type: application/json\r\n" .
-                   "Authorization: Bearer $token\r\n",
+                   "Accept: application/json\r\n" .
+                   "Authorization: $token\r\n",
         'method' => 'POST',
         'content' => json_encode($data)
     ]
@@ -286,11 +292,11 @@ if ($response['status'] === 'success') {
 ### Ví dụ cURL
 
 ```bash
-curl -X POST http://localhost/moodle/local/coursecopy/restful_api.php \
+curl -X POST http://localhost/moodle/webservice/restful/server.php/local_coursecopy_copy_course \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6" \
+  -H "Accept: application/json" \
+  -H "Authorization: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6" \
   -d '{
-    "wsfunction": "local_coursecopy_copy_course",
     "shortname_clone": "COURSE2024",
     "fullname": "Course Copy 2025",
     "shortname": "COURSE2025",
@@ -298,6 +304,13 @@ curl -X POST http://localhost/moodle/local/coursecopy/restful_api.php \
     "enddate": 1735689600
   }'
 ```
+
+### Lưu ý quan trọng
+
+1. **Function name trong URL**: Tên function được chỉ định trong PATH của URL, không phải trong body
+2. **Authorization header**: Token được đặt trực tiếp trong Authorization header, không cần prefix "Bearer"
+3. **Headers bắt buộc**: Phải có đầy đủ 3 headers: Authorization, Content-Type, Accept
+4. **Response format**: Được xác định bởi Accept header (application/json)
 
 ## Lưu ý bảo mật
 
