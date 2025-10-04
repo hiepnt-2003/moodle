@@ -14,14 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * English language strings for Course Copy plugin.
+ * Strings for component 'webservice_restful', language 'en'
  *
- * @package    local_coursecopy
- * @copyright  2025 Course Copy Team
+ * @package    webservice_restful
+ * @category   string
+ * @copyright  Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Course Copy';
-$string['coursecopy:copy'] = 'Copy courses';
-$string['privacy:metadata'] = 'The Course Copy plugin does not store any personal data.';
+$string['pluginname'] = 'RESTful protocol';
+$string['restful:use'] = 'Use RESTful protocol';
+
+$string['noauthheader'] = 'No Authorization header found in request sent to Moodle';
+$string['nowsfunction'] = 'No webservice function found in URL sent to Moodle';
+$string['noacceptheader'] = 'No Accept header found in request sent to Moodle';
+$string['notypeheader'] = 'No Content Type header found in request sent to Moodle';
+$string['privacy:metadata'] = 'The RESTful protocol plugin does not store any personal data.';

@@ -1,200 +1,341 @@
 # Course Copy RESTful API Plugin
 
-Plugin Moodle để copy/clone môn học thông qua RESTful API endpoint đơn giản.
+Plugin Moodle cho phép copy môn học thông qua RESTful API sử dụng plugin webservice_restful.
 
-## 🎯 Tính năng
+## Thông tin Plugin
 
-- ✅ **RESTful API** với JSON request/response
-- ✅ **Course Cloning** với tùy chỉnh thông tin môn học mới
-- ✅ **Token Authentication** bảo mật
-- ✅ **CORS Support** cho cross-origin requests
-- ✅ **Không cần modify core Moodle files**
+- **Tên**: Course Copy
+- **Loại**: local plugin
+- **Phiên bản**: 1.0.0
+- **Yêu cầu**: Moodle 3.8+ (tương thích với Moodle 3.9)
+- **Plugin phụ thuộc**: webservice_restful
 
-## 📡 API Endpoint
+## Tính năng
 
-**URL**: `POST /webservice/restful/server.php/local_webservice_coursecopy_copy_course`
+- Copy môn học với các thông tin mới (tên đầy đủ, tên viết tắt, ngày bắt đầu, ngày kết thúc)
+- Giữ nguyên cấu trúc, định dạng và cài đặt của môn học gốc
+- RESTful API endpoint với xác thực token
+- Hỗ trợ cả Authorization Bearer token và wstoken trong request body
 
-**Headers**:
+## Cài đặt
+
+### 1. Cài đặt plugin webservice_restful (nếu chưa có)
+
+Plugin này yêu cầu webservice_restful đã được cài đặt và kích hoạt.
+
+### 2. Cài đặt plugin coursecopy
+
+```bash
+cd /path/to/moodle/local/
+git clone <repository-url> coursecopy
+cd coursecopy
 ```
-Content-Type: application/json
-Authorization: Bearer your_token_here
+
+Hoặc giải nén plugin vào thư mục `local/coursecopy`
+
+### 3. Cập nhật database
+
+Truy cập: **Site administration → Notifications** để cài đặt plugin.
+
+### 4. Kích hoạt Web Services
+
+1. **Kích hoạt Web services**:
+   - Site administration → Advanced features
+   - Tích chọn "Enable web services"
+
+2. **Kích hoạt RESTful protocol**:
+   - Site administration → Plugins → Web services → Manage protocols
+   - Kích hoạt "RESTful protocol"
+
+3. **Tạo user cho web service**:
+   - Tạo user mới hoặc sử dụng user hiện có
+   - Cấp quyền: `moodle/course:create`, `moodle/course:view`
+
+4. **Tạo token**:
+   - Site administration → Plugins → Web services → Manage tokens
+   - Tạo token mới cho user
+   - Chọn service: "Course Copy Service" hoặc "All services"
+   - Lưu token để sử dụng trong API requests
+
+## Sử dụng API
+
+### Endpoint
+
+```
+POST /local/coursecopy/restful_api.php
 ```
 
-**Request Body**:
+### Xác thực
+
+Có 3 cách cung cấp token:
+
+#### Cách 1: Authorization Bearer Header (khuyến nghị)
+```
+Authorization: Bearer YOUR_TOKEN_HERE
+```
+
+#### Cách 2: Trong request body
 ```json
 {
-  "shortname_clone": "ORIGINAL_COURSE",
-  "fullname": "New Course Name",
-  "shortname": "NEW_COURSE_2025",
-  "startdate": 1704067200,
-  "enddate": 1719792000
-}
-```
-
-## 🔧 Parameters
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `shortname_clone` | string | ✅ | Shortname của môn học nguồn cần copy |
-| `fullname` | string | ✅ | Tên đầy đủ cho môn học mới |
-| `shortname` | string | ✅ | Shortname cho môn học mới (phải unique) |
-| `startdate` | integer | ✅ | Ngày bắt đầu (Unix timestamp) |
-| `enddate` | integer | ✅ | Ngày kết thúc (Unix timestamp) |
-
-## 📤 Response Format
-
-### Success Response
-```json
-{
-  "status": "success",
-  "id": 123,
-  "message": "Course copied successfully"
-}
-```
-
-### Error Response
-```json
-{
-  "status": "error",
-  "id": 0,
-  "message": "Source course not found with shortname: ORIGINAL_COURSE"
-}
-```
-
-## 🔐 Authentication
-
-### 1. Tạo Token
-1. Vào **Site Administration → Server → Web services → Manage tokens**
-2. Click **Create token**
-3. Chọn user và service (hoặc để trống)
-4. Copy token để sử dụng
-
-### 2. Sử dụng Token
-Truyền token qua một trong hai cách:
-
-**Option 1: Authorization Header**
-```
-Authorization: Bearer your_token_here
-```
-
-**Option 2: Request Body**
-```json
-{
-  "token": "your_token_here",
-  "shortname_clone": "...",
+  "wstoken": "YOUR_TOKEN_HERE",
+  "wsfunction": "local_coursecopy_copy_course",
   ...
 }
 ```
 
-## 🧪 Testing Examples
+#### Cách 3: Query parameter
+```
+/local/coursecopy/restful_api.php?wstoken=YOUR_TOKEN_HERE
+```
 
-### cURL Example
+### Request Format
+
+#### Copy Course
+
+**Method**: POST  
+**Content-Type**: application/json
+
+**Parameters**:
+
+| Tham số | Kiểu | Bắt buộc | Mô tả |
+|---------|------|----------|-------|
+| wsfunction | string | Không | Tên function (mặc định: local_coursecopy_copy_course) |
+| shortname_clone | string | Có | Shortname của môn học nguồn cần copy |
+| fullname | string | Có | Tên đầy đủ cho môn học mới |
+| shortname | string | Có | Tên viết tắt cho môn học mới |
+| startdate | integer | Có | Ngày bắt đầu (Unix timestamp) |
+| enddate | integer | Có | Ngày kết thúc (Unix timestamp) |
+
+**Example Request**:
+
 ```bash
-curl -X POST "http://your-moodle-site/webservice/restful/server.php/local_webservice_coursecopy_copy_course" \\
+curl -X POST https://your-moodle-site.com/local/coursecopy/restful_api.php \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer your_token_here" \
+  -H "Authorization: Bearer abc123def456ghi789" \
   -d '{
-    "shortname_clone": "MATH101",
-    "fullname": "Mathematics 101 - Spring 2025",
-    "shortname": "MATH101_2025",
+    "wsfunction": "local_coursecopy_copy_course",
+    "shortname_clone": "COURSE2024",
+    "fullname": "Course Copy 2025",
+    "shortname": "COURSE2025",
     "startdate": 1704067200,
-    "enddate": 1719792000
+    "enddate": 1735689600
   }'
 ```
 
-### JavaScript/Fetch Example
+### Response Format
+
+#### Success Response
+
+```json
+{
+  "status": "success",
+  "id": 123,
+  "message": "Copy môn học thành công! ID môn học mới: 123"
+}
+```
+
+#### Error Response
+
+```json
+{
+  "status": "error",
+  "id": 0,
+  "message": "Mô tả lỗi chi tiết"
+}
+```
+
+### Response Fields
+
+| Field | Kiểu | Mô tả |
+|-------|------|-------|
+| status | string | "success" hoặc "error" |
+| id | integer | ID của môn học mới (0 nếu có lỗi) |
+| message | string | Thông báo thành công hoặc mô tả lỗi |
+
+## Ví dụ sử dụng
+
+### JavaScript (Fetch API)
+
 ```javascript
-const response = await fetch('/webservice/restful/server.php/local_webservice_coursecopy_copy_course', {
+const copyData = {
+  wsfunction: "local_coursecopy_copy_course",
+  shortname_clone: "MATH2024",
+  fullname: "Mathematics 2025",
+  shortname: "MATH2025",
+  startdate: 1704067200,  // 2024-01-01
+  enddate: 1735689600     // 2025-01-01
+};
+
+fetch('https://your-moodle-site.com/local/coursecopy/restful_api.php', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer your_token_here'
+    'Authorization': 'Bearer YOUR_TOKEN_HERE'
   },
-  body: JSON.stringify({
-    shortname_clone: 'MATH101',
-    fullname: 'Mathematics 101 - Spring 2025',
-    shortname: 'MATH101_2025',
-    startdate: 1704067200,
-    enddate: 1719792000
-  })
-});
-
-const result = await response.json();
-console.log(result);
+  body: JSON.stringify(copyData)
+})
+.then(response => response.json())
+.then(data => {
+  if (data.status === 'success') {
+    console.log('Course copied successfully! New course ID:', data.id);
+  } else {
+    console.error('Error:', data.message);
+  }
+})
+.catch(error => console.error('Request failed:', error));
 ```
 
-## ⚙️ Cài đặt
+### Python
 
-### 1. Upload Plugin
-1. Upload thư mục `coursecopy` vào `local/webservice/`
-2. Vào **Site Administration → Notifications** để cài đặt
+```python
+import requests
+import json
+from datetime import datetime
 
-### 2. Cấu hình Permissions
-1. Vào **Site Administration → Users → Permissions → Define roles**
-2. Edit role cần thiết và add capabilities:
-   - `moodle/course:create`
-   - `moodle/backup:backupcourse`
-   - `moodle/restore:restorecourse`
+url = "https://your-moodle-site.com/local/coursecopy/restful_api.php"
+token = "YOUR_TOKEN_HERE"
 
-### 3. Enable Web Services (để tạo token)
-1. Vào **Site Administration → Advanced features**
-2. Check **Enable web services**
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {token}"
+}
 
-## 🔧 Requirements
+data = {
+    "wsfunction": "local_coursecopy_copy_course",
+    "shortname_clone": "COURSE2024",
+    "fullname": "Course Copy 2025",
+    "shortname": "COURSE2025",
+    "startdate": int(datetime(2024, 1, 1).timestamp()),
+    "enddate": int(datetime(2025, 1, 1).timestamp())
+}
 
-- **Moodle 3.9+**
-- Web services enabled (để tạo token)
-- User với quyền:
-  - `moodle/course:create`
-  - `moodle/backup:backupcourse`
-  - `moodle/restore:restorecourse`
+response = requests.post(url, headers=headers, json=data)
+result = response.json()
 
-## 🐛 Troubleshooting
-
-### Lỗi thường gặp:
-
-1. **"Invalid token"**:
-   - Kiểm tra token có tồn tại trong database
-   - Token chưa expired
-
-2. **"Source course not found"**:
-   - Kiểm tra `shortname_clone` có chính xác không
-   - Course phải visible hoặc user có quyền truy cập
-
-3. **"Course with shortname already exists"**:
-   - `shortname` mới phải unique trong hệ thống
-
-4. **"User does not have permission"**:
-   - User cần có đủ capabilities như đã liệt kê ở trên
-
-5. **"Start date must be before end date"**:
-   - Kiểm tra `startdate < enddate`
-   - Cả hai đều phải là Unix timestamp
-
-## 📁 File Structure
-
-```
-local/webservice/coursecopy/
-├── restful.php              # Main RESTful API endpoint
-├── version.php              # Plugin version info
-├── README.md                # This documentation
-├── externallib.php          # Optional traditional webservice
-└── db/
-    ├── access.php           # Capabilities definition
-    └── services.php         # Web service definitions
+if result['status'] == 'success':
+    print(f"Course copied successfully! New course ID: {result['id']}")
+else:
+    print(f"Error: {result['message']}")
 ```
 
-## 🎯 Technical Details
+### PHP
 
-- **Protocol**: RESTful API với JSON
-- **Authentication**: Token-based (Moodle web service tokens)
-- **Method**: POST only
-- **Content-Type**: application/json
-- **CORS**: Enabled for cross-origin requests
-- **Backup Method**: Moodle's built-in backup/restore system
+```php
+<?php
+$url = "https://your-moodle-site.com/local/coursecopy/restful_api.php";
+$token = "YOUR_TOKEN_HERE";
 
----
+$data = [
+    'wsfunction' => 'local_coursecopy_copy_course',
+    'shortname_clone' => 'COURSE2024',
+    'fullname' => 'Course Copy 2025',
+    'shortname' => 'COURSE2025',
+    'startdate' => strtotime('2024-01-01'),
+    'enddate' => strtotime('2025-01-01')
+];
 
-**Plugin Version**: v1.0  
-**Compatible**: Moodle 3.9+  
-**License**: GPL v3 or later
+$options = [
+    'http' => [
+        'header' => "Content-Type: application/json\r\n" .
+                   "Authorization: Bearer $token\r\n",
+        'method' => 'POST',
+        'content' => json_encode($data)
+    ]
+];
+
+$context = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+$response = json_decode($result, true);
+
+if ($response['status'] === 'success') {
+    echo "Course copied successfully! New course ID: " . $response['id'];
+} else {
+    echo "Error: " . $response['message'];
+}
+?>
+```
+
+## Xử lý lỗi thường gặp
+
+| Lỗi | Nguyên nhân | Giải pháp |
+|-----|------------|-----------|
+| "Authorization token required" | Không có token trong request | Thêm token vào Authorization header hoặc request body |
+| "Invalid token" | Token không đúng hoặc không tồn tại | Kiểm tra lại token trong Moodle admin |
+| "Token expired" | Token đã hết hạn | Tạo token mới hoặc gia hạn token |
+| "Không tìm thấy môn học với shortname: ..." | Shortname nguồn không tồn tại | Kiểm tra lại shortname của môn học nguồn |
+| "Shortname đã tồn tại: ..." | Shortname mới đã được sử dụng | Chọn shortname khác cho môn học mới |
+| "Ngày kết thúc phải sau ngày bắt đầu" | startdate >= enddate | Đảm bảo enddate > startdate |
+| "Missing required parameters" | Thiếu tham số bắt buộc | Kiểm tra lại tất cả các tham số required |
+
+## Kiểm tra timestamp
+
+Để chuyển đổi ngày thành Unix timestamp:
+
+### Online tool
+- https://www.unixtimestamp.com/
+
+### JavaScript
+```javascript
+const timestamp = new Date('2024-01-01').getTime() / 1000;
+```
+
+### PHP
+```php
+$timestamp = strtotime('2024-01-01');
+```
+
+### Python
+```python
+from datetime import datetime
+timestamp = int(datetime(2024, 1, 1).timestamp())
+```
+
+## Quyền truy cập
+
+Plugin này yêu cầu các quyền sau:
+- `moodle/course:create` - Tạo môn học mới
+- `moodle/course:view` - Xem thông tin môn học
+
+## Bảo mật
+
+- Plugin sử dụng xác thực token của Moodle
+- Token phải được giữ bí mật và không chia sẻ
+- Nên sử dụng HTTPS khi gọi API
+- Token có thể đặt thời gian hết hạn trong Moodle admin
+- Validate tất cả input parameters
+
+## Troubleshooting
+
+### Debug mode
+
+Để bật debug mode trong Moodle:
+1. Site administration → Development → Debugging
+2. Set "Debug messages" to "DEVELOPER"
+3. Check lại response để xem error details
+
+### Kiểm tra token
+
+```sql
+SELECT * FROM mdl_external_tokens WHERE token = 'YOUR_TOKEN';
+```
+
+### Kiểm tra web services
+
+```sql
+SELECT * FROM mdl_external_services WHERE shortname = 'coursecopy_service';
+```
+
+## Hỗ trợ
+
+Nếu gặp vấn đề, vui lòng:
+1. Kiểm tra Moodle error logs
+2. Kiểm tra web server error logs
+3. Bật debug mode để xem chi tiết lỗi
+
+## License
+
+GNU GPL v3 or later
+
+## Tác giả
+
+Course Copy Team - 2025

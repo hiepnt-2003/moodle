@@ -14,14 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * English language strings for Course Copy plugin.
+ * Version details
  *
- * @package    local_coursecopy
- * @copyright  2025 Course Copy Team
+ * @package    webservice_restful
+ * @copyright  Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Course Copy';
-$string['coursecopy:copy'] = 'Copy courses';
-$string['privacy:metadata'] = 'The Course Copy plugin does not store any personal data.';
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->version   = 2022052500;            // The current plugin version (Date: YYYYMMDDXX).
+$plugin->release   = 2022052500;            // Same as version.
+$plugin->component = 'webservice_restful';  // Full name of the plugin (used for diagnostics).
+$plugin->requires = 2016052300;             // Requires this Moodle version.
+$plugin->maturity = MATURITY_STABLE;

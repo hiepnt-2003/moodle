@@ -14,14 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * English language strings for Course Copy plugin.
+ * RESTful server related capabilities
  *
- * @package    local_coursecopy
- * @copyright  2025 Course Copy Team
+ * @package    webservice_restful
+ * @category   access
+ * @copyright  Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Course Copy';
-$string['coursecopy:copy'] = 'Copy courses';
-$string['privacy:metadata'] = 'The Course Copy plugin does not store any personal data.';
+defined('MOODLE_INTERNAL') || die();
+
+$capabilities = array(
+
+    'webservice/restful:use' => array(
+        'captype' => 'read', // In fact this may be considered read and write at the same time.
+        'contextlevel' => CONTEXT_COURSE, // The context level should be probably CONTEXT_MODULE.
+        'archetypes' => array(
+        ),
+    ),
+
+);

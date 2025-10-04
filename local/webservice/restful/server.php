@@ -14,14 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * English language strings for Course Copy plugin.
+ * RESTful web service entry point. The authentication is done via header tokens.
  *
- * @package    local_coursecopy
- * @copyright  2025 Course Copy Team
+ * @package    webservice_restful
+ * @copyright  Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Course Copy';
-$string['coursecopy:copy'] = 'Copy courses';
-$string['privacy:metadata'] = 'The Course Copy plugin does not store any personal data.';
+/**
+ * NO_DEBUG_DISPLAY - disable moodle specific debug messages and any errors in output
+ */
+define('NO_DEBUG_DISPLAY', true);
+define('WS_SERVER', true);
+
+require('../../config.php');
+require_once("$CFG->dirroot/webservice/restful/locallib.php");
+
+if (!webservice_protocol_is_enabled('restful')) {
+    header("HTTP/1.0 403 Forbidden");
+    debugging('The server died because the web services or the REST protocol are not enable',
+        DEBUG_DEVELOPER);
+    die;
+}
+
+$server = new webservice_restful_server(WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN);
+$server->run();
+die;
+

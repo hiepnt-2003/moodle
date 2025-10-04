@@ -15,23 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin capabilities.
+ * Capability definitions for the Course Copy plugin.
  *
  * @package    local_coursecopy
- * @copyright  2025 Your Name
+ * @copyright  2025 Course Copy Team
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
-    'local/coursecopy:use' => [
-        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+    'local/coursecopy:copy' => [
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
             'manager' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW,
         ],
     ],
 ];

@@ -15,17 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for Course Copy RESTful API plugin.
+ * Privacy provider implementation for webservice_restful.
  *
- * @package    local_coursecopy
- * @copyright  2025 Course Copy Team
+ * @package    webservice_restful
+ * @copyright  Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace webservice_restful\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025100401;        // Plugin version (YYYYMMDDXX).
-$plugin->requires  = 2019111800;        // Requires Moodle 3.8+ (compatible with 3.9).
-$plugin->component = 'local_coursecopy'; // Plugin component name.
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0.0';
+/**
+ * Privacy provider implementation for webservice_restful.
+ *
+ * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    // This trait must be included.
+    use \core_privacy\local\legacy_polyfill;
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function _get_reason() {
+        return 'privacy:metadata';
+    }
+}

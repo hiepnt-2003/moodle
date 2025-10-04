@@ -15,33 +15,37 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web service definitions for course copy using RESTful protocol.
+ * Web service external functions and service definitions.
  *
  * @package    local_coursecopy
- * @copyright  2025 Your Name
+ * @copyright  2025 Course Copy Team
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
+// Define the web service functions.
 $functions = [
     'local_coursecopy_copy_course' => [
-        'classname' => 'local_coursecopy_external',
-        'methodname' => 'copy_course',
-        'classpath' => 'local/webservice_coursecopy/externallib.php',
-        'description' => 'Copy a course with new parameters using RESTful protocol',
-        'type' => 'write',
-        'ajax' => true,
-        'capabilities' => 'moodle/course:create,moodle/backup:backupcourse,moodle/restore:restorecourse',
+        'classname'   => 'local_coursecopy_external',
+        'methodname'  => 'copy_course',
+        'classpath'   => 'local/coursecopy/externallib.php',
+        'description' => 'Copy a course with new details (fullname, shortname, startdate, enddate)',
+        'type'        => 'write',
+        'capabilities' => 'moodle/course:create',
+        'ajax'        => true,
     ],
 ];
 
+// Define the services.
 $services = [
-    'Course Copy RESTful Service' => [
-        'functions' => ['local_coursecopy_copy_course'],
+    'Course Copy Service' => [
+        'functions' => [
+            'local_coursecopy_copy_course',
+        ],
         'restrictedusers' => 0,
         'enabled' => 1,
-        'shortname' => 'coursecopy_restful',
+        'shortname' => 'coursecopy_service',
         'downloadfiles' => 0,
         'uploadfiles' => 0,
     ],
