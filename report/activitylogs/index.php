@@ -71,13 +71,17 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
     global $DB, $OUTPUT;
     
     // Build SQL query
-    $sql = "SELECT l.id, l.timecreated, l.userid, l.eventname, l.component, l.action, 
-                   l.target, l.objecttable, l.contextid, l.contextlevel, l.ip,
+    $sql = "SELECT l.id, l.timecreated, l.userid, l.relateduserid, l.eventname, 
+                   l.component, l.action, l.target, l.objecttable, l.objectid,
+                   l.crud, l.edulevel, l.contextid, l.contextlevel, l.contextinstanceid,
+                   l.ip, l.origin, l.other,
                    u.firstname, u.lastname, u.email,
+                   ru.firstname as relatedfirstname, ru.lastname as relatedlastname,
                    c.fullname as coursename,
                    ctx.contextlevel, ctx.instanceid
             FROM {logstore_standard_log} l
             LEFT JOIN {user} u ON l.userid = u.id
+            LEFT JOIN {user} ru ON l.relateduserid = ru.id
             LEFT JOIN {context} ctx ON l.contextid = ctx.id
             LEFT JOIN {course} c ON (ctx.contextlevel = 50 AND ctx.instanceid = c.id)
             WHERE l.timecreated >= :datefrom 
@@ -112,10 +116,13 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
     $table = new html_table();
     $table->head = array(
         get_string('time', 'report_activitylogs'),
-        get_string('user', 'report_activitylogs'),
-        get_string('event', 'report_activitylogs'),
+        get_string('userfullname', 'report_activitylogs'),
+        get_string('affecteduser', 'report_activitylogs'),
+        get_string('eventcontext', 'report_activitylogs'),
         get_string('component', 'report_activitylogs'),
-        get_string('context', 'report_activitylogs'),
+        get_string('eventname', 'report_activitylogs'),
+        get_string('description'),
+        get_string('origin', 'report_activitylogs'),
         get_string('ipaddress', 'report_activitylogs')
     );
     $table->attributes['class'] = 'generaltable';
@@ -126,7 +133,7 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
         // Time
         $row[] = userdate($log->timecreated, get_string('strftimedatetime', 'langconfig'));
         
-        // User
+        // User full name
         if ($log->firstname && $log->lastname) {
             $userlink = html_writer::link(
                 new moodle_url('/user/profile.php', array('id' => $log->userid)),
@@ -137,21 +144,64 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
             $row[] = '-';
         }
         
-        // Event name - make it more readable
-        $eventname = str_replace('\\', ' ', $log->eventname);
-        $eventname = preg_replace('/([a-z])([A-Z])/', '$1 $2', $eventname);
-        $row[] = $eventname;
+        // Affected user (related user)
+        if ($log->relateduserid && $log->relatedfirstname && $log->relatedlastname) {
+            $relateduser = (object)[
+                'firstname' => $log->relatedfirstname,
+                'lastname' => $log->relatedlastname
+            ];
+            $row[] = fullname($relateduser);
+        } else {
+            $row[] = '-';
+        }
+        
+        // Event context (Course name)
+        if ($log->coursename) {
+            $contextlink = html_writer::link(
+                new moodle_url('/course/view.php', array('id' => $log->instanceid)),
+                $log->coursename
+            );
+            $row[] = $contextlink;
+        } else {
+            $row[] = '-';
+        }
         
         // Component
         $row[] = $log->component ? $log->component : '-';
         
-        // Context
-        if ($log->coursename) {
-            $contexttext = $log->coursename;
-        } else {
-            $contexttext = 'Context Level ' . $log->contextlevel;
+        // Event name
+        $eventname = $log->eventname;
+        // Make event name more readable
+        $eventparts = explode('\\', $eventname);
+        $eventshort = end($eventparts);
+        $row[] = html_writer::tag('span', $eventname, array('title' => $eventname));
+        
+        // Description
+        $description = '';
+        try {
+            // Try to get event description
+            if (class_exists($log->eventname)) {
+                $eventclass = $log->eventname;
+                $eventdata = [
+                    'objectid' => $log->objectid,
+                    'context' => context::instance_by_id($log->contextid, IGNORE_MISSING),
+                    'userid' => $log->userid,
+                    'relateduserid' => $log->relateduserid,
+                    'other' => $log->other ? unserialize($log->other) : null
+                ];
+                
+                if ($eventdata['context']) {
+                    $event = $eventclass::create($eventdata);
+                    $description = $event->get_description();
+                }
+            }
+        } catch (Exception $e) {
+            // If we can't get description, leave it empty
         }
-        $row[] = $contexttext;
+        $row[] = $description ? $description : '-';
+        
+        // Origin
+        $row[] = $log->origin ? $log->origin : '-';
         
         // IP Address
         $row[] = $log->ip ? $log->ip : '-';
