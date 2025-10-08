@@ -23,16 +23,16 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-admin_externalpage_setup('reportactivitylogs', '', null, '', array('pagelayout'=>'report'));
+require_login();
 
 $context = context_system::instance();
 require_capability('report/activitylogs:view', $context);
 
 $PAGE->set_url(new moodle_url('/report/activitylogs/index.php'));
 $PAGE->set_context($context);
+$PAGE->set_pagelayout('report');
 $PAGE->set_title(get_string('pluginname', 'report_activitylogs'));
 $PAGE->set_heading(get_string('pluginname', 'report_activitylogs'));
 
