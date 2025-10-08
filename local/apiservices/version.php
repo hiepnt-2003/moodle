@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for API Services plugin.
+ * Version information for local_apiservices plugin.
  *
  * @package    local_apiservices
  * @copyright  2025 API Services Team
@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025100800;        // Plugin version (YYYYMMDDXX).
-$plugin->requires  = 2019111800;        // Requires Moodle 3.8+.
-$plugin->component = 'local_apiservices'; // Plugin component name.
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0.0';
+$plugin->component = 'local_apiservices';
+$plugin->version = 2025100800;
+$plugin->requires = 2019111800;        // Requires Moodle 3.8+ (compatible with 3.9).
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release = 'v1.0';

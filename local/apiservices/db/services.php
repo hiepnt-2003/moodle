@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 // Define the web service functions.
 $functions = [
-    // Course Copy Function
     'local_apiservices_copy_course' => [
         'classname'   => 'local_apiservices_external',
         'methodname'  => 'copy_course',
@@ -36,8 +35,6 @@ $functions = [
         'capabilities' => 'moodle/course:create',
         'ajax'        => true,
     ],
-    
-    // User Creation Function
     'local_apiservices_create_user' => [
         'classname'   => 'local_apiservices_external',
         'methodname'  => 'create_user',

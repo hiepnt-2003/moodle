@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * English language strings for API Services plugin.
+ * Language strings for local_apiservices plugin.
  *
  * @package    local_apiservices
  * @copyright  2025 API Services Team
@@ -29,10 +29,10 @@ $string['apiservices:copycourse'] = 'Copy courses via web service';
 $string['apiservices:createuser'] = 'Create users via web service';
 $string['privacy:metadata'] = 'The API Services plugin does not store any personal data.';
 
-// User Creation - Success messages.
+// User creation - Success messages.
 $string['success_usercreated'] = 'User has been successfully created';
 
-// User Creation - Error messages.
+// User creation - Error messages.
 $string['error_usernameinuse'] = 'Username "{$a}" is already in use';
 $string['error_emailinuse'] = 'Email "{$a}" is already in use';
 $string['error_requiredfields'] = 'All required fields must be provided';

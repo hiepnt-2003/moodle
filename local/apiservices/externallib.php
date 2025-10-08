@@ -33,9 +33,9 @@ require_once($CFG->dirroot . '/user/lib.php');
  */
 class local_apiservices_external extends external_api {
 
-    // =============================================================================
+    // ==========================================
     // COURSE COPY FUNCTIONS
-    // =============================================================================
+    // ==========================================
 
     /**
      * Describes the parameters for copy_course function.
@@ -293,9 +293,9 @@ class local_apiservices_external extends external_api {
         ]);
     }
 
-    // =============================================================================
+    // ==========================================
     // USER CREATION FUNCTIONS
-    // =============================================================================
+    // ==========================================
 
     /**
      * Describes the parameters for create_user function.

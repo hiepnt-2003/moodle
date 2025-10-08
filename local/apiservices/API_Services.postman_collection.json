@@ -1,509 +1,407 @@
 {
-  "info": {
-    "_postman_id": "api-services-collection-2025",
-    "name": "Moodle API Services",
-    "description": "API Services Collection - Combined Course Copy and User Creation",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "https://your-moodle-site.com",
-      "type": "string"
-    },
-    {
-      "key": "token",
-      "value": "YOUR_WEBSERVICE_TOKEN_HERE",
-      "type": "string"
-    },
-    {
-      "key": "ws_rest_endpoint",
-      "value": "{{base_url}}/webservice/rest/server.php",
-      "type": "string"
-    }
-  ],
-  "item": [
-    {
-      "name": "Course Copy",
-      "item": [
-        {
-          "name": "Copy Course - Basic",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                {
-                  "key": "wstoken",
-                  "value": "{{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "wsfunction",
-                  "value": "local_apiservices_copy_course",
-                  "type": "text"
-                },
-                {
-                  "key": "moodlewsrestformat",
-                  "value": "json",
-                  "type": "text"
-                },
-                {
-                  "key": "shortname_clone",
-                  "value": "COURSE001",
-                  "description": "Shortname of source course to copy from",
-                  "type": "text"
-                },
-                {
-                  "key": "fullname",
-                  "value": "New Course Full Name",
-                  "description": "Full name for the new course",
-                  "type": "text"
-                },
-                {
-                  "key": "shortname",
-                  "value": "COURSE002",
-                  "description": "Short name for the new course",
-                  "type": "text"
-                },
-                {
-                  "key": "startdate",
-                  "value": "1704067200",
-                  "description": "Start date as Unix timestamp (e.g., Jan 1, 2024)",
-                  "type": "text"
-                },
-                {
-                  "key": "enddate",
-                  "value": "1735689600",
-                  "description": "End date as Unix timestamp (e.g., Jan 1, 2025)",
-                  "type": "text"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{ws_rest_endpoint}}",
-              "host": ["{{ws_rest_endpoint}}"]
-            },
-            "description": "Copy a course with new course details. The source course structure and settings will be copied to create a new course."
-          },
-          "response": []
-        },
-        {
-          "name": "Copy Course - With Current Dates",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                {
-                  "key": "wstoken",
-                  "value": "{{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "wsfunction",
-                  "value": "local_apiservices_copy_course",
-                  "type": "text"
-                },
-                {
-                  "key": "moodlewsrestformat",
-                  "value": "json",
-                  "type": "text"
-                },
-                {
-                  "key": "shortname_clone",
-                  "value": "COURSE001",
-                  "type": "text"
-                },
-                {
-                  "key": "fullname",
-                  "value": "Advanced Programming 2025",
-                  "type": "text"
-                },
-                {
-                  "key": "shortname",
-                  "value": "PROG2025",
-                  "type": "text"
-                },
-                {
-                  "key": "startdate",
-                  "value": "{{$timestamp}}",
-                  "description": "Current timestamp",
-                  "type": "text"
-                },
-                {
-                  "key": "enddate",
-                  "value": "1767225600",
-                  "description": "End of 2025",
-                  "type": "text"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{ws_rest_endpoint}}",
-              "host": ["{{ws_rest_endpoint}}"]
-            },
-            "description": "Example with current date as start date"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "User Creation",
-      "item": [
-        {
-          "name": "Create User - Auto Password",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                {
-                  "key": "wstoken",
-                  "value": "{{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "wsfunction",
-                  "value": "local_apiservices_create_user",
-                  "type": "text"
-                },
-                {
-                  "key": "moodlewsrestformat",
-                  "value": "json",
-                  "type": "text"
-                },
-                {
-                  "key": "username",
-                  "value": "johndoe",
-                  "description": "Username (alphanumeric, dots, underscores, hyphens)",
-                  "type": "text"
-                },
-                {
-                  "key": "firstname",
-                  "value": "John",
-                  "description": "First name",
-                  "type": "text"
-                },
-                {
-                  "key": "lastname",
-                  "value": "Doe",
-                  "description": "Last name",
-                  "type": "text"
-                },
-                {
-                  "key": "email",
-                  "value": "john.doe@example.com",
-                  "description": "Email address",
-                  "type": "text"
-                },
-                {
-                  "key": "createpassword",
-                  "value": "1",
-                  "description": "Auto-generate password (1=yes, 0=no)",
-                  "type": "text"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{ws_rest_endpoint}}",
-              "host": ["{{ws_rest_endpoint}}"]
-            },
-            "description": "Create a new user with auto-generated password"
-          },
-          "response": []
-        },
-        {
-          "name": "Create User - Custom Password",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                {
-                  "key": "wstoken",
-                  "value": "{{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "wsfunction",
-                  "value": "local_apiservices_create_user",
-                  "type": "text"
-                },
-                {
-                  "key": "moodlewsrestformat",
-                  "value": "json",
-                  "type": "text"
-                },
-                {
-                  "key": "username",
-                  "value": "janedoe",
-                  "type": "text"
-                },
-                {
-                  "key": "firstname",
-                  "value": "Jane",
-                  "type": "text"
-                },
-                {
-                  "key": "lastname",
-                  "value": "Doe",
-                  "type": "text"
-                },
-                {
-                  "key": "email",
-                  "value": "jane.doe@example.com",
-                  "type": "text"
-                },
-                {
-                  "key": "createpassword",
-                  "value": "0",
-                  "description": "Use custom password",
-                  "type": "text"
-                },
-                {
-                  "key": "password",
-                  "value": "SecurePassword123",
-                  "description": "Password (min 8 chars, 1 upper, 1 lower, 1 digit)",
-                  "type": "text"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{ws_rest_endpoint}}",
-              "host": ["{{ws_rest_endpoint}}"]
-            },
-            "description": "Create a new user with custom password. Password must be at least 8 characters with uppercase, lowercase, and digit."
-          },
-          "response": []
-        },
-        {
-          "name": "Create User - Batch Example",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                {
-                  "key": "wstoken",
-                  "value": "{{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "wsfunction",
-                  "value": "local_apiservices_create_user",
-                  "type": "text"
-                },
-                {
-                  "key": "moodlewsrestformat",
-                  "value": "json",
-                  "type": "text"
-                },
-                {
-                  "key": "username",
-                  "value": "student{{$randomInt}}",
-                  "description": "Random username",
-                  "type": "text"
-                },
-                {
-                  "key": "firstname",
-                  "value": "{{$randomFirstName}}",
-                  "type": "text"
-                },
-                {
-                  "key": "lastname",
-                  "value": "{{$randomLastName}}",
-                  "type": "text"
-                },
-                {
-                  "key": "email",
-                  "value": "student{{$randomInt}}@example.com",
-                  "type": "text"
-                },
-                {
-                  "key": "createpassword",
-                  "value": "1",
-                  "type": "text"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{ws_rest_endpoint}}",
-              "host": ["{{ws_rest_endpoint}}"]
-            },
-            "description": "Example for batch user creation using Postman random variables"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Combined Workflow",
-      "item": [
-        {
-          "name": "1. Create User First",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.status === 'success') {",
-                  "    pm.environment.set('created_user_id', jsonData.id);",
-                  "    pm.test('User created successfully', function () {",
-                  "        pm.expect(jsonData.status).to.eql('success');",
-                  "    });",
-                  "} else {",
-                  "    pm.test('User creation failed: ' + jsonData.message, function () {",
-                  "        pm.expect(jsonData.status).to.eql('error');",
-                  "    });",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                {
-                  "key": "wstoken",
-                  "value": "{{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "wsfunction",
-                  "value": "local_apiservices_create_user",
-                  "type": "text"
-                },
-                {
-                  "key": "moodlewsrestformat",
-                  "value": "json",
-                  "type": "text"
-                },
-                {
-                  "key": "username",
-                  "value": "newstudent",
-                  "type": "text"
-                },
-                {
-                  "key": "firstname",
-                  "value": "New",
-                  "type": "text"
-                },
-                {
-                  "key": "lastname",
-                  "value": "Student",
-                  "type": "text"
-                },
-                {
-                  "key": "email",
-                  "value": "newstudent@example.com",
-                  "type": "text"
-                },
-                {
-                  "key": "createpassword",
-                  "value": "1",
-                  "type": "text"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{ws_rest_endpoint}}",
-              "host": ["{{ws_rest_endpoint}}"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "2. Then Copy Course",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.status === 'success') {",
-                  "    pm.environment.set('created_course_id', jsonData.id);",
-                  "    pm.test('Course copied successfully', function () {",
-                  "        pm.expect(jsonData.status).to.eql('success');",
-                  "    });",
-                  "} else {",
-                  "    pm.test('Course copy failed: ' + jsonData.message, function () {",
-                  "        pm.expect(jsonData.status).to.eql('error');",
-                  "    });",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                {
-                  "key": "wstoken",
-                  "value": "{{token}}",
-                  "type": "text"
-                },
-                {
-                  "key": "wsfunction",
-                  "value": "local_apiservices_copy_course",
-                  "type": "text"
-                },
-                {
-                  "key": "moodlewsrestformat",
-                  "value": "json",
-                  "type": "text"
-                },
-                {
-                  "key": "shortname_clone",
-                  "value": "COURSE001",
-                  "type": "text"
-                },
-                {
-                  "key": "fullname",
-                  "value": "Course for New Student",
-                  "type": "text"
-                },
-                {
-                  "key": "shortname",
-                  "value": "NEWSTUDENT001",
-                  "type": "text"
-                },
-                {
-                  "key": "startdate",
-                  "value": "{{$timestamp}}",
-                  "type": "text"
-                },
-                {
-                  "key": "enddate",
-                  "value": "1767225600",
-                  "type": "text"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{ws_rest_endpoint}}",
-              "host": ["{{ws_rest_endpoint}}"]
-            }
-          },
-          "response": []
-        }
-      ],
-      "description": "Example workflow: Create user then copy course for that user"
-    }
-  ]
+	"info": {
+		"_postman_id": "api-services-collection-001",
+		"name": "API Services - Moodle (RESTful)",
+		"description": "RESTful API cho Moodle API Services plugin (Course Copy & User Creation)\n\nPlugin: local_apiservices\nProtocol: webservice_restful\n\n**Headers**: Authorization, Content-Type, Accept",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Course Copy",
+			"item": [
+				{
+					"name": "Copy Course - Success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});",
+									"",
+									"pm.test(\"Copy successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('success');",
+									"    pm.expect(jsonData.id).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{moodle_token}}",
+								"type": "text",
+								"description": "Token không cần 'Bearer' prefix"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"shortname_clone\": \"COURSE001\",\n    \"fullname\": \"New Course Test {{$timestamp}}\",\n    \"shortname\": \"NEWCOURSE{{$timestamp}}\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1719878400\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{moodle_url}}/webservice/restful/server.php/local_apiservices_copy_course",
+							"host": [
+								"{{moodle_url}}"
+							],
+							"path": [
+								"webservice",
+								"restful",
+								"server.php",
+								"local_apiservices_copy_course"
+							]
+						},
+						"description": "Copy một môn học với thông tin mới sử dụng webservice_restful.\n\n**Endpoint**: /webservice/restful/server.php/local_apiservices_copy_course\n\n**Headers bắt buộc**:\n- Authorization: TOKEN (không cần Bearer prefix)\n- Content-Type: application/json\n- Accept: application/json"
+					},
+					"response": []
+				},
+				{
+					"name": "Copy Course - Invalid Dates",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{moodle_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"shortname_clone\": \"COURSE001\",\n    \"fullname\": \"Test Invalid Dates\",\n    \"shortname\": \"TESTINVALID\",\n    \"startdate\": 1719878400,\n    \"enddate\": 1704067200\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{moodle_url}}/webservice/restful/server.php/local_apiservices_copy_course",
+							"host": [
+								"{{moodle_url}}"
+							],
+							"path": [
+								"webservice",
+								"restful",
+								"server.php",
+								"local_apiservices_copy_course"
+							]
+						},
+						"description": "Test trường hợp enddate trước startdate - kỳ vọng trả về error"
+					},
+					"response": []
+				},
+				{
+					"name": "Copy Course - Source Not Found",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{moodle_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"shortname_clone\": \"NOTEXIST999\",\n    \"fullname\": \"Test Not Found\",\n    \"shortname\": \"TESTNOTFOUND\",\n    \"startdate\": 1704067200,\n    \"enddate\": 1719878400\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{moodle_url}}/webservice/restful/server.php/local_apiservices_copy_course",
+							"host": [
+								"{{moodle_url}}"
+							],
+							"path": [
+								"webservice",
+								"restful",
+								"server.php",
+								"local_apiservices_copy_course"
+							]
+						},
+						"description": "Test trường hợp môn học nguồn không tồn tại - kỳ vọng trả về error"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Creation",
+			"item": [
+				{
+					"name": "Create User - Auto Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});",
+									"",
+									"pm.test(\"User creation successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('success');",
+									"    pm.expect(jsonData.id).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{moodle_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser{{$timestamp}}\",\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"email\": \"john.doe.{{$timestamp}}@example.com\",\n    \"createpassword\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{moodle_url}}/webservice/restful/server.php/local_apiservices_create_user",
+							"host": [
+								"{{moodle_url}}"
+							],
+							"path": [
+								"webservice",
+								"restful",
+								"server.php",
+								"local_apiservices_create_user"
+							]
+						},
+						"description": "Tạo user mới với password tự động. Username và email sử dụng timestamp để đảm bảo unique."
+					},
+					"response": []
+				},
+				{
+					"name": "Create User - Manual Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{moodle_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"manualuser{{$timestamp}}\",\n    \"firstname\": \"Jane\",\n    \"lastname\": \"Smith\",\n    \"email\": \"jane.smith.{{$timestamp}}@example.com\",\n    \"createpassword\": false,\n    \"password\": \"Test@1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{moodle_url}}/webservice/restful/server.php/local_apiservices_create_user",
+							"host": [
+								"{{moodle_url}}"
+							],
+							"path": [
+								"webservice",
+								"restful",
+								"server.php",
+								"local_apiservices_create_user"
+							]
+						},
+						"description": "Tạo user mới với password tự định nghĩa. Password phải đủ mạnh (min 8 chars, có uppercase, lowercase, digit)."
+					},
+					"response": []
+				},
+				{
+					"name": "Create User - Weak Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{moodle_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"weakpwduser\",\n    \"firstname\": \"Test\",\n    \"lastname\": \"User\",\n    \"email\": \"weakpwd@example.com\",\n    \"createpassword\": false,\n    \"password\": \"weak\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{moodle_url}}/webservice/restful/server.php/local_apiservices_create_user",
+							"host": [
+								"{{moodle_url}}"
+							],
+							"path": [
+								"webservice",
+								"restful",
+								"server.php",
+								"local_apiservices_create_user"
+							]
+						},
+						"description": "Test trường hợp password quá yếu - kỳ vọng trả về error"
+					},
+					"response": []
+				},
+				{
+					"name": "Create User - Invalid Email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{moodle_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"invalidemailuser\",\n    \"firstname\": \"Test\",\n    \"lastname\": \"User\",\n    \"email\": \"not-an-email\",\n    \"createpassword\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{moodle_url}}/webservice/restful/server.php/local_apiservices_create_user",
+							"host": [
+								"{{moodle_url}}"
+							],
+							"path": [
+								"webservice",
+								"restful",
+								"server.php",
+								"local_apiservices_create_user"
+							]
+						},
+						"description": "Test trường hợp email không hợp lệ - kỳ vọng trả về error"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "moodle_url",
+			"value": "http://localhost/moodle",
+			"type": "string"
+		},
+		{
+			"key": "moodle_token",
+			"value": "YOUR_TOKEN_HERE",
+			"type": "string"
+		}
+	]
 }

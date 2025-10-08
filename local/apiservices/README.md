@@ -1,152 +1,104 @@
-# API Services Plugin for Moodle
+# API Services - Moodle Web Services Plugin
 
-Plugin tích hợp 2 webservice: **Course Copy** và **User Creation** vào một dịch vụ duy nhất.
+## Overview
 
-## Mô tả
+Plugin **API Services** cung cấp các web services API để quản lý Course và User trong Moodle. Plugin này gộp chức năng của 2 services:
+- **Course Copy Service** - Copy môn học với thông tin mới
+- **User Creation Service** - Tạo người dùng mới
 
-Plugin `local_apiservices` cung cấp 2 API chính:
-1. **Copy Course** - Sao chép khóa học với thông tin mới
-2. **Create User** - Tạo người dùng mới
+## Features
 
-## Cài đặt
+### 1. Course Copy API
+- Copy môn học từ một môn học nguồn với các thông tin mới
+- Giữ nguyên cấu trúc, cài đặt và format của môn học nguồn
+- Tự động sao chép các course format options
 
-1. Copy thư mục `apiservices` vào `local/` của Moodle
-2. Truy cập **Site administration > Notifications** để cài đặt plugin
-3. Cấu hình Web Service:
-   - Vào **Site administration > Server > Web services > Overview**
-   - Enable web services
-   - Enable protocols (REST, SOAP, etc.)
-   - Tạo một service mới hoặc sử dụng service "API Services" có sẵn
-   - Thêm các functions:
-     - `local_apiservices_copy_course`
-     - `local_apiservices_create_user`
-   - Tạo token cho user có quyền phù hợp
+### 2. User Creation API
+- Tạo người dùng mới với đầy đủ thông tin
+- Hỗ trợ tự động tạo password hoặc tự định nghĩa
+- Kiểm tra tính hợp lệ của username, email và password
 
-## API Functions
+## Installation
 
-### 1. Copy Course (`local_apiservices_copy_course`)
+1. Copy thư mục `apiservices` vào thư mục `local/` của Moodle
+2. Truy cập Site Administration → Notifications để cài đặt plugin
+3. Cấu hình Web Services theo hướng dẫn trong [SETUP_GUIDE.md](SETUP_GUIDE.md)
 
-Sao chép một khóa học với thông tin mới.
+## API Endpoints
 
-**Tham số:**
-- `shortname_clone` (string) - Shortname của khóa học nguồn
-- `fullname` (string) - Tên đầy đủ cho khóa học mới
-- `shortname` (string) - Shortname cho khóa học mới
+### 1. Copy Course
+**Function:** `local_apiservices_copy_course`
+
+**Parameters:**
+- `shortname_clone` (string) - Shortname của môn học nguồn cần copy
+- `fullname` (string) - Tên đầy đủ cho môn học mới
+- `shortname` (string) - Tên viết tắt cho môn học mới
 - `startdate` (int) - Ngày bắt đầu (Unix timestamp)
 - `enddate` (int) - Ngày kết thúc (Unix timestamp)
 
-**Trả về:**
+**Returns:**
 ```json
 {
-  "status": "success|error",
-  "id": 123,
-  "message": "Thông báo"
+    "status": "success",
+    "id": 123,
+    "message": "Copy môn học thành công! ID môn học mới: 123"
 }
 ```
 
-**Ví dụ REST API:**
-```bash
-curl -X POST "https://your-moodle-site/webservice/rest/server.php" \
-  -d "wstoken=YOUR_TOKEN" \
-  -d "wsfunction=local_apiservices_copy_course" \
-  -d "moodlewsrestformat=json" \
-  -d "shortname_clone=COURSE001" \
-  -d "fullname=New Course Name" \
-  -d "shortname=COURSE002" \
-  -d "startdate=1704067200" \
-  -d "enddate=1735689600"
-```
+### 2. Create User
+**Function:** `local_apiservices_create_user`
 
-### 2. Create User (`local_apiservices_create_user`)
+**Parameters:**
+- `username` (string) - Username cho người dùng mới
+- `firstname` (string) - Tên
+- `lastname` (string) - Họ
+- `email` (string) - Địa chỉ email
+- `createpassword` (boolean) - Tự động tạo password hay không
+- `password` (string) - Password (bắt buộc nếu createpassword = false)
 
-Tạo người dùng mới trong hệ thống.
-
-**Tham số:**
-- `username` (string) - Username (chỉ chữ, số, dấu chấm, gạch dưới, gạch ngang)
-- `firstname` (string) - Họ
-- `lastname` (string) - Tên
-- `email` (string) - Email
-- `createpassword` (boolean) - Tự động tạo mật khẩu (true/false)
-- `password` (string) - Mật khẩu (bắt buộc nếu createpassword=false)
-
-**Trả về:**
+**Returns:**
 ```json
 {
-  "status": "success|error",
-  "id": 456,
-  "message": "Thông báo"
+    "status": "success",
+    "id": 456,
+    "message": "User has been successfully created"
 }
 ```
 
-**Ví dụ REST API:**
-```bash
-# Tạo user với mật khẩu tự động
-curl -X POST "https://your-moodle-site/webservice/rest/server.php" \
-  -d "wstoken=YOUR_TOKEN" \
-  -d "wsfunction=local_apiservices_create_user" \
-  -d "moodlewsrestformat=json" \
-  -d "username=johndoe" \
-  -d "firstname=John" \
-  -d "lastname=Doe" \
-  -d "email=john.doe@example.com" \
-  -d "createpassword=1"
+## Testing
 
-# Tạo user với mật khẩu tùy chỉnh
-curl -X POST "https://your-moodle-site/webservice/rest/server.php" \
-  -d "wstoken=YOUR_TOKEN" \
-  -d "wsfunction=local_apiservices_create_user" \
-  -d "moodlewsrestformat=json" \
-  -d "username=janedoe" \
-  -d "firstname=Jane" \
-  -d "lastname=Doe" \
-  -d "email=jane.doe@example.com" \
-  -d "createpassword=0" \
-  -d "password=SecurePass123"
-```
+Sử dụng Postman collection đã được cung cấp trong file `API_Services.postman_collection.json` để test các API endpoints.
 
-## Quyền truy cập
+### RESTful Protocol
 
-Plugin yêu cầu các quyền sau:
-- **Course Copy**: `moodle/course:create`
-- **User Creation**: `moodle/user:create`
+Plugin này sử dụng **webservice_restful** protocol của Moodle:
 
-## Postman Collection
+**Endpoint Format**: `{{moodle_url}}/webservice/restful/server.php/{function_name}`
 
-Bạn có thể import Postman collection từ các plugin gốc để test:
-- `Course_Copy_API.postman_collection.json` (từ local/coursecopy)
-- `User_Creation_API.postman_collection.json` (từ local/usercreation)
+**Headers bắt buộc**:
+- `Authorization`: YOUR_TOKEN (không cần 'Bearer' prefix)
+- `Content-Type`: application/json
+- `Accept`: application/json
 
-**Lưu ý:** Cần thay đổi tên function trong collection:
-- `local_coursecopy_copy_course` → `local_apiservices_copy_course`
-- `local_usercreation_create_user` → `local_apiservices_create_user`
+**Body**: JSON format với các parameters
 
-## Cấu trúc thư mục
+## Documentation
 
-```
-local/apiservices/
-├── db/
-│   ├── access.php          # Định nghĩa capabilities
-│   └── services.php        # Định nghĩa web services
-├── lang/
-│   └── en/
-│       └── local_apiservices.php  # Language strings
-├── externallib.php         # External API functions
-├── version.php             # Plugin version
-└── README.md              # Tài liệu này
-```
+- [Setup Guide](SETUP_GUIDE.md) - Hướng dẫn cài đặt và cấu hình chi tiết
+- [API Overview](OVERVIEW.md) - Tổng quan về các API
+- [RESTful Protocol Guide](RESTFUL_GUIDE.md) - Hướng dẫn sử dụng RESTful protocol
+- [Postman Collection](API_Services.postman_collection.json) - Collection để test APIs
 
-## Hỗ trợ
+## Requirements
 
-- **Moodle version**: 3.8 trở lên
-- **Plugin type**: Local
-- **Maturity**: Stable
+- Moodle 3.8 trở lên
+- Web Services được kích hoạt
+- RESTful protocol được kích hoạt (webservice_restful plugin)
 
 ## License
 
-GPL v3 or later
+This plugin is licensed under the GNU GPL v3 or later.
 
-## Credits
+## Support
 
-Plugin này được tạo bằng cách gộp 2 plugin:
-- `local_coursecopy` - Course Copy Service
-- `local_usercreation` - User Creation Service
+Để được hỗ trợ, vui lòng tạo issue hoặc liên hệ với đội phát triển.
