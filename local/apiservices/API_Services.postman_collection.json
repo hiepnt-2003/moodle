@@ -1,0 +1,509 @@
+{
+  "info": {
+    "_postman_id": "api-services-collection-2025",
+    "name": "Moodle API Services",
+    "description": "API Services Collection - Combined Course Copy and User Creation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://your-moodle-site.com",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "YOUR_WEBSERVICE_TOKEN_HERE",
+      "type": "string"
+    },
+    {
+      "key": "ws_rest_endpoint",
+      "value": "{{base_url}}/webservice/rest/server.php",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Course Copy",
+      "item": [
+        {
+          "name": "Copy Course - Basic",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "wstoken",
+                  "value": "{{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "wsfunction",
+                  "value": "local_apiservices_copy_course",
+                  "type": "text"
+                },
+                {
+                  "key": "moodlewsrestformat",
+                  "value": "json",
+                  "type": "text"
+                },
+                {
+                  "key": "shortname_clone",
+                  "value": "COURSE001",
+                  "description": "Shortname of source course to copy from",
+                  "type": "text"
+                },
+                {
+                  "key": "fullname",
+                  "value": "New Course Full Name",
+                  "description": "Full name for the new course",
+                  "type": "text"
+                },
+                {
+                  "key": "shortname",
+                  "value": "COURSE002",
+                  "description": "Short name for the new course",
+                  "type": "text"
+                },
+                {
+                  "key": "startdate",
+                  "value": "1704067200",
+                  "description": "Start date as Unix timestamp (e.g., Jan 1, 2024)",
+                  "type": "text"
+                },
+                {
+                  "key": "enddate",
+                  "value": "1735689600",
+                  "description": "End date as Unix timestamp (e.g., Jan 1, 2025)",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{ws_rest_endpoint}}",
+              "host": ["{{ws_rest_endpoint}}"]
+            },
+            "description": "Copy a course with new course details. The source course structure and settings will be copied to create a new course."
+          },
+          "response": []
+        },
+        {
+          "name": "Copy Course - With Current Dates",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "wstoken",
+                  "value": "{{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "wsfunction",
+                  "value": "local_apiservices_copy_course",
+                  "type": "text"
+                },
+                {
+                  "key": "moodlewsrestformat",
+                  "value": "json",
+                  "type": "text"
+                },
+                {
+                  "key": "shortname_clone",
+                  "value": "COURSE001",
+                  "type": "text"
+                },
+                {
+                  "key": "fullname",
+                  "value": "Advanced Programming 2025",
+                  "type": "text"
+                },
+                {
+                  "key": "shortname",
+                  "value": "PROG2025",
+                  "type": "text"
+                },
+                {
+                  "key": "startdate",
+                  "value": "{{$timestamp}}",
+                  "description": "Current timestamp",
+                  "type": "text"
+                },
+                {
+                  "key": "enddate",
+                  "value": "1767225600",
+                  "description": "End of 2025",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{ws_rest_endpoint}}",
+              "host": ["{{ws_rest_endpoint}}"]
+            },
+            "description": "Example with current date as start date"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Creation",
+      "item": [
+        {
+          "name": "Create User - Auto Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "wstoken",
+                  "value": "{{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "wsfunction",
+                  "value": "local_apiservices_create_user",
+                  "type": "text"
+                },
+                {
+                  "key": "moodlewsrestformat",
+                  "value": "json",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "johndoe",
+                  "description": "Username (alphanumeric, dots, underscores, hyphens)",
+                  "type": "text"
+                },
+                {
+                  "key": "firstname",
+                  "value": "John",
+                  "description": "First name",
+                  "type": "text"
+                },
+                {
+                  "key": "lastname",
+                  "value": "Doe",
+                  "description": "Last name",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "john.doe@example.com",
+                  "description": "Email address",
+                  "type": "text"
+                },
+                {
+                  "key": "createpassword",
+                  "value": "1",
+                  "description": "Auto-generate password (1=yes, 0=no)",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{ws_rest_endpoint}}",
+              "host": ["{{ws_rest_endpoint}}"]
+            },
+            "description": "Create a new user with auto-generated password"
+          },
+          "response": []
+        },
+        {
+          "name": "Create User - Custom Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "wstoken",
+                  "value": "{{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "wsfunction",
+                  "value": "local_apiservices_create_user",
+                  "type": "text"
+                },
+                {
+                  "key": "moodlewsrestformat",
+                  "value": "json",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "janedoe",
+                  "type": "text"
+                },
+                {
+                  "key": "firstname",
+                  "value": "Jane",
+                  "type": "text"
+                },
+                {
+                  "key": "lastname",
+                  "value": "Doe",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "jane.doe@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "createpassword",
+                  "value": "0",
+                  "description": "Use custom password",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "SecurePassword123",
+                  "description": "Password (min 8 chars, 1 upper, 1 lower, 1 digit)",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{ws_rest_endpoint}}",
+              "host": ["{{ws_rest_endpoint}}"]
+            },
+            "description": "Create a new user with custom password. Password must be at least 8 characters with uppercase, lowercase, and digit."
+          },
+          "response": []
+        },
+        {
+          "name": "Create User - Batch Example",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "wstoken",
+                  "value": "{{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "wsfunction",
+                  "value": "local_apiservices_create_user",
+                  "type": "text"
+                },
+                {
+                  "key": "moodlewsrestformat",
+                  "value": "json",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "student{{$randomInt}}",
+                  "description": "Random username",
+                  "type": "text"
+                },
+                {
+                  "key": "firstname",
+                  "value": "{{$randomFirstName}}",
+                  "type": "text"
+                },
+                {
+                  "key": "lastname",
+                  "value": "{{$randomLastName}}",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "student{{$randomInt}}@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "createpassword",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{ws_rest_endpoint}}",
+              "host": ["{{ws_rest_endpoint}}"]
+            },
+            "description": "Example for batch user creation using Postman random variables"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Combined Workflow",
+      "item": [
+        {
+          "name": "1. Create User First",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.status === 'success') {",
+                  "    pm.environment.set('created_user_id', jsonData.id);",
+                  "    pm.test('User created successfully', function () {",
+                  "        pm.expect(jsonData.status).to.eql('success');",
+                  "    });",
+                  "} else {",
+                  "    pm.test('User creation failed: ' + jsonData.message, function () {",
+                  "        pm.expect(jsonData.status).to.eql('error');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "wstoken",
+                  "value": "{{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "wsfunction",
+                  "value": "local_apiservices_create_user",
+                  "type": "text"
+                },
+                {
+                  "key": "moodlewsrestformat",
+                  "value": "json",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "newstudent",
+                  "type": "text"
+                },
+                {
+                  "key": "firstname",
+                  "value": "New",
+                  "type": "text"
+                },
+                {
+                  "key": "lastname",
+                  "value": "Student",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "newstudent@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "createpassword",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{ws_rest_endpoint}}",
+              "host": ["{{ws_rest_endpoint}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Then Copy Course",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.status === 'success') {",
+                  "    pm.environment.set('created_course_id', jsonData.id);",
+                  "    pm.test('Course copied successfully', function () {",
+                  "        pm.expect(jsonData.status).to.eql('success');",
+                  "    });",
+                  "} else {",
+                  "    pm.test('Course copy failed: ' + jsonData.message, function () {",
+                  "        pm.expect(jsonData.status).to.eql('error');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "wstoken",
+                  "value": "{{token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "wsfunction",
+                  "value": "local_apiservices_copy_course",
+                  "type": "text"
+                },
+                {
+                  "key": "moodlewsrestformat",
+                  "value": "json",
+                  "type": "text"
+                },
+                {
+                  "key": "shortname_clone",
+                  "value": "COURSE001",
+                  "type": "text"
+                },
+                {
+                  "key": "fullname",
+                  "value": "Course for New Student",
+                  "type": "text"
+                },
+                {
+                  "key": "shortname",
+                  "value": "NEWSTUDENT001",
+                  "type": "text"
+                },
+                {
+                  "key": "startdate",
+                  "value": "{{$timestamp}}",
+                  "type": "text"
+                },
+                {
+                  "key": "enddate",
+                  "value": "1767225600",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{ws_rest_endpoint}}",
+              "host": ["{{ws_rest_endpoint}}"]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Example workflow: Create user then copy course for that user"
+    }
+  ]
+}
