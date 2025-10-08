@@ -1,0 +1,53 @@
+/* Activity Logs Report Styles */
+
+.report-activitylogs .log-count {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #0066cc;
+}
+
+.report-activitylogs .generaltable {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.report-activitylogs .generaltable th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.report-activitylogs .generaltable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.report-activitylogs .generaltable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.report-activitylogs .generaltable tr:hover {
+    background-color: #f0f0f0;
+}
+
+.report-activitylogs .mform {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+}
+
+.report-activitylogs .mform fieldset {
+    border: none;
+}
+
+.report-activitylogs .fitem {
+    margin-bottom: 15px;
+}
+
+.report-activitylogs select {
+    max-width: 400px;
+}
