@@ -177,59 +177,9 @@ function report_activitylogs_display_logs_table($userid, $courseid, $datefrom, $
 function report_activitylogs_get_event_description($log) {
     $description = '';
     
-    try {
-        // Try to get event description
-        if (isset($log->eventname) && class_exists($log->eventname)) {
-            $eventclass = $log->eventname;
-            
-            // Prepare context safely
-            $eventcontext = null;
-            try {
-                if (isset($log->contextid)) {
-                    $eventcontext = context::instance_by_id($log->contextid, IGNORE_MISSING);
-                }
-            } catch (Exception $e) {
-                try {
-                    $eventcontext = context_system::instance();
-                } catch (Exception $e2) {
-                    $eventcontext = null;
-                }
-            }
-            
-            if ($eventcontext) {
-                $eventdata = [
-                    'objectid' => isset($log->objectid) ? $log->objectid : null,
-                    'context' => $eventcontext,
-                    'userid' => isset($log->userid) ? $log->userid : 0,
-                    'relateduserid' => isset($log->relateduserid) ? $log->relateduserid : null,
-                    'other' => null
-                ];
-                
-                // Try to unserialize 'other' data
-                if (isset($log->other) && !empty($log->other)) {
-                    try {
-                        $eventdata['other'] = @unserialize($log->other);
-                    } catch (Exception $e) {
-                        // Keep other as null
-                    }
-                }
-                
-                try {
-                    $event = $eventclass::create($eventdata);
-                    $description = $event->get_description();
-                } catch (Exception $e) {
-                    // Event creation failed
-                }
-            }
-        }
-    } catch (Exception $e) {
-        // Failed to get description from event class
-    }
-    
-    // If still no description, create a generic one
-    if (empty($description)) {
-        $description = report_activitylogs_create_generic_description($log);
-    }
+    // Bỏ qua việc tạo event description vì có thể gây lỗi
+    // Trực tiếp tạo generic description thôi
+    $description = report_activitylogs_create_generic_description($log);
     
     return $description;
 }
