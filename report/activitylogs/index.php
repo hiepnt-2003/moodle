@@ -136,10 +136,11 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
         $row = array();
         
         // Time
-        $row[] = userdate($log->timecreated, get_string('strftimedatetime', 'langconfig'));
+        $timecreated = isset($log->timecreated) ? $log->timecreated : time();
+        $row[] = userdate($timecreated, get_string('strftimedatetime', 'langconfig'));
         
         // User full name
-        if ($log->firstname && $log->lastname) {
+        if (isset($log->firstname) && isset($log->lastname) && $log->firstname && $log->lastname) {
             $userlink = html_writer::link(
                 new moodle_url('/user/profile.php', array('id' => $log->userid)),
                 fullname($log)
@@ -150,7 +151,9 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
         }
         
         // Affected user (related user)
-        if ($log->relateduserid && $log->relatedfirstname && $log->relatedlastname) {
+        if (isset($log->relateduserid) && $log->relateduserid && 
+            isset($log->relatedfirstname) && isset($log->relatedlastname) &&
+            $log->relatedfirstname && $log->relatedlastname) {
             $relateduser = (object)[
                 'firstname' => $log->relatedfirstname,
                 'lastname' => $log->relatedlastname
@@ -161,7 +164,7 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
         }
         
         // Event context (Course name)
-        if ($log->coursename) {
+        if (isset($log->coursename) && $log->coursename) {
             $contextlink = html_writer::link(
                 new moodle_url('/course/view.php', array('id' => $log->instanceid)),
                 $log->coursename
@@ -171,39 +174,51 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
             $row[] = '-';
         }
         
-        // Component - simple display
-        $row[] = $log->component ? $log->component : 'System';
+        // Component - display exactly as stored in database
+        $component = isset($log->component) && !empty($log->component) ? $log->component : '-';
+        // Debug: uncomment to see raw data
+        // $component .= ' [RAW: ' . $log->component . ']';
+        $row[] = $component;
         
-        // Event name - simple display
-        $row[] = $log->eventname ? $log->eventname : '-';
+        // Event name - display exactly as stored in database (full class name)
+        $eventname = isset($log->eventname) && !empty($log->eventname) ? $log->eventname : '-';
+        // Debug: uncomment to see raw data
+        // $eventname .= ' [RAW: ' . $log->eventname . ']';
+        $row[] = $eventname;
         
         // Description - Always provide meaningful description
         $description = '';
         try {
             // Try to get event description
-            if (class_exists($log->eventname)) {
+            if (isset($log->eventname) && class_exists($log->eventname)) {
                 $eventclass = $log->eventname;
                 
                 // Prepare context safely
                 $eventcontext = null;
                 try {
-                    $eventcontext = context::instance_by_id($log->contextid, IGNORE_MISSING);
+                    if (isset($log->contextid)) {
+                        $eventcontext = context::instance_by_id($log->contextid, IGNORE_MISSING);
+                    }
                 } catch (Exception $e) {
                     // Context might not exist, try to get system context
-                    $eventcontext = context_system::instance();
+                    try {
+                        $eventcontext = context_system::instance();
+                    } catch (Exception $e2) {
+                        $eventcontext = null;
+                    }
                 }
                 
                 if ($eventcontext) {
                     $eventdata = [
-                        'objectid' => $log->objectid,
+                        'objectid' => isset($log->objectid) ? $log->objectid : null,
                         'context' => $eventcontext,
-                        'userid' => $log->userid,
-                        'relateduserid' => $log->relateduserid,
+                        'userid' => isset($log->userid) ? $log->userid : 0,
+                        'relateduserid' => isset($log->relateduserid) ? $log->relateduserid : null,
                         'other' => null
                     ];
                     
                     // Try to unserialize 'other' data
-                    if ($log->other) {
+                    if (isset($log->other) && !empty($log->other)) {
                         try {
                             $eventdata['other'] = @unserialize($log->other);
                         } catch (Exception $e) {
@@ -215,7 +230,7 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
                         $event = $eventclass::create($eventdata);
                         $description = $event->get_description();
                     } catch (Exception $e) {
-                        // Event creation failed
+                        // Event creation failed, will create generic description below
                     }
                 }
             }
@@ -226,27 +241,27 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
         // If still no description, create a generic one based on available data
         if (empty($description)) {
             $description = 'The user';
-            if ($log->firstname && $log->lastname) {
+            if (isset($log->userid)) {
                 $description .= " with id '{$log->userid}'";
             }
             
             // Add action information
-            if ($log->action) {
+            if (isset($log->action) && !empty($log->action)) {
                 $description .= " {$log->action}";
             }
             
             // Add target information
-            if ($log->target) {
+            if (isset($log->target) && !empty($log->target)) {
                 $description .= " the {$log->target}";
             }
             
             // Add object information
-            if ($log->objectid) {
+            if (isset($log->objectid) && !empty($log->objectid)) {
                 $description .= " with id '{$log->objectid}'";
             }
             
             // Add course context if available
-            if ($log->coursename) {
+            if (isset($log->coursename) && !empty($log->coursename)) {
                 $description .= " in the course '{$log->coursename}'";
             }
             
@@ -256,10 +271,12 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
         $row[] = $description;
         
         // Origin
-        $row[] = $log->origin ? $log->origin : '-';
+        $origin = isset($log->origin) && $log->origin ? $log->origin : '-';
+        $row[] = $origin;
         
         // IP Address
-        $row[] = $log->ip ? $log->ip : '-';
+        $ip = isset($log->ip) && $log->ip ? $log->ip : '-';
+        $row[] = $ip;
         
         $table->data[] = $row;
     }
