@@ -31,7 +31,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
         $output = parent::standard_end_of_body_html();
         
         // Nối thêm thẻ <script> để tải file JavaScript của FontAwesome từ CDN.
-        $output .= html_writer::script('', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js');
+        // $output .= html_writer::script('', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js');
         
         // Add password toggle script.
         $output .= html_writer::script('
@@ -98,19 +98,19 @@ class core_renderer extends \theme_boost\output\core_renderer {
      *
      * @return string HTML fragment.
      */
-    public function standard_head_html() {
-        // Lấy toàn bộ nội dung HTML mặc định của thẻ <head> từ theme Boost gốc
-        $output = parent::standard_head_html();
+    // public function standard_head_html() {
+    //     // Lấy toàn bộ nội dung HTML mặc định của thẻ <head> từ theme Boost gốc
+    //     $output = parent::standard_head_html();
         
-        // Nối thêm một thẻ <link> để tải file CSS của FontAwesome từ CDN.
-        $output .= html_writer::tag('link', '', [
-            'rel' => 'stylesheet',
-            'href' => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-            'integrity' => 'sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==',
-            'crossorigin' => 'anonymous',
-            'referrerpolicy' => 'no-referrer'
-        ]);
+    //     // Nối thêm một thẻ <link> để tải file CSS của FontAwesome từ CDN.
+    //     $output .= html_writer::tag('link', '', [
+    //         'rel' => 'stylesheet',
+    //         'href' => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+    //         'integrity' => 'sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==',
+    //         'crossorigin' => 'anonymous',
+    //         'referrerpolicy' => 'no-referrer'
+    //     ]);
         
-        return $output;
-    }
+    //     return $output;
+    // }
 }
