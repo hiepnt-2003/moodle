@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025100910;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2025100911;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2019111800;        // Requires Moodle 3.8+ (compatible with 3.9).
 $plugin->component = 'report_activitylogs'; // Full name of the plugin (used for diagnostics).

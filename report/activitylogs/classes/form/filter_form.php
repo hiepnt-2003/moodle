@@ -45,33 +45,53 @@ class filter_form extends \moodleform {
         $mform->addGroup($radioarray, 'filtertypegroup', '', array(' '), false);
         $mform->setDefault('filtertype', 'user');
 
-        // Select user (exclude deleted users)
-        $users = $DB->get_records_sql("
-            SELECT id, CONCAT(firstname, ' ', lastname, ' (', email, ')') as fullname 
-            FROM {user} 
-            WHERE deleted = 0 AND id > 1
-            ORDER BY firstname, lastname
-        ");
+        // User selection with autocomplete (shown when filter by user is selected)
+        $options = array(
+            'ajax' => 'core_user/form_user_selector',
+            'multiple' => false,
+            'valuehtmlcallback' => function($value) {
+                global $DB, $OUTPUT;
+                
+                if (empty($value)) {
+                    return get_string('allusers', 'report_activitylogs');
+                }
+                
+                $user = $DB->get_record('user', array('id' => $value), 'id, firstname, lastname, email');
+                if ($user) {
+                    $username = fullname($user);
+                    return $OUTPUT->render_from_template('core/user_selector_suggestion', [
+                        'fullname' => $username,
+                        'email' => $user->email
+                    ]);
+                }
+                return '';
+            }
+        );
         
-        $useroptions = array(0 => get_string('allusers', 'report_activitylogs'));
-        foreach ($users as $user) {
-            $useroptions[$user->id] = $user->fullname;
-        }
-        
-        // Course selection options
-        $courses = $DB->get_records_menu('course', null, 'fullname', 'id, fullname');
-        $courseoptions = array(0 => get_string('allcourses', 'report_activitylogs'));
-        foreach ($courses as $courseid => $coursename) {
-            $courseoptions[$courseid] = $coursename;
-        }
-        
-        // User selection (shown when filter by user is selected)
-        $mform->addElement('select', 'userid', get_string('selectuser', 'report_activitylogs'), $useroptions);
+        $mform->addElement('autocomplete', 'userid', get_string('selectuser', 'report_activitylogs'), array(), $options);
         $mform->setType('userid', PARAM_INT);
         $mform->hideIf('userid', 'filtertype', 'eq', 'course');
         
-        // Course selection (shown when filter by course is selected)
-        $mform->addElement('select', 'courseid', get_string('selectcourse', 'report_activitylogs'), $courseoptions);
+        // Course selection with autocomplete (shown when filter by course is selected)
+        $courseoptions = array(
+            'ajax' => 'core_course/form_course_selector',
+            'multiple' => false,
+            'valuehtmlcallback' => function($value) {
+                global $DB;
+                
+                if (empty($value)) {
+                    return get_string('allcourses', 'report_activitylogs');
+                }
+                
+                $course = $DB->get_record('course', array('id' => $value), 'id, fullname');
+                if ($course) {
+                    return format_string($course->fullname);
+                }
+                return '';
+            }
+        );
+        
+        $mform->addElement('autocomplete', 'courseid', get_string('selectcourse', 'report_activitylogs'), array(), $courseoptions);
         $mform->setType('courseid', PARAM_INT);
         $mform->hideIf('courseid', 'filtertype', 'eq', 'user');
 

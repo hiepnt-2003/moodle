@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Hiển thị bảng logs
+ * Hiển thị bảng logs sử dụng get_recordset để tối ưu hiệu suất
  *
  * @param int $userid User ID (0 for all users)
  * @param int $courseid Course ID (0 for all courses)
@@ -69,10 +69,12 @@ function report_activitylogs_display_logs_table($userid, $courseid, $datefrom, $
     
     $sql .= " ORDER BY l.timecreated DESC";
     
-    // Get logs
-    $logs = $DB->get_records_sql($sql, $params, 0, 1000); // Limit to 1000 records
+    // Sử dụng get_recordset thay vì get_records_sql để tối ưu bộ nhớ
+    // get_recordset trả về iterator, xử lý từng record một thay vì load tất cả vào memory
+    $recordset = $DB->get_recordset_sql($sql, $params, 0, 1000); // Limit to 1000 records
     
-    if (empty($logs)) {
+    if (!$recordset->valid()) {
+        $recordset->close(); // Quan trọng: phải đóng recordset
         echo $OUTPUT->notification(get_string('nologs', 'report_activitylogs'), 'info');
         return;
     }
@@ -92,7 +94,9 @@ function report_activitylogs_display_logs_table($userid, $courseid, $datefrom, $
     );
     $table->attributes['class'] = 'generaltable';
     
-    foreach ($logs as $log) {
+    $count = 0;
+    // Lặp qua từng record từ recordset
+    foreach ($recordset as $log) {
         $row = array();
         
         // Time
@@ -174,12 +178,15 @@ function report_activitylogs_display_logs_table($userid, $courseid, $datefrom, $
         $row[] = $ip;
         
         $table->data[] = $row;
+        $count++;
     }
+    
+    // Quan trọng: Luôn đóng recordset sau khi sử dụng để giải phóng tài nguyên
+    $recordset->close();
     
     echo html_writer::table($table);
     
     // Display count
-    $count = count($logs);
     echo html_writer::tag('p', get_string('numberofentries', 'moodle', $count), array('class' => 'log-count'));
 }
 
