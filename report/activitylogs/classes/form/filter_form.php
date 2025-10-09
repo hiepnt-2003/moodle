@@ -46,9 +46,23 @@ class filter_form extends \moodleform {
         $mform->setDefault('filtertype', 'user');
 
         // User selection with autocomplete (shown when filter by user is selected)
+        // Load tất cả users để hiển thị khi click
+        $initialusers = $DB->get_records_sql("
+            SELECT id, firstname, lastname, email 
+            FROM {user} 
+            WHERE deleted = 0 AND id > 1
+            ORDER BY firstname, lastname
+        ");
+        
+        $useroptions = array(0 => get_string('allusers', 'report_activitylogs'));
+        foreach ($initialusers as $user) {
+            $useroptions[$user->id] = fullname($user) . ' (' . $user->email . ')';
+        }
+        
         $options = array(
             'ajax' => 'core_user/form_user_selector',
             'multiple' => false,
+            'noselectionstring' => get_string('allusers', 'report_activitylogs'),
             'valuehtmlcallback' => function($value) {
                 global $DB, $OUTPUT;
                 
@@ -68,14 +82,28 @@ class filter_form extends \moodleform {
             }
         );
         
-        $mform->addElement('autocomplete', 'userid', get_string('selectuser', 'report_activitylogs'), array(), $options);
+        $mform->addElement('autocomplete', 'userid', get_string('selectuser', 'report_activitylogs'), $useroptions, $options);
         $mform->setType('userid', PARAM_INT);
         $mform->hideIf('userid', 'filtertype', 'eq', 'course');
         
         // Course selection with autocomplete (shown when filter by course is selected)
+        // Load tất cả courses để hiển thị khi click
+        $initialcourses = $DB->get_records_sql("
+            SELECT id, fullname 
+            FROM {course} 
+            WHERE id > 1
+            ORDER BY fullname
+        ");
+        
+        $courseoptionsdata = array(0 => get_string('allcourses', 'report_activitylogs'));
+        foreach ($initialcourses as $course) {
+            $courseoptionsdata[$course->id] = format_string($course->fullname);
+        }
+        
         $courseoptions = array(
             'ajax' => 'core_course/form_course_selector',
             'multiple' => false,
+            'noselectionstring' => get_string('allcourses', 'report_activitylogs'),
             'valuehtmlcallback' => function($value) {
                 global $DB;
                 
@@ -91,7 +119,7 @@ class filter_form extends \moodleform {
             }
         );
         
-        $mform->addElement('autocomplete', 'courseid', get_string('selectcourse', 'report_activitylogs'), array(), $courseoptions);
+        $mform->addElement('autocomplete', 'courseid', get_string('selectcourse', 'report_activitylogs'), $courseoptionsdata, $courseoptions);
         $mform->setType('courseid', PARAM_INT);
         $mform->hideIf('courseid', 'filtertype', 'eq', 'user');
 
