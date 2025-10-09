@@ -166,15 +166,52 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
             $row[] = '-';
         }
         
-        // Component
-        $row[] = $log->component ? $log->component : '-';
+        // Component - show with more details
+        $componenttext = $log->component ? $log->component : 'System';
+        // Add action and target info if available
+        if ($log->action || $log->target) {
+            $componenttext .= '<br><small style="color: #666;">';
+            if ($log->action) {
+                $componenttext .= 'Action: ' . $log->action;
+            }
+            if ($log->target) {
+                $componenttext .= ($log->action ? ' | ' : '') . 'Target: ' . $log->target;
+            }
+            $componenttext .= '</small>';
+        }
+        $row[] = $componenttext;
         
-        // Event name
+        // Event name - show full event name with additional info
         $eventname = $log->eventname;
-        // Make event name more readable
-        $eventparts = explode('\\', $eventname);
-        $eventshort = end($eventparts);
-        $row[] = html_writer::tag('span', $eventname, array('title' => $eventname));
+        $eventdisplay = $eventname;
+        
+        // Add CRUD and Education level info
+        if ($log->crud || $log->edulevel) {
+            $eventdisplay .= '<br><small style="color: #666;">';
+            $crudmap = array('c' => 'Create', 'r' => 'Read', 'u' => 'Update', 'd' => 'Delete');
+            $edulevelmap = array(
+                0 => 'Other',
+                1 => 'Participating', 
+                2 => 'Teaching',
+                3 => 'Editing'
+            );
+            
+            $extrainfo = array();
+            if ($log->crud && isset($crudmap[$log->crud])) {
+                $extrainfo[] = 'CRUD: ' . $crudmap[$log->crud];
+            }
+            if ($log->edulevel !== null && isset($edulevelmap[$log->edulevel])) {
+                $extrainfo[] = 'Level: ' . $edulevelmap[$log->edulevel];
+            }
+            if ($log->objecttable) {
+                $extrainfo[] = 'Table: ' . $log->objecttable;
+            }
+            
+            $eventdisplay .= implode(' | ', $extrainfo);
+            $eventdisplay .= '</small>';
+        }
+        
+        $row[] = $eventdisplay;
         
         // Description
         $description = '';
