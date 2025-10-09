@@ -27,32 +27,34 @@ class core_renderer extends \theme_boost\output\core_renderer {
      * @return string HTML to output.
      */
     public function standard_end_of_body_html() {
+        // Lấy toàn bộ nội dung HTML/JS mặc định ở cuối trang từ theme Boost gốc
         $output = parent::standard_end_of_body_html();
         
-        // Add FontAwesome CDN.
+        // Nối thêm thẻ <script> để tải file JavaScript của FontAwesome từ CDN.
         $output .= html_writer::script('', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js');
         
         // Add password toggle script.
         $output .= html_writer::script('
             document.addEventListener("DOMContentLoaded", function() {
-                // Find password input fields
+                // Tìm tất cả ô nhập mật khẩu
                 const passwordFields = document.querySelectorAll(\'input[type="password"]\');
                 
+                // Lặp qua từng ô mật khẩu đã tìm thấy
                 passwordFields.forEach(function(passwordField) {
                     // Skip if already wrapped
                     if (passwordField.parentElement.classList.contains("password-toggle-container")) {
                         return;
                     }
                     
-                    // Create wrapper
+                    // Tạo một thẻ <div> để bọc bên ngoài ô mật khẩu và nút bấm
                     const wrapper = document.createElement("div");
                     wrapper.className = "password-toggle-container";
                     
-                    // Wrap the password field
+                    // Đặt input mật khẩu vào
                     passwordField.parentNode.insertBefore(wrapper, passwordField);
                     wrapper.appendChild(passwordField);
                     
-                    // Create toggle button
+                    // Tạo một nút <button>
                     const toggleBtn = document.createElement("button");
                     toggleBtn.type = "button";
                     toggleBtn.className = "password-toggle-btn";
@@ -60,20 +62,26 @@ class core_renderer extends \theme_boost\output\core_renderer {
                     toggleBtn.setAttribute("aria-label", "Toggle password visibility");
                     toggleBtn.setAttribute("title", "Show password");
                     
-                    // Add toggle button after password field
+                    // Thêm nút vào sau ô mật khẩu
                     wrapper.appendChild(toggleBtn);
-                    
-                    // Add click event
+
+                    // Thêm sự kiện click
                     toggleBtn.addEventListener("click", function() {
+
+                        // Lấy ra loại (type) hiện tại của ô input, nếu là "password" thì đổi thành "text" và ngược lại
                         const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+                        
+                        // Cập nhật lại loại (type) cho ô input
                         passwordField.setAttribute("type", type);
                         
-                        // Toggle icon
+                        // Lấy ra thẻ <i> chứa icon
                         const icon = toggleBtn.querySelector("i");
                         if (type === "text") {
+                            // Mắt gạch chéo  : password hiện
                             icon.className = "far fa-eye-slash";
                             toggleBtn.setAttribute("title", "Hide password");
                         } else {
+                            // Mắt mở : password ẩn
                             icon.className = "far fa-eye";
                             toggleBtn.setAttribute("title", "Show password");
                         }
@@ -91,9 +99,10 @@ class core_renderer extends \theme_boost\output\core_renderer {
      * @return string HTML fragment.
      */
     public function standard_head_html() {
+        // Lấy toàn bộ nội dung HTML mặc định của thẻ <head> từ theme Boost gốc
         $output = parent::standard_head_html();
         
-        // Add FontAwesome CSS (for solid icons that don't need JS).
+        // Nối thêm một thẻ <link> để tải file CSS của FontAwesome từ CDN.
         $output .= html_writer::tag('link', '', [
             'rel' => 'stylesheet',
             'href' => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',

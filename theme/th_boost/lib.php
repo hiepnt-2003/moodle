@@ -9,10 +9,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Returns the main SCSS content.
- *
- * @param theme_config $theme The theme config object.
- * @return string
+ * Hàm này có nhiệm vụ lấy nội dung SCSS chính, hay còn gọi là "preset" (bộ cài đặt giao diện có sẵn).
+ * Nó làm gì? Nó kiểm tra xem quản trị viên đã chọn preset nào trong phần cài đặt theme.
+ * Nếu là default.scss hoặc plain.scss, nó sẽ lấy file tương ứng từ theme Boost gốc của Moodle.
+ * Nếu là một file khác (ví dụ my_preset.scss), nó sẽ tìm file mà quản trị viên đã tải lên.
+ * Nếu không có lựa chọn nào, nó sẽ mặc định dùng file default.scss của theme Boost.
+ * Mục đích: Xác định bộ giao diện nền tảng cho toàn bộ trang web.
  */
 function theme_th_boost_get_main_scss_content($theme) {
     global $CFG;
@@ -36,11 +38,15 @@ function theme_th_boost_get_main_scss_content($theme) {
 }
 
 /**
- * Get SCSS to prepend.
- *
- * @param theme_config $theme The theme config object.
- * @return string
- */
+ * Hàm này lấy nội dung SCSS để chèn vào TRƯỚC file SCSS chính. "Pre" có nghĩa là "trước".
+ * Nó kiểm tra các cài đặt trong theme, ví dụ như brandcolor (màu thương hiệu). 
+ * Nếu quản trị viên đã chọn một màu trong giao diện cài đặt (ví dụ: #ff0000), 
+ * hàm này sẽ tạo ra một dòng mã SCSS: $brandcolor: #ff0000;.
+ * Nó kiểm tra xem quản trị viên có nhập mã tùy chỉnh vào ô "SCSS ban đầu" (scsspre) trong cài đặt không và chèn mã đó vào.
+ * Mục đích: Định nghĩa các biến (variables) SCSS. 
+ * Bằng cách chèn các biến này vào trước, chúng ta có thể ghi đè các giá trị mặc định trong file preset. 
+ * Đây chính là cách bạn thay đổi màu sắc của toàn bộ trang web chỉ bằng một lựa chọn trong cài đặt. 
+*/
 function theme_th_boost_get_pre_scss($theme) {
     global $CFG;
 
@@ -69,10 +75,8 @@ function theme_th_boost_get_pre_scss($theme) {
 }
 
 /**
- * Get extra SCSS.
- *
- * @param theme_config $theme The theme config object.
- * @return string
+ *  Mục đích: Thêm các định dạng tùy chỉnh và ghi đè lên các định dạng của preset. 
+ *  Vì được chèn vào cuối cùng nên các quy tắc CSS ở đây có độ ưu tiên cao nhất.
  */
 function theme_th_boost_get_extra_scss($theme) {
     global $CFG;
@@ -90,9 +94,8 @@ function theme_th_boost_get_extra_scss($theme) {
 }
 
 /**
- * Get compiled css.
- *
- * @return string compiled css
+ * Mục đích: Trong trường hợp máy chủ không thể biên dịch SCSS (do cấu hình hoặc lỗi), 
+ * Moodle sẽ sử dụng file CSS này để trang web không bị mất hoàn toàn giao diện.
  */
 function theme_th_boost_get_precompiled_css() {
     global $CFG;
@@ -100,16 +103,12 @@ function theme_th_boost_get_precompiled_css() {
 }
 
 /**
- * Serves any files associated with the theme settings.
- *
- * @param stdClass $course
- * @param stdClass $cm
- * @param context $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
- * @param array $options
- * @return bool
+ * Đây là một hàm chuẩn của Moodle, có nhiệm vụ phục vụ (serve) các file mà quản trị viên đã tải lên thông qua trang cài đặt theme.
+ * Khi trình duyệt yêu cầu một file (ví dụ: logo của trang web), 
+ * Moodle sẽ gọi hàm này. Hàm sẽ kiểm tra khu vực file (filearea) là logo, backgroundimage (ảnh nền), hay preset 
+ * để trả về đúng file một cách an toàn.
+
+ * Mục đích: Đảm bảo các file media của theme (logo, ảnh nền, v.v.) được hiển thị một cách bảo mật.
  */
 function theme_th_boost_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     if ($context->contextlevel == CONTEXT_SYSTEM) {
@@ -131,10 +130,9 @@ function theme_th_boost_pluginfile($course, $cm, $context, $filearea, $args, $fo
 }
 
 /**
- * Inject additional SCSS.
- *
- * @param theme_config $theme The theme config object.
- * @return string
+ * Một hàm bổ sung để quản lý việc nhúng FontAwesome.
+ * Nó làm gì? Nó trả về một dòng mã SCSS duy nhất: @import "fontawesome";.
+ * Mục đích: Đây là một cách để Moodle biết rằng cần phải nhúng thư viện FontAwesome vào quá trình biên dịch SCSS.
  */
 function theme_th_boost_get_extra_scss_fontawesome($theme) {
     $scss = '';

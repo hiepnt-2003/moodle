@@ -58,29 +58,23 @@ class filter_form extends \moodleform {
             $useroptions[$user->id] = $user->fullname;
         }
         
-        // User selection fields
-        $mform->addElement('header', 'userheader', '');
-        $mform->addElement('select', 'userid', get_string('selectuser', 'report_activitylogs'), $useroptions);
-        $mform->setType('userid', PARAM_INT);
-        $mform->hideIf('userheader', 'filtertype', 'eq', 'course');
-        $mform->hideIf('userid', 'filtertype', 'eq', 'course');
-
-        // Course selection fields
-        $mform->addElement('header', 'courseheader', '');
+        // Course selection options
         $courses = $DB->get_records_menu('course', null, 'fullname', 'id, fullname');
         $courseoptions = array(0 => get_string('allcourses', 'report_activitylogs'));
         foreach ($courses as $courseid => $coursename) {
             $courseoptions[$courseid] = $coursename;
         }
         
+        // User selection (shown when filter by user is selected)
+        $mform->addElement('select', 'userid', get_string('selectuser', 'report_activitylogs'), $useroptions);
+        $mform->setType('userid', PARAM_INT);
+        $mform->hideIf('userid', 'filtertype', 'eq', 'course');
+        
+        // Course selection (shown when filter by course is selected)
         $mform->addElement('select', 'courseid', get_string('selectcourse', 'report_activitylogs'), $courseoptions);
         $mform->setType('courseid', PARAM_INT);
-        $mform->hideIf('courseheader', 'filtertype', 'eq', 'user');
         $mform->hideIf('courseid', 'filtertype', 'eq', 'user');
 
-        // Date range - always visible
-        $mform->addElement('header', 'dateheader', '');
-        
         // Date from
         $mform->addElement('date_selector', 'datefrom', get_string('datefrom', 'report_activitylogs'), array('optional' => false));
         $mform->setDefault('datefrom', strtotime('-7 days'));

@@ -51,3 +51,19 @@
 .report-activitylogs select {
     max-width: 400px;
 }
+
+/* Hide collapsible headers */
+.report-activitylogs .mform fieldset.collapsible legend a {
+    pointer-events: none;
+    cursor: default;
+}
+
+.report-activitylogs .mform fieldset.collapsible legend a.fheader::before {
+    display: none;
+}
+
+/* Make user and course selectors appear in the same position */
+.report-activitylogs .mform .fitem#fitem_id_userid,
+.report-activitylogs .mform .fitem#fitem_id_courseid {
+    min-height: 50px;
+}
