@@ -42,20 +42,25 @@ echo $OUTPUT->heading(get_string('pluginname', 'report_activitylogs'));
 // Display filter form
 $mform = new \report_activitylogs\form\filter_form();
 
-if ($data = $mform->get_data()) {
-    // Process form data and display logs
+// Get form data
+$data = $mform->get_data();
+
+// Display form first
+$mform->display();
+
+// Then display results below the form
+if ($data) {
+    // Process form data and display logs below form
     $userid = $data->userid;
     $courseid = $data->courseid;
     $datefrom = $data->datefrom;
     $dateto = $data->dateto;
     
-    // Display the logs table
+    // Display the logs table below form
     display_logs_table($userid, $courseid, $datefrom, $dateto);
 } else {
-    echo html_writer::tag('p', get_string('selectcriteria', 'report_activitylogs'));
+    echo html_writer::tag('p', get_string('selectcriteria', 'report_activitylogs'), array('class' => 'alert alert-info'));
 }
-
-$mform->display();
 
 echo $OUTPUT->footer();
 
