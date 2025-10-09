@@ -1,0 +1,116 @@
+/**
+ * TH Boost Theme - Precompiled CSS
+ * This file provides basic styling when SCSS compilation is not available
+ */
+
+/* Password toggle styling */
+.password-toggle-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.password-toggle-container input[type="password"],
+.password-toggle-container input[type="text"] {
+    padding-right: 45px !important;
+    width: 100% !important;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    width: 42px;
+    background: transparent;
+    border: none;
+    border-left: 1px solid #dee2e6;
+    cursor: pointer;
+    padding: 0;
+    color: #6c757d;
+    transition: all 0.3s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.password-toggle-btn:hover {
+    color: #007bff;
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.password-toggle-btn:focus {
+    outline: none;
+    color: #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+    box-shadow: none;
+}
+
+.password-toggle-btn:active {
+    background-color: rgba(0, 123, 255, 0.15);
+}
+
+.password-toggle-btn i {
+    font-size: 16px;
+    pointer-events: none;
+    transition: transform 0.2s ease;
+}
+
+.password-toggle-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* Login page specific */
+#page-login-index .password-toggle-container {
+    margin-bottom: 1rem;
+}
+
+#page-login-index #fitem_id_password {
+    position: relative;
+}
+
+#page-login-index #fitem_id_password .felement {
+    position: relative;
+}
+
+/* FontAwesome icon base */
+.fa, .fas, .far, .fal, .fad, .fab {
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "Font Awesome 6 Brands" !important;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .password-toggle-container input[type="password"],
+    .password-toggle-container input[type="text"] {
+        padding-right: 40px !important;
+    }
+    
+    .password-toggle-btn {
+        width: 38px;
+    }
+    
+    .password-toggle-btn i {
+        font-size: 14px;
+    }
+}
+
+/* Login container styling */
+#page-login-index .login-container {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Enhanced form controls */
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}

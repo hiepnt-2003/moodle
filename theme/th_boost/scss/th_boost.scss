@@ -1,0 +1,147 @@
+// TH Boost Custom SCSS
+// Import FontAwesome from CDN (will be loaded via JavaScript)
+
+// Password toggle button styling
+.password-toggle-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    
+    input[type="password"],
+    input[type="text"] {
+        padding-right: 45px !important;
+        width: 100% !important;
+    }
+    
+    .password-toggle-btn {
+        position: absolute;
+        right: 1px;
+        top: 1px;
+        bottom: 1px;
+        width: 42px;
+        background: transparent;
+        border: none;
+        border-left: 1px solid #dee2e6;
+        cursor: pointer;
+        padding: 0;
+        color: #6c757d;
+        transition: all 0.3s ease;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0 0.25rem 0.25rem 0;
+        
+        &:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        
+        &:focus {
+            outline: none;
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            box-shadow: none;
+        }
+        
+        &:active {
+            background-color: rgba(0, 123, 255, 0.15);
+        }
+        
+        i {
+            font-size: 16px;
+            pointer-events: none;
+            transition: transform 0.2s ease;
+        }
+        
+        &:hover i {
+            transform: scale(1.1);
+        }
+    }
+}
+
+// Login form specific styling
+#page-login-index {
+    .password-toggle-container {
+        margin-bottom: 1rem;
+    }
+    
+    // Ensure the password field container has proper positioning
+    #fitem_id_password {
+        position: relative;
+        
+        .felement {
+            position: relative;
+        }
+    }
+}
+
+// FontAwesome icon enhancements
+.fa, .fas, .far, .fal, .fad, .fab {
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "Font Awesome 6 Brands" !important;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+}
+
+// Additional styling for better appearance
+.loginpanel {
+    .password-toggle-container {
+        input {
+            width: 100%;
+        }
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .password-toggle-container {
+        input[type="password"],
+        input[type="text"] {
+            padding-right: 40px !important;
+        }
+        
+        .password-toggle-btn {
+            width: 38px;
+            
+            i {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+// Enhanced login form styling
+#page-login-index {
+    .login-container {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .login-heading {
+        text-align: center;
+        margin-bottom: 2rem;
+        
+        i {
+            font-size: 3rem;
+            color: #007bff;
+            margin-bottom: 1rem;
+        }
+    }
+    
+    .form-control {
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+        transition: all 0.3s ease;
+        
+        &:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+    }
+}
