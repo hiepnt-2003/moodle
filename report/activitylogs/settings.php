@@ -24,9 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$ADMIN->add('reports', new admin_externalpage(
-    'reportactivitylogs',
-    get_string('pluginname', 'report_activitylogs'),
-    new moodle_url('/report/activitylogs/index.php'),
-    'report/activitylogs:view'
-));
+// Chỉ thêm menu nếu chưa tồn tại
+if ($hassiteconfig) {
+    $ADMIN->add('reports', new admin_externalpage(
+        'report_activitylogs',
+        get_string('pluginname', 'report_activitylogs'),
+        new moodle_url('/report/activitylogs/index.php'),
+        'report/activitylogs:view'
+    ));
+}
