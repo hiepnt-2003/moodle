@@ -176,14 +176,17 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
         
         // Component - display exactly as stored in database
         $component = isset($log->component) && !empty($log->component) ? $log->component : '-';
-        // Debug: uncomment to see raw data
-        // $component .= ' [RAW: ' . $log->component . ']';
         $row[] = $component;
         
-        // Event name - display exactly as stored in database (full class name)
+        // Event name - extract just the event name (last part after the last backslash)
         $eventname = isset($log->eventname) && !empty($log->eventname) ? $log->eventname : '-';
-        // Debug: uncomment to see raw data
-        // $eventname .= ' [RAW: ' . $log->eventname . ']';
+        if ($eventname != '-') {
+            // Extract event name from full class name
+            // Example: \report_log\event\report_viewed -> report_viewed
+            // Example: \core\event\course_viewed -> course_viewed
+            $parts = explode('\\', $eventname);
+            $eventname = end($parts); // Get the last part
+        }
         $row[] = $eventname;
         
         // Description - Always provide meaningful description
