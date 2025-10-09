@@ -38,6 +38,13 @@ class filter_form extends \moodleform {
         
         $mform = $this->_form;
 
+        // Radio buttons to choose filter type
+        $radioarray = array();
+        $radioarray[] = $mform->createElement('radio', 'filtertype', '', get_string('filterbyuser', 'report_activitylogs'), 'user');
+        $radioarray[] = $mform->createElement('radio', 'filtertype', '', get_string('filterbycourse', 'report_activitylogs'), 'course');
+        $mform->addGroup($radioarray, 'filtertypegroup', '', array(' '), false);
+        $mform->setDefault('filtertype', 'user');
+
         // Select user (exclude deleted users)
         $users = $DB->get_records_sql("
             SELECT id, CONCAT(firstname, ' ', lastname, ' (', email, ')') as fullname 
@@ -51,10 +58,15 @@ class filter_form extends \moodleform {
             $useroptions[$user->id] = $user->fullname;
         }
         
+        // User selection fields
+        $mform->addElement('header', 'userheader', '');
         $mform->addElement('select', 'userid', get_string('selectuser', 'report_activitylogs'), $useroptions);
         $mform->setType('userid', PARAM_INT);
+        $mform->hideIf('userheader', 'filtertype', 'eq', 'course');
+        $mform->hideIf('userid', 'filtertype', 'eq', 'course');
 
-        // Select course
+        // Course selection fields
+        $mform->addElement('header', 'courseheader', '');
         $courses = $DB->get_records_menu('course', null, 'fullname', 'id, fullname');
         $courseoptions = array(0 => get_string('allcourses', 'report_activitylogs'));
         foreach ($courses as $courseid => $coursename) {
@@ -63,7 +75,12 @@ class filter_form extends \moodleform {
         
         $mform->addElement('select', 'courseid', get_string('selectcourse', 'report_activitylogs'), $courseoptions);
         $mform->setType('courseid', PARAM_INT);
+        $mform->hideIf('courseheader', 'filtertype', 'eq', 'user');
+        $mform->hideIf('courseid', 'filtertype', 'eq', 'user');
 
+        // Date range - always visible
+        $mform->addElement('header', 'dateheader', '');
+        
         // Date from
         $mform->addElement('date_selector', 'datefrom', get_string('datefrom', 'report_activitylogs'), array('optional' => false));
         $mform->setDefault('datefrom', strtotime('-7 days'));

@@ -52,8 +52,16 @@ $mform->display();
 // Then display results below the form
 if ($data) {
     // Process form data and display logs below form
-    $userid = $data->userid;
-    $courseid = $data->courseid;
+    $filtertype = $data->filtertype;
+    
+    if ($filtertype === 'user') {
+        $userid = $data->userid;
+        $courseid = 0; // All courses when filtering by user
+    } else {
+        $userid = 0; // All users when filtering by course
+        $courseid = $data->courseid;
+    }
+    
     $datefrom = $data->datefrom;
     $dateto = $data->dateto;
     

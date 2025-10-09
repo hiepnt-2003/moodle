@@ -24,6 +24,8 @@
 
 $string['pluginname'] = 'Activity Logs';
 $string['activitylogs:view'] = 'View activity logs report';
+$string['filterbyuser'] = 'Filter by User';
+$string['filterbycourse'] = 'Filter by Course';
 $string['selectuser'] = 'Select user';
 $string['selectcourse'] = 'Select course';
 $string['datefrom'] = 'Date from';
