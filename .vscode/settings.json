@@ -1,0 +1,16 @@
+{
+    // Chỉ tắt hiển thị lỗi/cảnh báo màu đỏ, giữ các tính năng khác
+    "php.validate.enable": false,
+    
+    // Hoặc nếu muốn giữ validation nhưng không hiện lỗi trong editor:
+    "php.validate.run": "onSave",
+    
+    // Tắt diagnostics từ PHP Intelephense (nếu có)
+    "intelephense.diagnostics.enable": false,
+    
+    // Các tính năng khác vẫn hoạt động bình thường:
+    // - Autocomplete vẫn hoạt động
+    // - Go to definition vẫn hoạt động  
+    // - Hover để xem thông tin vẫn hoạt động
+    // - Suggestions vẫn hoạt động
+}

@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Display logs table based on filter criteria
+ * Hiển thị bảng logs
  *
  * @param int $userid User ID (0 for all users)
  * @param int $courseid Course ID (0 for all courses)
@@ -169,7 +169,7 @@ function report_activitylogs_display_logs_table($userid, $courseid, $datefrom, $
 }
 
 /**
- * Get event description from log entry
+ * Lấy description từ event
  *
  * @param object $log Log entry object
  * @return string Event description
@@ -235,7 +235,7 @@ function report_activitylogs_get_event_description($log) {
 }
 
 /**
- * Create generic description from log data
+ * Tạo description
  *
  * @param object $log Log entry object
  * @return string Generic description
