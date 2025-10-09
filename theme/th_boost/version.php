@@ -9,7 +9,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'theme_th_boost';
-$plugin->version   = 2025100900;        // YYYYMMDDXX.
+$plugin->version   = 2025100901;        // YYYYMMDDXX.
 $plugin->requires  = 2019111800;        // Requires Moodle 3.8+ (compatible with 3.9).
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '1.0';

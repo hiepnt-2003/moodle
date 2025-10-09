@@ -17,7 +17,8 @@ Theme con kế thừa từ Boost với các tính năng bổ sung:
 
 ### 3. 👁️ Hiển thị mật khẩu trong Form đăng nhập
 - Icon "mắt" để toggle hiển thị/ẩn mật khẩu
-- Tự động apply cho tất cả password fields
+- Tự động apply cho tất cả password fields (login, change password, etc.)
+- Sử dụng trang login mặc định của Moodle
 - Animation mượt mà
 - Responsive design
 - Accessible với screen readers

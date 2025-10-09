@@ -8,10 +8,6 @@
 
 namespace theme_th_boost\output;
 
-use core\output\icon_system_fontawesome as core_icon_system_fontawesome;
-use renderer_base;
-use pix_icon;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -21,7 +17,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2025
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class icon_system_fontawesome extends core_icon_system_fontawesome {
+class icon_system_fontawesome extends \core\output\icon_system_fontawesome {
 
     /**
      * @var array $map Cached map of moodle icon names to FontAwesome icon names.
@@ -90,48 +86,5 @@ class icon_system_fontawesome extends core_icon_system_fontawesome {
             'core:a/search' => 'fa-search',
             'core:a/refresh' => 'fa-sync',
         ];
-    }
-
-    /**
-     * Render a pix_icon.
-     *
-     * @param renderer_base $output
-     * @param pix_icon $icon
-     * @return string
-     */
-    public function render_pix_icon(renderer_base $output, pix_icon $icon) {
-        // Get the icon mapping.
-        if (empty($this->map)) {
-            $this->map = $this->get_core_icon_map();
-        }
-
-        $iconname = $icon->get_component() . ':' . $icon->get_name();
-        
-        // Check if we have a FontAwesome mapping.
-        if (isset($this->map[$iconname])) {
-            $faicon = $this->map[$iconname];
-            $attributes = $icon->get_attributes();
-            
-            $title = '';
-            if (isset($attributes['title'])) {
-                $title = $attributes['title'];
-            } else if (isset($attributes['alt'])) {
-                $title = $attributes['alt'];
-            }
-            
-            $classes = 'icon fa ' . $faicon;
-            if (!empty($attributes['class'])) {
-                $classes .= ' ' . $attributes['class'];
-            }
-            
-            return \html_writer::tag('i', '', [
-                'class' => $classes,
-                'title' => $title,
-                'aria-hidden' => 'true'
-            ]);
-        }
-        
-        // Fall back to parent implementation.
-        return parent::render_pix_icon($output, $icon);
     }
 }

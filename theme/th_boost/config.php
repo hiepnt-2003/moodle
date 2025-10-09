@@ -17,7 +17,8 @@ $THEME->yuicssmodules = [];
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->requiredblocks = '';
 $THEME->addblockposition = BLOCK_ADDBLOCK_POSITION_FLATNAV;
-$THEME->iconsystem = '\\theme_th_boost\\output\\icon_system_fontawesome';
+// Icon system removed for better compatibility with Moodle 3.8/3.9
+// FontAwesome still available via CDN in templates
 $THEME->prescsscallback = 'theme_th_boost_get_pre_scss';
 $THEME->scss = function($theme) {
     return theme_th_boost_get_main_scss_content($theme);
