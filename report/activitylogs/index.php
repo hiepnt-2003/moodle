@@ -213,29 +213,83 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
         
         $row[] = $eventdisplay;
         
-        // Description
+        // Description - Always provide meaningful description
         $description = '';
         try {
             // Try to get event description
             if (class_exists($log->eventname)) {
                 $eventclass = $log->eventname;
-                $eventdata = [
-                    'objectid' => $log->objectid,
-                    'context' => context::instance_by_id($log->contextid, IGNORE_MISSING),
-                    'userid' => $log->userid,
-                    'relateduserid' => $log->relateduserid,
-                    'other' => $log->other ? unserialize($log->other) : null
-                ];
                 
-                if ($eventdata['context']) {
-                    $event = $eventclass::create($eventdata);
-                    $description = $event->get_description();
+                // Prepare context safely
+                $eventcontext = null;
+                try {
+                    $eventcontext = context::instance_by_id($log->contextid, IGNORE_MISSING);
+                } catch (Exception $e) {
+                    // Context might not exist, try to get system context
+                    $eventcontext = context_system::instance();
+                }
+                
+                if ($eventcontext) {
+                    $eventdata = [
+                        'objectid' => $log->objectid,
+                        'context' => $eventcontext,
+                        'userid' => $log->userid,
+                        'relateduserid' => $log->relateduserid,
+                        'other' => null
+                    ];
+                    
+                    // Try to unserialize 'other' data
+                    if ($log->other) {
+                        try {
+                            $eventdata['other'] = @unserialize($log->other);
+                        } catch (Exception $e) {
+                            // Keep other as null if unserialize fails
+                        }
+                    }
+                    
+                    try {
+                        $event = $eventclass::create($eventdata);
+                        $description = $event->get_description();
+                    } catch (Exception $e) {
+                        // Event creation failed
+                    }
                 }
             }
         } catch (Exception $e) {
-            // If we can't get description, leave it empty
+            // If we can't get description from event class, create a generic one
         }
-        $row[] = $description ? $description : '-';
+        
+        // If still no description, create a generic one based on available data
+        if (empty($description)) {
+            $description = 'The user';
+            if ($log->firstname && $log->lastname) {
+                $description .= " with id '{$log->userid}'";
+            }
+            
+            // Add action information
+            if ($log->action) {
+                $description .= " {$log->action}";
+            }
+            
+            // Add target information
+            if ($log->target) {
+                $description .= " the {$log->target}";
+            }
+            
+            // Add object information
+            if ($log->objectid) {
+                $description .= " with id '{$log->objectid}'";
+            }
+            
+            // Add course context if available
+            if ($log->coursename) {
+                $description .= " in the course '{$log->coursename}'";
+            }
+            
+            $description .= '.';
+        }
+        
+        $row[] = $description;
         
         // Origin
         $row[] = $log->origin ? $log->origin : '-';
