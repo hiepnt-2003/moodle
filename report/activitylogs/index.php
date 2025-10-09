@@ -171,52 +171,11 @@ function display_logs_table($userid, $courseid, $datefrom, $dateto) {
             $row[] = '-';
         }
         
-        // Component - show with more details
-        $componenttext = $log->component ? $log->component : 'System';
-        // Add action and target info if available
-        if ($log->action || $log->target) {
-            $componenttext .= '<br><small style="color: #666;">';
-            if ($log->action) {
-                $componenttext .= 'Action: ' . $log->action;
-            }
-            if ($log->target) {
-                $componenttext .= ($log->action ? ' | ' : '') . 'Target: ' . $log->target;
-            }
-            $componenttext .= '</small>';
-        }
-        $row[] = $componenttext;
+        // Component - simple display
+        $row[] = $log->component ? $log->component : 'System';
         
-        // Event name - show full event name with additional info
-        $eventname = $log->eventname;
-        $eventdisplay = $eventname;
-        
-        // Add CRUD and Education level info
-        if ($log->crud || $log->edulevel) {
-            $eventdisplay .= '<br><small style="color: #666;">';
-            $crudmap = array('c' => 'Create', 'r' => 'Read', 'u' => 'Update', 'd' => 'Delete');
-            $edulevelmap = array(
-                0 => 'Other',
-                1 => 'Participating', 
-                2 => 'Teaching',
-                3 => 'Editing'
-            );
-            
-            $extrainfo = array();
-            if ($log->crud && isset($crudmap[$log->crud])) {
-                $extrainfo[] = 'CRUD: ' . $crudmap[$log->crud];
-            }
-            if ($log->edulevel !== null && isset($edulevelmap[$log->edulevel])) {
-                $extrainfo[] = 'Level: ' . $edulevelmap[$log->edulevel];
-            }
-            if ($log->objecttable) {
-                $extrainfo[] = 'Table: ' . $log->objecttable;
-            }
-            
-            $eventdisplay .= implode(' | ', $extrainfo);
-            $eventdisplay .= '</small>';
-        }
-        
-        $row[] = $eventdisplay;
+        // Event name - simple display
+        $row[] = $log->eventname ? $log->eventname : '-';
         
         // Description - Always provide meaningful description
         $description = '';
