@@ -101,9 +101,19 @@ function report_activitylogs_display_logs_table($userid, $courseid, $datefrom, $
         
         // User full name
         if (isset($log->firstname) && isset($log->lastname) && $log->firstname && $log->lastname) {
+            // Tạo user object với đầy đủ các trường cần thiết
+            $user = (object)[
+                'id' => isset($log->userid) ? $log->userid : 0,
+                'firstname' => $log->firstname,
+                'lastname' => $log->lastname,
+                'firstnamephonetic' => '',
+                'lastnamephonetic' => '',
+                'middlename' => '',
+                'alternatename' => ''
+            ];
             $userlink = html_writer::link(
                 new moodle_url('/user/profile.php', array('id' => $log->userid)),
-                fullname($log)
+                fullname($user)
             );
             $row[] = $userlink;
         } else {
@@ -115,8 +125,13 @@ function report_activitylogs_display_logs_table($userid, $courseid, $datefrom, $
             isset($log->relatedfirstname) && isset($log->relatedlastname) &&
             $log->relatedfirstname && $log->relatedlastname) {
             $relateduser = (object)[
+                'id' => $log->relateduserid,
                 'firstname' => $log->relatedfirstname,
-                'lastname' => $log->relatedlastname
+                'lastname' => $log->relatedlastname,
+                'firstnamephonetic' => '',
+                'lastnamephonetic' => '',
+                'middlename' => '',
+                'alternatename' => ''
             ];
             $row[] = fullname($relateduser);
         } else {
