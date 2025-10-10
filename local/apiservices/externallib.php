@@ -175,19 +175,38 @@ class local_apiservices_external extends external_api {
                 $admin->id
             );
 
-            // Configure backup settings to include everything
-            // Set backup settings to include all content
-            $bc->get_plan()->get_setting('users')->set_value(false);
-            $bc->get_plan()->get_setting('role_assignments')->set_value(false);
-            $bc->get_plan()->get_setting('activities')->set_value(true);
-            $bc->get_plan()->get_setting('blocks')->set_value(true);
-            $bc->get_plan()->get_setting('filters')->set_value(true);
-            $bc->get_plan()->get_setting('comments')->set_value(true);
-            $bc->get_plan()->get_setting('badges')->set_value(true);
-            $bc->get_plan()->get_setting('calendarevents')->set_value(true);
-            $bc->get_plan()->get_setting('userscompletion')->set_value(true);
-            $bc->get_plan()->get_setting('logs')->set_value(false);
-            $bc->get_plan()->get_setting('grade_histories')->set_value(false);
+            // Configure backup settings - only set basic ones
+            $plan = $bc->get_plan();
+            $settings = $plan->get_settings();
+            
+            // Loop through settings and configure them safely
+            foreach ($settings as $setting) {
+                $name = $setting->get_name();
+                
+                if ($name == 'users') {
+                    $setting->set_value(false);
+                } else if ($name == 'role_assignments') {
+                    $setting->set_value(false);
+                } else if ($name == 'activities') {
+                    $setting->set_value(true);
+                } else if ($name == 'blocks') {
+                    $setting->set_value(true);
+                } else if ($name == 'filters') {
+                    $setting->set_value(true);
+                } else if ($name == 'comments') {
+                    $setting->set_value(true);
+                } else if ($name == 'badges') {
+                    $setting->set_value(true);
+                } else if ($name == 'calendarevents') {
+                    $setting->set_value(true);
+                } else if ($name == 'userscompletion') {
+                    $setting->set_value(true);
+                } else if ($name == 'logs') {
+                    $setting->set_value(false);
+                } else if ($name == 'grade_histories') {
+                    $setting->set_value(false);
+                }
+            }
             
             // Execute backup
             $bc->execute_plan();
@@ -217,19 +236,38 @@ class local_apiservices_external extends external_api {
                 backup::TARGET_CURRENT_ADDING
             );
 
-            // Configure restore settings
-            // Set restore settings to include all content
-            $rc->get_plan()->get_setting('users')->set_value(false);
-            $rc->get_plan()->get_setting('role_assignments')->set_value(false);
-            $rc->get_plan()->get_setting('activities')->set_value(true);
-            $rc->get_plan()->get_setting('blocks')->set_value(true);
-            $rc->get_plan()->get_setting('filters')->set_value(true);
-            $rc->get_plan()->get_setting('comments')->set_value(true);
-            $rc->get_plan()->get_setting('badges')->set_value(true);
-            $rc->get_plan()->get_setting('calendarevents')->set_value(true);
-            $rc->get_plan()->get_setting('userscompletion')->set_value(true);
-            $rc->get_plan()->get_setting('logs')->set_value(false);
-            $rc->get_plan()->get_setting('grade_histories')->set_value(false);
+            // Configure restore settings safely
+            $plan = $rc->get_plan();
+            $settings = $plan->get_settings();
+            
+            // Loop through settings and configure them safely
+            foreach ($settings as $setting) {
+                $name = $setting->get_name();
+                
+                if ($name == 'users') {
+                    $setting->set_value(false);
+                } else if ($name == 'role_assignments') {
+                    $setting->set_value(false);
+                } else if ($name == 'activities') {
+                    $setting->set_value(true);
+                } else if ($name == 'blocks') {
+                    $setting->set_value(true);
+                } else if ($name == 'filters') {
+                    $setting->set_value(true);
+                } else if ($name == 'comments') {
+                    $setting->set_value(true);
+                } else if ($name == 'badges') {
+                    $setting->set_value(true);
+                } else if ($name == 'calendarevents') {
+                    $setting->set_value(true);
+                } else if ($name == 'userscompletion') {
+                    $setting->set_value(true);
+                } else if ($name == 'logs') {
+                    $setting->set_value(false);
+                } else if ($name == 'grade_histories') {
+                    $setting->set_value(false);
+                }
+            }
 
             // Execute restore
             if (!$rc->execute_precheck()) {
