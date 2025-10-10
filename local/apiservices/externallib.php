@@ -174,41 +174,8 @@ class local_apiservices_external extends external_api {
                 backup::MODE_GENERAL,
                 $admin->id
             );
-
-            // Configure backup settings - only set basic ones
-            $plan = $bc->get_plan();
-            $settings = $plan->get_settings();
             
-            // Loop through settings and configure them safely
-            foreach ($settings as $setting) {
-                $name = $setting->get_name();
-                
-                if ($name == 'users') {
-                    $setting->set_value(false);
-                } else if ($name == 'role_assignments') {
-                    $setting->set_value(false);
-                } else if ($name == 'activities') {
-                    $setting->set_value(true);
-                } else if ($name == 'blocks') {
-                    $setting->set_value(true);
-                } else if ($name == 'filters') {
-                    $setting->set_value(true);
-                } else if ($name == 'comments') {
-                    $setting->set_value(true);
-                } else if ($name == 'badges') {
-                    $setting->set_value(true);
-                } else if ($name == 'calendarevents') {
-                    $setting->set_value(true);
-                } else if ($name == 'userscompletion') {
-                    $setting->set_value(true);
-                } else if ($name == 'logs') {
-                    $setting->set_value(false);
-                } else if ($name == 'grade_histories') {
-                    $setting->set_value(false);
-                }
-            }
-            
-            // Execute backup
+            // Execute backup with default settings
             $bc->execute_plan();
             $results = $bc->get_results();
             $backup_file = $results['backup_destination'];
@@ -236,40 +203,7 @@ class local_apiservices_external extends external_api {
                 backup::TARGET_CURRENT_ADDING
             );
 
-            // Configure restore settings safely
-            $plan = $rc->get_plan();
-            $settings = $plan->get_settings();
-            
-            // Loop through settings and configure them safely
-            foreach ($settings as $setting) {
-                $name = $setting->get_name();
-                
-                if ($name == 'users') {
-                    $setting->set_value(false);
-                } else if ($name == 'role_assignments') {
-                    $setting->set_value(false);
-                } else if ($name == 'activities') {
-                    $setting->set_value(true);
-                } else if ($name == 'blocks') {
-                    $setting->set_value(true);
-                } else if ($name == 'filters') {
-                    $setting->set_value(true);
-                } else if ($name == 'comments') {
-                    $setting->set_value(true);
-                } else if ($name == 'badges') {
-                    $setting->set_value(true);
-                } else if ($name == 'calendarevents') {
-                    $setting->set_value(true);
-                } else if ($name == 'userscompletion') {
-                    $setting->set_value(true);
-                } else if ($name == 'logs') {
-                    $setting->set_value(false);
-                } else if ($name == 'grade_histories') {
-                    $setting->set_value(false);
-                }
-            }
-
-            // Execute restore
+            // Execute restore with default settings
             if (!$rc->execute_precheck()) {
                 $precheckresults = $rc->get_precheck_results();
                 $rc->destroy();
