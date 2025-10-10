@@ -176,20 +176,18 @@ class local_apiservices_external extends external_api {
             );
 
             // Configure backup settings to include everything
-            $plan = $bc->get_plan();
-            
             // Set backup settings to include all content
-            $plan->get_setting('users')->set_value(true);
-            $plan->get_setting('role_assignments')->set_value(true);
-            $plan->get_setting('activities')->set_value(true);
-            $plan->get_setting('blocks')->set_value(true);
-            $plan->get_setting('filters')->set_value(true);
-            $plan->get_setting('comments')->set_value(true);
-            $plan->get_setting('badges')->set_value(true);
-            $plan->get_setting('calendarevents')->set_value(true);
-            $plan->get_setting('userscompletion')->set_value(true);
-            $plan->get_setting('logs')->set_value(false);
-            $plan->get_setting('grade_histories')->set_value(false);
+            $bc->get_plan()->get_setting('users')->set_value(false);
+            $bc->get_plan()->get_setting('role_assignments')->set_value(false);
+            $bc->get_plan()->get_setting('activities')->set_value(true);
+            $bc->get_plan()->get_setting('blocks')->set_value(true);
+            $bc->get_plan()->get_setting('filters')->set_value(true);
+            $bc->get_plan()->get_setting('comments')->set_value(true);
+            $bc->get_plan()->get_setting('badges')->set_value(true);
+            $bc->get_plan()->get_setting('calendarevents')->set_value(true);
+            $bc->get_plan()->get_setting('userscompletion')->set_value(true);
+            $bc->get_plan()->get_setting('logs')->set_value(false);
+            $bc->get_plan()->get_setting('grade_histories')->set_value(false);
             
             // Execute backup
             $bc->execute_plan();
@@ -220,20 +218,18 @@ class local_apiservices_external extends external_api {
             );
 
             // Configure restore settings
-            $plan = $rc->get_plan();
-            
             // Set restore settings to include all content
-            $plan->get_setting('users')->set_value(true);
-            $plan->get_setting('role_assignments')->set_value(true);
-            $plan->get_setting('activities')->set_value(true);
-            $plan->get_setting('blocks')->set_value(true);
-            $plan->get_setting('filters')->set_value(true);
-            $plan->get_setting('comments')->set_value(true);
-            $plan->get_setting('badges')->set_value(true);
-            $plan->get_setting('calendarevents')->set_value(true);
-            $plan->get_setting('userscompletion')->set_value(true);
-            $plan->get_setting('logs')->set_value(false);
-            $plan->get_setting('grade_histories')->set_value(false);
+            $rc->get_plan()->get_setting('users')->set_value(false);
+            $rc->get_plan()->get_setting('role_assignments')->set_value(false);
+            $rc->get_plan()->get_setting('activities')->set_value(true);
+            $rc->get_plan()->get_setting('blocks')->set_value(true);
+            $rc->get_plan()->get_setting('filters')->set_value(true);
+            $rc->get_plan()->get_setting('comments')->set_value(true);
+            $rc->get_plan()->get_setting('badges')->set_value(true);
+            $rc->get_plan()->get_setting('calendarevents')->set_value(true);
+            $rc->get_plan()->get_setting('userscompletion')->set_value(true);
+            $rc->get_plan()->get_setting('logs')->set_value(false);
+            $rc->get_plan()->get_setting('grade_histories')->set_value(false);
 
             // Execute restore
             if (!$rc->execute_precheck()) {
