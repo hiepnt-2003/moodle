@@ -190,18 +190,30 @@ class local_apiservices_external extends external_api {
             }
 
             // Get backup file path
-            $backup_filepath = $backup_file->copy_content_to_temp();
+            $fs = get_file_storage();
+            $context = context_course::instance($source_course->id);
+            
+            // Copy backup file to temp location
+            $backupid = $backup_file->get_filename();
+            $tempdir = make_backup_temp_directory($backupid);
+            $backup_file->extract_to_pathname(get_file_packer('application/vnd.moodle.backup'), $tempdir);
+            
             $bc->destroy();
 
             // Step 3: Restore to new course
             $rc = new restore_controller(
-                basename($backup_filepath),
+                $backupid,
                 $new_course->id,
                 backup::INTERACTIVE_NO,
                 backup::MODE_GENERAL,
                 $admin->id,
                 backup::TARGET_CURRENT_ADDING
             );
+
+            // Check if precheck is required
+            if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
+                $rc->convert();
+            }
 
             // Execute restore with default settings
             if (!$rc->execute_precheck()) {
@@ -218,9 +230,9 @@ class local_apiservices_external extends external_api {
             $rc->execute_plan();
             $rc->destroy();
 
-            // Clean up temp backup file
-            if (file_exists($backup_filepath)) {
-                @unlink($backup_filepath);
+            // Clean up temp backup directory
+            if (file_exists($tempdir)) {
+                fulldelete($tempdir);
             }
 
             // Step 4: Update course dates
