@@ -24,13 +24,21 @@
 
 $string['pluginname'] = 'Activity Logs';
 $string['activitylogs:view'] = 'View activity logs report';
+
+// Filter form strings
+$string['filterby'] = 'Filter by';
 $string['filterbyuser'] = 'Filter by User';
 $string['filterbycourse'] = 'Filter by Course';
 $string['selectuser'] = 'Select user';
+$string['selectuser_help'] = 'Select one or more users to filter the logs. Leave empty to view logs for all users.';
 $string['selectcourse'] = 'Select course';
+$string['selectcourse_help'] = 'Select one or more courses to filter the logs. Leave empty to view logs for all courses.';
 $string['datefrom'] = 'Date from';
 $string['dateto'] = 'Date to';
 $string['viewlogs'] = 'View logs';
+$string['selectcriteria'] = 'Select criteria to view activity logs';
+
+// Display strings
 $string['nologs'] = 'No logs found for the selected criteria';
 $string['allcourses'] = 'All courses';
 $string['allusers'] = 'All users';
@@ -45,4 +53,3 @@ $string['component'] = 'Component';
 $string['context'] = 'Context';
 $string['origin'] = 'Origin';
 $string['ipaddress'] = 'IP Address';
-$string['selectcriteria'] = 'Select criteria to view activity logs';
