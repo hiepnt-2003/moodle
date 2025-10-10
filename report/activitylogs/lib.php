@@ -25,18 +25,57 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Hiển thị bảng logs sử dụng get_recordset để tối ưu hiệu suất
- * Hỗ trợ filter theo nhiều users và nhiều courses
+ * Hiển thị bảng logs với phân trang (50 logs/page)
+ * Chỉ load dữ liệu của trang hiện tại để tối ưu hiệu suất
  *
  * @param array $userids Array of User IDs (empty array for all users)
  * @param array $courseids Array of Course IDs (empty array for all courses)
  * @param int $datefrom Start timestamp
  * @param int $dateto End timestamp
+ * @param int $page Current page number (0-based)
  */
-function report_activitylogs_display_logs_table($userids, $courseids, $datefrom, $dateto) {
+function report_activitylogs_display_logs_table($userids, $courseids, $datefrom, $dateto, $page = 0) {
     global $DB, $OUTPUT;
     
-    // Build SQL query
+    // Pagination settings
+    $perpage = 50; // 50 logs per page
+    $offset = $page * $perpage;
+    
+    // Build WHERE clause and parameters
+    $where = "l.timecreated >= :datefrom AND l.timecreated <= :dateto";
+    $params = array(
+        'datefrom' => $datefrom,
+        'dateto' => $dateto
+    );
+    
+    // Filter by multiple users
+    if (!empty($userids) && is_array($userids)) {
+        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'user');
+        $where .= " AND l.userid $insql";
+        $params = array_merge($params, $inparams);
+    }
+    
+    // Filter by multiple courses
+    if (!empty($courseids) && is_array($courseids)) {
+        list($insql, $inparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'course');
+        $where .= " AND ctx.instanceid $insql AND ctx.contextlevel = 50";
+        $params = array_merge($params, $inparams);
+    }
+    
+    // Step 1: Count total records (for pagination)
+    $countsql = "SELECT COUNT(l.id)
+                 FROM {logstore_standard_log} l
+                 LEFT JOIN {context} ctx ON l.contextid = ctx.id
+                 WHERE $where";
+    
+    $totalcount = $DB->count_records_sql($countsql, $params);
+    
+    if ($totalcount == 0) {
+        echo $OUTPUT->notification(get_string('nologs', 'report_activitylogs'), 'info');
+        return;
+    }
+    
+    // Step 2: Get only records for current page
     $sql = "SELECT l.id, l.timecreated, l.userid, l.relateduserid, l.eventname, 
                    l.component, l.action, l.target, l.objecttable, l.objectid,
                    l.crud, l.edulevel, l.contextid, l.contextlevel, l.contextinstanceid,
@@ -50,36 +89,13 @@ function report_activitylogs_display_logs_table($userids, $courseids, $datefrom,
             LEFT JOIN {user} ru ON l.relateduserid = ru.id
             LEFT JOIN {context} ctx ON l.contextid = ctx.id
             LEFT JOIN {course} c ON (ctx.contextlevel = 50 AND ctx.instanceid = c.id)
-            WHERE l.timecreated >= :datefrom 
-            AND l.timecreated <= :dateto";
+            WHERE $where
+            ORDER BY l.timecreated DESC";
     
-    $params = array(
-        'datefrom' => $datefrom,
-        'dateto' => $dateto
-    );
+    // Get records for current page only
+    $records = $DB->get_records_sql($sql, $params, $offset, $perpage);
     
-    // Filter by multiple users
-    if (!empty($userids) && is_array($userids)) {
-        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'user');
-        $sql .= " AND l.userid $insql";
-        $params = array_merge($params, $inparams);
-    }
-    
-    // Filter by multiple courses
-    if (!empty($courseids) && is_array($courseids)) {
-        list($insql, $inparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'course');
-        $sql .= " AND ctx.instanceid $insql AND ctx.contextlevel = 50";
-        $params = array_merge($params, $inparams);
-    }
-    
-    $sql .= " ORDER BY l.timecreated DESC";
-    
-    // Sử dụng get_recordset thay vì get_records_sql để tối ưu bộ nhớ
-    // get_recordset trả về iterator, xử lý từng record một thay vì load tất cả vào memory
-    $recordset = $DB->get_recordset_sql($sql, $params, 0, 1000); // Limit to 1000 records
-    
-    if (!$recordset->valid()) {
-        $recordset->close(); // Quan trọng: phải đóng recordset
+    if (empty($records)) {
         echo $OUTPUT->notification(get_string('nologs', 'report_activitylogs'), 'info');
         return;
     }
@@ -99,9 +115,8 @@ function report_activitylogs_display_logs_table($userids, $courseids, $datefrom,
     );
     $table->attributes['class'] = 'generaltable';
     
-    $count = 0;
-    // Lặp qua từng record từ recordset
-    foreach ($recordset as $log) {
+    // Build table rows from records
+    foreach ($records as $log) {
         $row = array();
         
         // Time
@@ -110,7 +125,6 @@ function report_activitylogs_display_logs_table($userids, $courseids, $datefrom,
         
         // User full name
         if (isset($log->firstname) && isset($log->lastname) && $log->firstname && $log->lastname) {
-            // Tạo user object với đầy đủ các trường cần thiết
             $user = (object)[
                 'id' => isset($log->userid) ? $log->userid : 0,
                 'firstname' => $log->firstname,
@@ -183,16 +197,41 @@ function report_activitylogs_display_logs_table($userids, $courseids, $datefrom,
         $row[] = $ip;
         
         $table->data[] = $row;
-        $count++;
     }
     
-    // Quan trọng: Luôn đóng recordset sau khi sử dụng để giải phóng tài nguyên
-    $recordset->close();
-    
+    // Display table
     echo html_writer::table($table);
     
-    // Display count
-    echo html_writer::tag('p', get_string('numberofentries', 'moodle', $count), array('class' => 'log-count'));
+    // Display count and pagination
+    $showing_from = $offset + 1;
+    $showing_to = min($offset + $perpage, $totalcount);
+    echo html_writer::tag('p', 
+        get_string('showingentries', 'report_activitylogs', 
+            array('from' => $showing_from, 'to' => $showing_to, 'total' => $totalcount)
+        ), 
+        array('class' => 'log-count')
+    );
+    
+    // Display pagination bar
+    $baseurl = new moodle_url('/report/activitylogs/index.php', array(
+        'filtertype' => !empty($userids) ? 'user' : 'course',
+        'datefrom' => $datefrom,
+        'dateto' => $dateto
+    ));
+    
+    // Add user or course IDs to URL
+    if (!empty($userids)) {
+        foreach ($userids as $userid) {
+            $baseurl->param('userids[]', $userid);
+        }
+    }
+    if (!empty($courseids)) {
+        foreach ($courseids as $courseid) {
+            $baseurl->param('courseids[]', $courseid);
+        }
+    }
+    
+    echo $OUTPUT->paging_bar($totalcount, $page, $perpage, $baseurl);
 }
 
 /**

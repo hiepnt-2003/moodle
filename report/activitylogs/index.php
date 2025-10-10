@@ -31,6 +31,16 @@ require_login();
 $context = context_system::instance();
 require_capability('report/activitylogs:view', $context);
 
+// Get page parameter for pagination
+$page = optional_param('page', 0, PARAM_INT);
+
+// Get filter parameters from URL (to maintain filters when changing pages)
+$filtertype = optional_param('filtertype', '', PARAM_ALPHA);
+$userids = optional_param_array('userids', array(), PARAM_INT);
+$courseids = optional_param_array('courseids', array(), PARAM_INT);
+$datefrom = optional_param('datefrom', 0, PARAM_INT);
+$dateto = optional_param('dateto', 0, PARAM_INT);
+
 $PAGE->set_url(new moodle_url('/report/activitylogs/index.php'));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('report');
@@ -46,6 +56,20 @@ $mform = new \report_activitylogs\form\filter_form();
 // Get form data
 $data = $mform->get_data();
 
+// If form is submitted, get data from form. Otherwise, use URL parameters (for pagination)
+if ($data) {
+    // Form was just submitted, reset to page 0
+    $page = 0;
+} else if ($filtertype) {
+    // Coming from pagination, reconstruct data from URL parameters
+    $data = new stdClass();
+    $data->filtertype = $filtertype;
+    $data->userids = $userids;
+    $data->courseids = $courseids;
+    $data->datefrom = $datefrom;
+    $data->dateto = $dateto;
+}
+
 // Display form first
 $mform->display();
 
@@ -54,24 +78,24 @@ if ($data) {
     // Process form data based on filter type
     $filtertype = $data->filtertype;
     
-    $userids = array();
-    $courseids = array();
+    $userids_filter = array();
+    $courseids_filter = array();
     
     if ($filtertype === 'user') {
         // Filter by users - get selected user IDs
-        $userids = isset($data->userids) ? $data->userids : array();
+        $userids_filter = isset($data->userids) ? $data->userids : array();
         // No course filter when filtering by user
     } else {
         // Filter by courses - get selected course IDs
-        $courseids = isset($data->courseids) ? $data->courseids : array();
+        $courseids_filter = isset($data->courseids) ? $data->courseids : array();
         // No user filter when filtering by course
     }
     
-    $datefrom = $data->datefrom;
-    $dateto = $data->dateto;
+    $datefrom_filter = $data->datefrom;
+    $dateto_filter = $data->dateto;
     
-    // Display the logs table below form with selected users/courses
-    report_activitylogs_display_logs_table($userids, $courseids, $datefrom, $dateto);
+    // Display the logs table below form with pagination
+    report_activitylogs_display_logs_table($userids_filter, $courseids_filter, $datefrom_filter, $dateto_filter, $page);
 } else {
     echo html_writer::tag('p', get_string('selectcriteria', 'report_activitylogs'), array('class' => 'alert alert-info'));
 }

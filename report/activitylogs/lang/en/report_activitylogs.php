@@ -53,3 +53,4 @@ $string['component'] = 'Component';
 $string['context'] = 'Context';
 $string['origin'] = 'Origin';
 $string['ipaddress'] = 'IP Address';
+$string['showingentries'] = 'Showing {$a->from} to {$a->to} of {$a->total} entries';
