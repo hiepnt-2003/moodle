@@ -55,7 +55,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
                     const toggleBtn = document.createElement("button");
                     toggleBtn.type = "button";
                     toggleBtn.className = "password-toggle-btn";
-                    toggleBtn.innerHTML = \'<i class="far fa-eye" aria-hidden="true"></i>\';
+                    toggleBtn.innerHTML = \'<i class="fa fa-eye" aria-hidden="true"></i>\';
                     toggleBtn.setAttribute("aria-label", "Toggle password visibility");
                     toggleBtn.setAttribute("title", "Show password");
                     
@@ -75,11 +75,11 @@ class core_renderer extends \theme_boost\output\core_renderer {
                         const icon = toggleBtn.querySelector("i");
                         if (type === "text") {
                             // Mắt gạch chéo  : password hiện
-                            icon.className = "far fa-eye-slash";
+                            icon.className = "fa fa-eye-slash";
                             toggleBtn.setAttribute("title", "Hide password");
                         } else {
                             // Mắt mở : password ẩn
-                            icon.className = "far fa-eye";
+                            icon.className = "fa fa-eye";
                             toggleBtn.setAttribute("title", "Show password");
                         }
                     });

@@ -1,5 +1,4 @@
 // TH Boost Custom SCSS
-// Import FontAwesome from CDN (will be loaded via JavaScript)
 
 // Password toggle button styling
 .password-toggle-container {
@@ -74,18 +73,6 @@
             position: relative;
         }
     }
-}
-
-// FontAwesome icon enhancements
-.fa, .fas, .far, .fal, .fad, .fab {
-    font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "Font Awesome 6 Brands" !important;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
-    display: inline-block;
-    font-style: normal;
-    font-variant: normal;
-    text-rendering: auto;
-    line-height: 1;
 }
 
 // Additional styling for better appearance
