@@ -48,7 +48,7 @@ class filter_form extends \moodleform {
         // User selection with autocomplete - Cho phép chọn nhiều users
         // Load tất cả users để hiển thị khi click
         $allusers = $DB->get_records_sql("
-            SELECT id, firstname, lastname, email 
+            SELECT id, firstname, lastname, firstnamephonetic, lastnamephonetic, middlename, alternatename, email 
             FROM {user} 
             WHERE deleted = 0 AND id > 1
             ORDER BY firstname, lastname
