@@ -17,6 +17,7 @@ $THEME->yuicssmodules = [];
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->requiredblocks = '';
 $THEME->addblockposition = BLOCK_ADDBLOCK_POSITION_FLATNAV;
+$THEME->iconsystem = \core\output\icon_system::FONTAWESOME;
 
 // Lấy các cài đặt màu sắc (brandcolor) và các đoạn mã trong ô "SCSS ban đầu" từ cơ sở dữ liệu.
 $THEME->prescsscallback = 'theme_th_boost_get_pre_scss';
