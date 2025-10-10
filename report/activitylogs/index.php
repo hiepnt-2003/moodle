@@ -51,22 +51,27 @@ $mform->display();
 
 // Then display results below the form
 if ($data) {
-    // Process form data and display logs below form
+    // Process form data based on filter type
     $filtertype = $data->filtertype;
     
+    $userids = array();
+    $courseids = array();
+    
     if ($filtertype === 'user') {
-        $userid = $data->userid;
-        $courseid = 0; // All courses when filtering by user
+        // Filter by users - get selected user IDs
+        $userids = isset($data->userids) ? $data->userids : array();
+        // No course filter when filtering by user
     } else {
-        $userid = 0; // All users when filtering by course
-        $courseid = $data->courseid;
+        // Filter by courses - get selected course IDs
+        $courseids = isset($data->courseids) ? $data->courseids : array();
+        // No user filter when filtering by course
     }
     
     $datefrom = $data->datefrom;
     $dateto = $data->dateto;
     
-    // Display the logs table below form
-    report_activitylogs_display_logs_table($userid, $courseid, $datefrom, $dateto);
+    // Display the logs table below form with selected users/courses
+    report_activitylogs_display_logs_table($userids, $courseids, $datefrom, $dateto);
 } else {
     echo html_writer::tag('p', get_string('selectcriteria', 'report_activitylogs'), array('class' => 'alert alert-info'));
 }

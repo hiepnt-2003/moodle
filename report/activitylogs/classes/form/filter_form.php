@@ -42,82 +42,58 @@ class filter_form extends \moodleform {
         $radioarray = array();
         $radioarray[] = $mform->createElement('radio', 'filtertype', '', get_string('filterbyuser', 'report_activitylogs'), 'user');
         $radioarray[] = $mform->createElement('radio', 'filtertype', '', get_string('filterbycourse', 'report_activitylogs'), 'course');
-        $mform->addGroup($radioarray, 'filtertypegroup', '', array(' '), false);
+        $mform->addGroup($radioarray, 'filtertypegroup', get_string('filterby', 'report_activitylogs'), array(' '), false);
         $mform->setDefault('filtertype', 'user');
 
-        // User selection with autocomplete (shown when filter by user is selected)
+        // User selection with autocomplete - Cho phép chọn nhiều users
         // Load tất cả users để hiển thị khi click
-        $initialusers = $DB->get_records_sql("
+        $allusers = $DB->get_records_sql("
             SELECT id, firstname, lastname, email 
             FROM {user} 
             WHERE deleted = 0 AND id > 1
             ORDER BY firstname, lastname
         ");
         
-        $useroptions = array(0 => get_string('allusers', 'report_activitylogs'));
-        foreach ($initialusers as $user) {
+        $useroptions = array();
+        foreach ($allusers as $user) {
             $useroptions[$user->id] = fullname($user) . ' (' . $user->email . ')';
         }
         
-        $options = array(
-            'ajax' => 'core_user/form_user_selector',
-            'multiple' => false,
+        $userselectoptions = array(
+            'multiple' => true,  // Cho phép chọn nhiều
             'noselectionstring' => get_string('allusers', 'report_activitylogs'),
-            'valuehtmlcallback' => function($value) {
-                global $DB;
-                
-                if (empty($value)) {
-                    return get_string('allusers', 'report_activitylogs');
-                }
-                
-                $user = $DB->get_record('user', array('id' => $value), 'id, firstname, lastname, email');
-                if ($user) {
-                    return fullname($user) . ' (' . $user->email . ')';
-                }
-                return '';
-            }
+            'placeholder' => get_string('selectuser', 'report_activitylogs')
         );
         
-        $mform->addElement('autocomplete', 'userid', get_string('selectuser', 'report_activitylogs'), $useroptions, $options);
-        $mform->setType('userid', PARAM_INT);
-        $mform->hideIf('userid', 'filtertype', 'eq', 'course');
+        $mform->addElement('autocomplete', 'userids', get_string('selectuser', 'report_activitylogs'), $useroptions, $userselectoptions);
+        $mform->addHelpButton('userids', 'selectuser', 'report_activitylogs');
+        // Hiển thị user selection chỉ khi chọn filter by user
+        $mform->hideIf('userids', 'filtertype', 'eq', 'course');
         
-        // Course selection with autocomplete (shown when filter by course is selected)
+        // Course selection with autocomplete - Cho phép chọn nhiều courses
         // Load tất cả courses để hiển thị khi click
-        $initialcourses = $DB->get_records_sql("
+        $allcourses = $DB->get_records_sql("
             SELECT id, fullname 
             FROM {course} 
             WHERE id > 1
             ORDER BY fullname
         ");
         
-        $courseoptionsdata = array(0 => get_string('allcourses', 'report_activitylogs'));
-        foreach ($initialcourses as $course) {
-            $courseoptionsdata[$course->id] = format_string($course->fullname);
+        $courseoptions = array();
+        foreach ($allcourses as $course) {
+            $courseoptions[$course->id] = format_string($course->fullname);
         }
         
-        $courseoptions = array(
-            'ajax' => 'core_course/form_course_selector',
-            'multiple' => false,
+        $courseselectoptions = array(
+            'multiple' => true,  // Cho phép chọn nhiều
             'noselectionstring' => get_string('allcourses', 'report_activitylogs'),
-            'valuehtmlcallback' => function($value) {
-                global $DB;
-                
-                if (empty($value)) {
-                    return get_string('allcourses', 'report_activitylogs');
-                }
-                
-                $course = $DB->get_record('course', array('id' => $value), 'id, fullname');
-                if ($course) {
-                    return format_string($course->fullname);
-                }
-                return '';
-            }
+            'placeholder' => get_string('selectcourse', 'report_activitylogs')
         );
         
-        $mform->addElement('autocomplete', 'courseid', get_string('selectcourse', 'report_activitylogs'), $courseoptionsdata, $courseoptions);
-        $mform->setType('courseid', PARAM_INT);
-        $mform->hideIf('courseid', 'filtertype', 'eq', 'user');
+        $mform->addElement('autocomplete', 'courseids', get_string('selectcourse', 'report_activitylogs'), $courseoptions, $courseselectoptions);
+        $mform->addHelpButton('courseids', 'selectcourse', 'report_activitylogs');
+        // Hiển thị course selection chỉ khi chọn filter by course
+        $mform->hideIf('courseids', 'filtertype', 'eq', 'user');
 
         // Date from
         $mform->addElement('date_selector', 'datefrom', get_string('datefrom', 'report_activitylogs'), array('optional' => false));

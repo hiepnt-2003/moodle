@@ -26,13 +26,14 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Hiển thị bảng logs sử dụng get_recordset để tối ưu hiệu suất
+ * Hỗ trợ filter theo nhiều users và nhiều courses
  *
- * @param int $userid User ID (0 for all users)
- * @param int $courseid Course ID (0 for all courses)
+ * @param array $userids Array of User IDs (empty array for all users)
+ * @param array $courseids Array of Course IDs (empty array for all courses)
  * @param int $datefrom Start timestamp
  * @param int $dateto End timestamp
  */
-function report_activitylogs_display_logs_table($userid, $courseid, $datefrom, $dateto) {
+function report_activitylogs_display_logs_table($userids, $courseids, $datefrom, $dateto) {
     global $DB, $OUTPUT;
     
     // Build SQL query
@@ -57,14 +58,18 @@ function report_activitylogs_display_logs_table($userid, $courseid, $datefrom, $
         'dateto' => $dateto
     );
     
-    if ($userid > 0) {
-        $sql .= " AND l.userid = :userid";
-        $params['userid'] = $userid;
+    // Filter by multiple users
+    if (!empty($userids) && is_array($userids)) {
+        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'user');
+        $sql .= " AND l.userid $insql";
+        $params = array_merge($params, $inparams);
     }
     
-    if ($courseid > 0) {
-        $sql .= " AND ctx.instanceid = :courseid AND ctx.contextlevel = 50";
-        $params['courseid'] = $courseid;
+    // Filter by multiple courses
+    if (!empty($courseids) && is_array($courseids)) {
+        list($insql, $inparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'course');
+        $sql .= " AND ctx.instanceid $insql AND ctx.contextlevel = 50";
+        $params = array_merge($params, $inparams);
     }
     
     $sql .= " ORDER BY l.timecreated DESC";
