@@ -64,7 +64,7 @@ class filter_form extends \moodleform {
             'multiple' => false,
             'noselectionstring' => get_string('allusers', 'report_activitylogs'),
             'valuehtmlcallback' => function($value) {
-                global $DB, $OUTPUT;
+                global $DB;
                 
                 if (empty($value)) {
                     return get_string('allusers', 'report_activitylogs');
@@ -72,11 +72,7 @@ class filter_form extends \moodleform {
                 
                 $user = $DB->get_record('user', array('id' => $value), 'id, firstname, lastname, email');
                 if ($user) {
-                    $username = fullname($user);
-                    return $OUTPUT->render_from_template('core/user_selector_suggestion', [
-                        'fullname' => $username,
-                        'email' => $user->email
-                    ]);
+                    return fullname($user) . ' (' . $user->email . ')';
                 }
                 return '';
             }
