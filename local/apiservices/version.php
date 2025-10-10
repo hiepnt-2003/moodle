@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_apiservices';
-$plugin->version = 2025100800;
+$plugin->version = 2025101000;
 $plugin->requires = 2019111800;        // Requires Moodle 3.8+ (compatible with 3.9).
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = 'v1.0';

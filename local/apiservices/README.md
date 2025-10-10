@@ -9,9 +9,17 @@ Plugin **API Services** cung cấp các web services API để quản lý Course
 ## Features
 
 ### 1. Course Copy API
-- Copy môn học từ một môn học nguồn với các thông tin mới
+- Copy đầy đủ nội dung môn học từ một môn học nguồn với các thông tin mới
 - Giữ nguyên cấu trúc, cài đặt và format của môn học nguồn
-- Tự động sao chép các course format options
+- Tự động sao chép tất cả:
+  - Activities (bài tập, quiz, forum, v.v.)
+  - Resources (files, pages, URLs, v.v.)
+  - Blocks
+  - Sections và course format options
+  - Role assignments và users
+  - Comments, badges, calendar events
+  - User completion data
+- Sử dụng Moodle Backup/Restore API để đảm bảo tính toàn vẹn
 
 ### 2. User Creation API
 - Tạo người dùng mới với đầy đủ thông tin
@@ -41,7 +49,7 @@ Plugin **API Services** cung cấp các web services API để quản lý Course
 {
     "status": "success",
     "id": 123,
-    "message": "Copy môn học thành công! ID môn học mới: 123"
+    "message": "Copy đầy đủ nội dung môn học thành công! ID môn học mới: 123"
 }
 ```
 

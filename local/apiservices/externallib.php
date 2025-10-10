@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/user/lib.php');
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 /**
  * External functions for API Services.
@@ -109,8 +111,8 @@ class local_apiservices_external extends external_api {
                 ];
             }
 
-            // Step 4: Create new course copy
-            $result = self::create_course_copy($source_course, $params);
+            // Step 4: Create new course copy with full content
+            $result = self::create_course_copy_with_content($source_course, $params);
             
             return $result;
 
@@ -124,7 +126,168 @@ class local_apiservices_external extends external_api {
     }
 
     /**
-     * Create a new course based on source course information.
+     * Create a new course copy with full content using Backup/Restore API.
+     *
+     * @param object $source_course Source course object
+     * @param array $params New course parameters
+     * @return array Result array
+     */
+    private static function create_course_copy_with_content($source_course, $params) {
+        global $DB, $USER, $CFG;
+        
+        try {
+            // Step 1: Create empty target course first
+            $course_data = new stdClass();
+            $course_data->fullname = $params['fullname'];
+            $course_data->shortname = $params['shortname'];
+            $course_data->category = $source_course->category;
+            $course_data->visible = $source_course->visible;
+            $course_data->startdate = $params['startdate'];
+            $course_data->enddate = $params['enddate'];
+            
+            $new_course = create_course($course_data);
+            
+            if (!$new_course) {
+                return [
+                    'status' => 'error',
+                    'id' => 0,
+                    'message' => 'Không thể tạo môn học mới'
+                ];
+            }
+
+            // Step 2: Use backup and restore to copy all content
+            $admin = get_admin();
+            if (!$admin) {
+                return [
+                    'status' => 'error',
+                    'id' => $new_course->id,
+                    'message' => 'Không tìm thấy admin user'
+                ];
+            }
+
+            // Create backup
+            $bc = new backup_controller(
+                backup::TYPE_1COURSE,
+                $source_course->id,
+                backup::FORMAT_MOODLE,
+                backup::INTERACTIVE_NO,
+                backup::MODE_GENERAL,
+                $admin->id
+            );
+
+            // Configure backup settings to include everything
+            $plan = $bc->get_plan();
+            
+            // Set backup settings to include all content
+            $plan->get_setting('users')->set_value(true);
+            $plan->get_setting('role_assignments')->set_value(true);
+            $plan->get_setting('activities')->set_value(true);
+            $plan->get_setting('blocks')->set_value(true);
+            $plan->get_setting('filters')->set_value(true);
+            $plan->get_setting('comments')->set_value(true);
+            $plan->get_setting('badges')->set_value(true);
+            $plan->get_setting('calendarevents')->set_value(true);
+            $plan->get_setting('userscompletion')->set_value(true);
+            $plan->get_setting('logs')->set_value(false);
+            $plan->get_setting('grade_histories')->set_value(false);
+            
+            // Execute backup
+            $bc->execute_plan();
+            $results = $bc->get_results();
+            $backup_file = $results['backup_destination'];
+            
+            if (!$backup_file) {
+                $bc->destroy();
+                return [
+                    'status' => 'error',
+                    'id' => $new_course->id,
+                    'message' => 'Không thể tạo file backup'
+                ];
+            }
+
+            // Get backup file path
+            $backup_filepath = $backup_file->copy_content_to_temp();
+            $bc->destroy();
+
+            // Step 3: Restore to new course
+            $rc = new restore_controller(
+                basename($backup_filepath),
+                $new_course->id,
+                backup::INTERACTIVE_NO,
+                backup::MODE_GENERAL,
+                $admin->id,
+                backup::TARGET_CURRENT_ADDING
+            );
+
+            // Configure restore settings
+            $plan = $rc->get_plan();
+            
+            // Set restore settings to include all content
+            $plan->get_setting('users')->set_value(true);
+            $plan->get_setting('role_assignments')->set_value(true);
+            $plan->get_setting('activities')->set_value(true);
+            $plan->get_setting('blocks')->set_value(true);
+            $plan->get_setting('filters')->set_value(true);
+            $plan->get_setting('comments')->set_value(true);
+            $plan->get_setting('badges')->set_value(true);
+            $plan->get_setting('calendarevents')->set_value(true);
+            $plan->get_setting('userscompletion')->set_value(true);
+            $plan->get_setting('logs')->set_value(false);
+            $plan->get_setting('grade_histories')->set_value(false);
+
+            // Execute restore
+            if (!$rc->execute_precheck()) {
+                $precheckresults = $rc->get_precheck_results();
+                $rc->destroy();
+                
+                return [
+                    'status' => 'error',
+                    'id' => $new_course->id,
+                    'message' => 'Precheck thất bại: ' . implode(', ', $precheckresults)
+                ];
+            }
+
+            $rc->execute_plan();
+            $rc->destroy();
+
+            // Clean up temp backup file
+            if (file_exists($backup_filepath)) {
+                @unlink($backup_filepath);
+            }
+
+            // Step 4: Update course dates
+            $new_course->startdate = $params['startdate'];
+            $new_course->enddate = $params['enddate'];
+            $new_course->fullname = $params['fullname'];
+            $new_course->shortname = $params['shortname'];
+            $DB->update_record('course', $new_course);
+
+            return [
+                'status' => 'success',
+                'id' => $new_course->id,
+                'message' => 'Copy đầy đủ nội dung môn học thành công! ID môn học mới: ' . $new_course->id
+            ];
+            
+        } catch (Exception $e) {
+            // If there's an error and we created a course, try to delete it
+            if (isset($new_course) && $new_course->id) {
+                try {
+                    delete_course($new_course->id, false);
+                } catch (Exception $delete_error) {
+                    // Ignore deletion errors
+                }
+            }
+            
+            return [
+                'status' => 'error',
+                'id' => 0,
+                'message' => 'Lỗi khi copy nội dung môn học: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Create a new course based on source course information (Legacy - without content).
      *
      * @param object $source_course Source course object
      * @param array $params New course parameters
